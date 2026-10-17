@@ -1,0 +1,105 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Space Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="app-layout">
+
+    <aside class="sidebar">
+      <a href="#" class="brand">
+        <span class="brand-icon">✦</span>
+        <span>SPACE<span class="brand-light">HUB</span></span>
+      </a>
+
+      <p class="sidebar-label">WORKSPACE</p>
+
+      <nav>
+        <button class="nav-link active" type="button">
+          <span class="nav-icon">🚀</span>
+          <span>Launches</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        Space data dashboard
+        <span class="version">v1.0</span>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">MISSION CONTROL / LAUNCHES</p>
+          <h1>Launches</h1>
+          <p class="subtitle">
+            Explore upcoming space missions around the world.
+          </p>
+        </div>
+      </header>
+
+      <section class="launch-section">
+        <div class="section-heading">
+          <div>
+            <h2>Upcoming missions</h2>
+            <p>Discover the next launches into space.</p>
+          </div>
+
+          <button id="load-launches" class="load-button" type="button">
+            <span>↻</span> Load launches
+          </button>
+        </div>
+
+    
+    <div class="filters">
+        <div class="search-wrapper">
+            <span class="search-icon">⌕</span>
+            <input
+                type="search"
+                id="search-launches"
+                placeholder="Search missions..."
+                aria-label="Search launches"
+                />
+            </div>
+
+        <div class="filter-actions">
+            <select id="filter-agency" aria-label="Filter by agency">
+                <option value="all">All agencies</option>
+            </select>
+
+            <button id="clear-filters" type="button">
+                Clear filters
+            </button>
+            </div>
+        </div>
+
+        <p id="status" role="status">
+          Click "Load launches" to explore upcoming missions.
+        </p>
+
+        <div class="results-toolbar">
+            <p id="results-count">No launches loaded yet.</p>
+
+        </div>
+
+        <section id="launches" aria-live="polite"></section>
+      </section>
+
+      <footer class="page-footer">
+        <span>SPACEHUB</span>
+        <span>Exploring beyond Earth.</span>
+      </footer>
+    </main>
+
+  </div>
+</body>
+</html>
+
+
+
