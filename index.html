@@ -4,13 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Space Dashboard</title>
+  <title>SpaceHub</title>
   <link rel="stylesheet" href="style.css">
   <script src="app.js" defer></script>
 </head>
 <body>
   <div class="app-layout">
 
+    <!-- SIDEBAR -->
     <aside class="sidebar">
       <a href="#" class="brand">
         <span class="brand-icon">✦</span>
@@ -20,9 +21,20 @@
       <p class="sidebar-label">WORKSPACE</p>
 
       <nav>
-        <button class="nav-link active" type="button">
-          <span class="nav-icon">🚀</span>
+        <button
+          id="nav-launches"
+          class="nav-link active"
+          type="button"
+        >
           <span>Launches</span>
+        </button>
+
+        <button
+          id="nav-guide"
+          class="nav-link"
+          type="button"
+        >
+          <span>Rocket Guide</span>
         </button>
       </nav>
 
@@ -33,71 +45,142 @@
       </div>
     </aside>
 
+    <!-- MAIN CONTENT -->
     <main class="main-content">
-      <header class="page-header">
-        <div>
-          <p class="eyebrow">MISSION CONTROL / LAUNCHES</p>
-          <h1>Launches</h1>
-          <p class="subtitle">
-            Explore upcoming space missions around the world.
-          </p>
-        </div>
-      </header>
 
-      <section class="launch-section">
-        <div class="section-heading">
+      <!-- LAUNCHES VIEW -->
+      <div id="view-launches">
+
+        <header class="page-header">
           <div>
-            <h2>Upcoming missions</h2>
-            <p>Discover the next launches into space.</p>
+            <p class="eyebrow">MISSION CONTROL / LAUNCHES</p>
+            <h1>Launches</h1>
+            <p class="subtitle">
+              Explore upcoming space missions around the world.
+            </p>
+          </div>
+        </header>
+
+        <section class="launch-section">
+
+          <div class="section-heading">
+            <div>
+              <h2>Upcoming missions</h2>
+              <p>Discover the next launches into space.</p>
+            </div>
           </div>
 
-          <button id="load-launches" class="load-button" type="button">
-            <span>↻</span> Load launches
-          </button>
-        </div>
+          <!-- SEARCH AND FILTERS -->
+          <div class="filters">
 
-    
-    <div class="filters">
-        <div class="search-wrapper">
-            <span class="search-icon">⌕</span>
-            <input
+            <div class="search-wrapper">
+              <span class="search-icon">⌕</span>
+              <input
                 type="search"
                 id="search-launches"
                 placeholder="Search missions..."
                 aria-label="Search launches"
-                />
+              >
             </div>
 
-        <div class="filter-actions">
-            <select id="filter-agency" aria-label="Filter by agency">
+            <div class="filter-actions">
+              <select
+                id="filter-agency"
+                aria-label="Filter by agency"
+              >
                 <option value="all">All agencies</option>
-            </select>
+              </select>
 
-            <button id="clear-filters" type="button">
+              <button id="clear-filters" type="button">
                 Clear filters
-            </button>
+              </button>
             </div>
-        </div>
 
-        <p id="status" role="status">
-          Click "Load launches" to explore upcoming missions.
-        </p>
+          </div>
 
-        <div class="results-toolbar">
+          <!-- STATUS AND RESULTS -->
+          <p id="status" role="status">
+            Preparing your mission dashboard...
+          </p>
+
+          <div class="results-toolbar">
             <p id="results-count">No launches loaded yet.</p>
+          </div>
 
-        </div>
+          <section id="launches" aria-live="polite"></section>
 
-        <section id="launches" aria-live="polite"></section>
-      </section>
+        </section>
 
-      <footer class="page-footer">
-        <span>SPACEHUB</span>
-        <span>Exploring beyond Earth.</span>
-      </footer>
+        <footer class="page-footer">
+          <span>SPACEHUB</span>
+          <span>Exploring beyond Earth.</span>
+        </footer>
+
+      </div>
+
+      <!-- ROCKET GUIDE VIEW -->
+      <div id="view-guide" hidden>
+
+        <header class="page-header">
+          <div>
+            <p class="eyebrow">LEARN / ROCKET GUIDE</p>
+            <h1>Rocket Guide</h1>
+            <p class="subtitle">
+              Explore the engineering behind rockets and spaceflight.
+            </p>
+          </div>
+        </header>
+
+        <section class="launch-section">
+
+          <div class="section-heading">
+            <div>
+              <h2>Explore rocket engineering</h2>
+              <p>
+                Learn how rockets work, from their structure
+                to their propulsion and onboard electronics.
+              </p>
+            </div>
+          </div>
+
+          <div class="guide-content">
+            <p>
+              Rocket Guide is being prepared. Educational articles
+              and explanations will be available here soon.
+            </p>
+          </div>
+
+        </section>
+
+        <footer class="page-footer">
+          <span>SPACEHUB</span>
+          <span>Exploring beyond Earth.</span>
+        </footer>
+
+      </div>
+
     </main>
 
   </div>
+<!-- LAUNCH DETAILS MODAL -->
+<dialog id="launch-dialog" class="launch-dialog">
+    <div class="launch-dialog-header">
+        <h2 id="launch-dialog-title">Launch details</h2>
+
+        <button
+            id="close-launch-dialog"
+            class="close-dialog-button"
+            type="button"
+            aria-label="Close details"
+        >
+            &times;
+        </button>
+    </div>
+
+    <div id="launch-dialog-content">
+        <!-- Launch details will be added here with JavaScript -->
+    </div>
+</dialog>
 </body>
 </html>
 
