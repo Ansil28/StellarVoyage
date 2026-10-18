@@ -15,10 +15,12 @@ const closeLaunchDialogButton = document.querySelector("#close-launch-dialog");
 // Navigation elements
 const navLaunches = document.querySelector("#nav-launches");
 const navGuide = document.querySelector("#nav-guide");
+const navIntelligence = document.querySelector("#nav-intelligence");
 
 // Page sections
 const viewLaunches = document.querySelector("#view-launches");
 const viewGuide = document.querySelector("#view-guide");
+const viewIntelligence = document.querySelector("#view-intelligence");
 
 let allLaunches = [];
 let countdownInterval = null;
@@ -104,14 +106,22 @@ navGuide.addEventListener("click", () => {
   showView("guide");
 });
 
+navIntelligence.addEventListener("click", () => {
+  showView("intelligence");
+});
+
 function showView(view) {
   const isLaunches = view === "launches";
+  const isGuide = view === "guide";
+  const isIntelligence = view === "intelligence";
 
   viewLaunches.hidden = !isLaunches;
-  viewGuide.hidden = isLaunches;
+  viewGuide.hidden = !isGuide;
+  viewIntelligence.hidden = !isIntelligence;
 
   navLaunches.classList.toggle("active", isLaunches);
-  navGuide.classList.toggle("active", !isLaunches);
+  navGuide.classList.toggle("active", isGuide);
+  navIntelligence.classList.toggle("active", isIntelligence);
 }
 
 // LOAD LAUNCHES FROM THE API
@@ -514,63 +524,43 @@ function showLaunchDetails(launch) {
     launchDialogContent.append(paragraph);
   }
 
+
+    
   // MISSION LINKS
-  const infoUrls =
-    launch.mission?.info_urls ||
-    [];
+  const wikipediaUrl = launch.pad?.wiki_url;
 
-  const videoUrls =
-    launch.mission?.vid_urls ||
-    [];
-
-  const links = [
-    ...infoUrls.map((item) => ({
-      title: item.title || "Mission information",
-      url: item.url
-    })),
-    ...videoUrls.map((item) => ({
-      title: item.title || "Watch video",
-      url: item.url
-    }))
-  ];
-
-  const validLinks = links.filter((link) => {
+  if (wikipediaUrl) {
     try {
-      const url = new URL(link.url);
+      const url = new URL(wikipediaUrl);
 
-      return (
-        url.protocol === "https:" ||
-        url.protocol === "http:"
-      );
-    } catch {
-      return false;
-    }
-  });
+      if (
+        url.protocol === "https:" &&
+        url.hostname === "en.wikipedia.org"
+      ) {
+        const section = document.createElement("div");
+        const heading = document.createElement("p");
+        const headingText = document.createElement("strong");
+        const paragraph = document.createElement("p");
+        const anchor = document.createElement("a");
 
-  if (validLinks.length > 0) {
-    const section = document.createElement("p");
-    const heading = document.createElement("strong");
+        headingText.textContent = "Useful links";
+        heading.append(headingText);
 
-    heading.textContent = "Mission links: ";
-    section.append(heading);
+        anchor.href = url.href;
+        anchor.textContent = "Launch Pad Wikipedia";
+        anchor.target = "_blank";
+        anchor.rel = "noopener noreferrer";
+        anchor.className = "mission-link";
 
-    validLinks.forEach((link, index) => {
-      if (index > 0) {
-        section.append(document.createTextNode(" · "));
+        paragraph.append(anchor);
+        section.append(heading, paragraph);
+        launchDialogContent.append(section);
       }
-
-      const anchor = document.createElement("a");
-
-      anchor.href = link.url;
-      anchor.textContent = link.title;
-      anchor.target = "_blank";
-      anchor.rel = "noopener noreferrer";
-
-      section.append(anchor);
-    });
-
-    launchDialogContent.append(section);
+    } catch {
+      // Ignore invalid URLs
+    }
   }
+
 
   launchDialog.showModal();
 }
@@ -593,3 +583,87 @@ launchDialog.addEventListener("click", (event) => {
 // LOAD THE WEBSITE
 
 loadLaunches();
+
+
+// SPACE INTELLIGENCE — 3D GLOBE
+let cesiumViewer = null;
+
+function initializeSpaceIntelligence() {
+  const container = document.querySelector("#cesiumContainer");
+
+  if (!container || cesiumViewer) {
+    return;
+  }
+
+  if (typeof Cesium === "undefined") {
+    container.textContent =
+      "Could not load the 3D globe library. Please refresh the page.";
+    return;
+  }
+
+  // Remove the temporary placeholder
+  container.replaceChildren();
+
+  try {
+    Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6Im52NDMzaElfYUxnNzB3dFgiLCJqdGkiOiJlZGNkZjNmOC1lMWNhLTQzMmItOWYzMi0yMWNmNGFjZDRiM2EiLCJpZCI6NTI5NDQ5LCJpc3MiOiJodHRwczovL2FwaS5jZXNpdW0uY29tIiwiYXVkIjoidW5kZWZpbmVkX2RlZmF1bHQiLCJpYXQiOjE3OTIzNDMwNzh9.ygxySbSj2TPhQCyxRPOpUpsSW-vUCdSnILH_YxToBxo";
+    cesiumViewer = new Cesium.Viewer("cesiumContainer", {
+      animation: false,
+      timeline: false,
+      baseLayerPicker: false,
+      geocoder: false,
+      homeButton: true,
+      sceneModePicker: false,
+      navigationHelpButton: true,
+      infoBox: false,
+      selectionIndicator: false,
+      fullscreenButton: true,
+    });
+
+    
+    // Improve the Earth's visual appearance
+    cesiumViewer.scene.globe.enableLighting = true;
+    cesiumViewer.scene.globe.showGroundAtmosphere = true;
+    cesiumViewer.scene.skyAtmosphere.show = true;
+    cesiumViewer.scene.fog.enabled = true;
+
+    // Set the initial camera position
+    cesiumViewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(
+        0,
+        20,
+        20000000
+      ),
+      duration: 2
+    });
+
+  } catch (error) {
+  console.error("Cesium initialization failed:", error);
+
+  container.replaceChildren();
+
+  const errorMessage = document.createElement("p");
+  errorMessage.className = "globe-placeholder";
+  errorMessage.textContent =
+    `Globe error: ${error.message || error}`;
+
+  container.append(errorMessage);
+}
+}
+
+// Initialize the globe when opening Space Intelligence
+navIntelligence.addEventListener("click", () => {
+  initializeSpaceIntelligence();
+
+  // Refresh the globe size after showing its section
+  requestAnimationFrame(() => {
+    if (cesiumViewer) {
+      cesiumViewer.resize();
+    }
+  });
+});
+
+
+
+
+
+
