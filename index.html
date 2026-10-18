@@ -5,8 +5,24 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SpaceHub</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="app.js" defer></script>
+  <link
+  rel="stylesheet"
+  href="https://cesium.com/downloads/cesiumjs/releases/1.146/Build/Cesium/Widgets/widgets.css"
+>
+
+<link rel="stylesheet" href="style.css">
+
+<script>
+  window.CESIUM_BASE_URL =
+    "https://cesium.com/downloads/cesiumjs/releases/1.146/Build/Cesium/";
+</script>
+
+<script
+  src="https://cesium.com/downloads/cesiumjs/releases/1.146/Build/Cesium/Cesium.js"
+  defer
+></script>
+
+<script src="app.js" defer></script>
 </head>
 <body>
   <div class="app-layout">
@@ -21,6 +37,14 @@
       <p class="sidebar-label">WORKSPACE</p>
 
       <nav>
+        <button
+          id="nav-intelligence"
+          class="nav-link"
+          type="button"
+        >
+          <span>Space Intelligence</span>
+        </button>
+
         <button
           id="nav-launches"
           class="nav-link active"
@@ -158,6 +182,48 @@
         </footer>
 
       </div>
+
+      <!-- SPACE INTELLIGENCE VIEW -->
+<div id="view-intelligence" hidden>
+
+  <header class="page-header">
+    <div>
+      <p class="eyebrow">EXPLORE / SPACE INTELLIGENCE</p>
+      <h1>Space Intelligence</h1>
+      <p class="subtitle">
+        Explore Earth and discover the technology
+        behind satellite tracking.
+      </p>
+    </div>
+  </header>
+
+  <section class="launch-section">
+    <div class="section-heading">
+      <div>
+        <h2>Earth Explorer</h2>
+        <p>
+          An interactive 3D view of our planet.
+        </p>
+      </div>
+    </div>
+
+    <div id="cesiumContainer" class="cesium-container">
+      <p class="globe-placeholder">
+        The 3D globe will appear here.
+      </p>
+    </div>
+
+    <p class="globe-caption">
+      Interactive globe powered by CesiumJS.
+    </p>
+  </section>
+
+  <footer class="page-footer">
+    <span>SPACEHUB</span>
+    <span>Exploring beyond Earth.</span>
+  </footer>
+
+</div>
 
     </main>
 
