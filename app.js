@@ -636,6 +636,8 @@ function initializeSpaceIntelligence() {
       duration: 2
     });
 
+    startISSTracking();
+
   } catch (error) {
   console.error("Cesium initialization failed:", error);
 
@@ -661,6 +663,225 @@ navIntelligence.addEventListener("click", () => {
     }
   });
 });
+
+
+
+/* SPACE INTELLIGENCE — ISS TRACKING */
+
+let issEntity = null;
+let issSatrec = null;
+let issUpdateTimer = null;
+
+async function startISSTracking() {
+  if (!cesiumViewer || issSatrec) return;
+
+  try {
+    if (typeof satellite === "undefined") {
+      throw new Error("A biblioteca satellite.js não foi carregada.");
+    }
+
+    const response = await fetch(
+      "https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE"
+    );
+
+    if (!response.ok) {
+      throw new Error("Não foi possível obter os dados orbitais.");
+    }
+
+    const tleText = await response.text();
+
+    const lines = tleText
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .filter(Boolean);
+
+    const line1Index = lines.findIndex(line =>
+      line.startsWith("1 ")
+    );
+
+    if (
+      line1Index < 0 ||
+      !lines[line1Index + 1]?.startsWith("2 ")
+    ) {
+      throw new Error("O formato dos dados orbitais é inválido.");
+    }
+
+    const tleLine1 = lines[line1Index];
+    const tleLine2 = lines[line1Index + 1];
+
+    issSatrec = satellite.twoline2satrec(
+      tleLine1,
+      tleLine2
+    );
+
+    issEntity = cesiumViewer.entities.add({
+      name: "ISS — International Space Station",
+
+      position: Cesium.Cartesian3.fromDegrees(0, 0, 420000),
+
+      point: {
+        pixelSize: 12,
+        color: Cesium.Color.CYAN,
+        outlineColor: Cesium.Color.WHITE,
+        outlineWidth: 2,
+        disableDepthTestDistance: Number.POSITIVE_INFINITY
+      },
+
+      label: {
+        text: "ISS",
+        font: "bold 14px sans-serif",
+        fillColor: Cesium.Color.CYAN,
+        outlineColor: Cesium.Color.BLACK,
+        outlineWidth: 3,
+        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+        pixelOffset: new Cesium.Cartesian2(12, -12),
+        disableDepthTestDistance: Number.POSITIVE_INFINITY
+      }
+    });
+
+    
+    // ISS information panel
+    let issPanel = document.querySelector("#iss-info-panel");
+
+    if (!issPanel) {
+      issPanel = document.createElement("div");
+      issPanel.id = "iss-info-panel";
+      issPanel.className = "iss-info-panel";
+
+      issPanel.innerHTML = `
+        <div class="iss-panel-header">
+          <div>
+            <p class="iss-panel-eyebrow">LIVE ORBITAL TRACKING</p>
+            <h3>International Space Station</h3>
+          </div>
+          <span class="iss-status">
+            <span class="iss-status-dot"></span>
+            Tracking
+          </span>
+        </div>
+
+        <div class="iss-panel-grid">
+          <div class="iss-data-card">
+            <span>ALTITUDE</span>
+            <strong id="iss-altitude">-- km</strong>
+          </div>
+
+          <div class="iss-data-card">
+            <span>LATITUDE</span>
+            <strong id="iss-latitude">--</strong>
+          </div>
+
+          <div class="iss-data-card">
+            <span>LONGITUDE</span>
+            <strong id="iss-longitude">--</strong>
+          </div>
+
+          <div class="iss-data-card">
+            <span>LAST UPDATE (UTC)</span>
+            <strong id="iss-update-time">--:--:--</strong>
+          </div>
+        </div>
+
+        <button id="iss-focus-button" type="button">
+          Centre camera on ISS ↗
+        </button>
+      `;
+
+      document.querySelector("#cesiumContainer")
+        .insertAdjacentElement("afterend", issPanel);
+
+      document.querySelector("#iss-focus-button")
+        .addEventListener("click", () => {
+          if (!cesiumViewer || !issEntity) return;
+
+          const currentPosition = issEntity.position.getValue(
+            Cesium.JulianDate.now()
+          );
+
+          if (!currentPosition) return;
+
+          const cartographic =
+            Cesium.Cartographic.fromCartesian(currentPosition);
+
+          cesiumViewer.camera.flyTo({
+            destination: Cesium.Cartesian3.fromRadians(
+              cartographic.longitude,
+              cartographic.latitude,
+              cartographic.height + 1800000
+            ),
+            duration: 1.5
+          });
+        });
+    }
+
+
+    function updateISSPosition() {
+      if (!cesiumViewer || !issSatrec || !issEntity) return;
+
+      const now = new Date();
+      const result = satellite.propagate(issSatrec, now);
+
+      if (!result || !result.position) return;
+
+      const gmst = satellite.gstime(now);
+
+      const geodetic = satellite.eciToGeodetic(
+        result.position,
+        gmst
+      );
+
+      const longitude = satellite.degreesLong(geodetic.longitude);
+      const latitude = satellite.degreesLat(geodetic.latitude);
+      const altitudeMeters = geodetic.height * 1000;
+      
+      const altitudeElement = document.querySelector("#iss-altitude");
+      const latitudeElement = document.querySelector("#iss-latitude");
+      const longitudeElement = document.querySelector("#iss-longitude");
+      const updateElement = document.querySelector("#iss-update-time");
+
+      if (altitudeElement) {
+        altitudeElement.textContent =
+          `${Math.round(geodetic.height)} km`;
+      }
+
+      if (latitudeElement) {
+        latitudeElement.textContent =
+          `${latitude.toFixed(2)}°`;
+      }
+
+      if (longitudeElement) {
+        longitudeElement.textContent =
+          `${longitude.toFixed(2)}°`;
+      }
+
+      if (updateElement) {
+        updateElement.textContent =
+          now.toISOString().slice(11, 19);
+      }
+
+
+      issEntity.position = Cesium.Cartesian3.fromDegrees(
+        longitude,
+        latitude,
+        altitudeMeters
+      );
+    }
+
+    updateISSPosition();
+
+    if (issUpdateTimer) {
+      clearInterval(issUpdateTimer);
+    }
+
+    issUpdateTimer = setInterval(updateISSPosition, 1000);
+
+    console.log("Rastreamento da ISS iniciado.");
+
+  } catch (error) {
+    console.error("Erro no rastreamento da ISS:", error);
+  }
+}
+
 
 
 
