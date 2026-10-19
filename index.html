@@ -1,29 +1,37 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SpaceHub</title>
+
   <link
-  rel="stylesheet"
-  href="https://cesium.com/downloads/cesiumjs/releases/1.146/Build/Cesium/Widgets/widgets.css"
->
+    rel="stylesheet"
+    href="https://cesium.com/downloads/cesiumjs/releases/1.146/Build/Cesium/Widgets/widgets.css"
+  >
 
-<link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
 
-<script>
-  window.CESIUM_BASE_URL =
-    "https://cesium.com/downloads/cesiumjs/releases/1.146/Build/Cesium/";
-</script>
+  <script>
+    window.CESIUM_BASE_URL =
+      "https://cesium.com/downloads/cesiumjs/releases/1.146/Build/Cesium/";
+  </script>
 
-<script
-  src="https://cesium.com/downloads/cesiumjs/releases/1.146/Build/Cesium/Cesium.js"
-  defer
-></script>
+  <script
+    src="https://cesium.com/downloads/cesiumjs/releases/1.146/Build/Cesium/Cesium.js"
+    defer
+  ></script>
 
-<script src="app.js" defer></script>
+  <!-- Satellite orbital calculations -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/satellite.js@6.0.1/dist/satellite.min.js"
+    defer
+  ></script>
+
+  <script src="app.js" defer></script>
 </head>
+
 <body>
   <div class="app-layout">
 
@@ -184,71 +192,70 @@
       </div>
 
       <!-- SPACE INTELLIGENCE VIEW -->
-<div id="view-intelligence" hidden>
+      <div id="view-intelligence" hidden>
 
-  <header class="page-header">
-    <div>
-      <p class="eyebrow">EXPLORE / SPACE INTELLIGENCE</p>
-      <h1>Space Intelligence</h1>
-      <p class="subtitle">
-        Explore Earth and discover the technology
-        behind satellite tracking.
-      </p>
-    </div>
-  </header>
+        <header class="page-header">
+          <div>
+            <p class="eyebrow">EXPLORE / SPACE INTELLIGENCE</p>
+            <h1>Space Intelligence</h1>
+            <p class="subtitle">
+              Explore Earth and discover the technology
+              behind satellite tracking.
+            </p>
+          </div>
+        </header>
 
-  <section class="launch-section">
-    <div class="section-heading">
-      <div>
-        <h2>Earth Explorer</h2>
-        <p>
-          An interactive 3D view of our planet.
-        </p>
+        <section class="launch-section">
+          <div class="section-heading">
+            <div>
+              <h2>Earth Explorer</h2>
+              <p>
+                An interactive 3D view of our planet.
+              </p>
+            </div>
+          </div>
+
+          <div id="cesiumContainer" class="cesium-container">
+            <p class="globe-placeholder">
+              The 3D globe will appear here.
+            </p>
+          </div>
+
+          <p class="globe-caption">
+            Interactive globe powered by CesiumJS.
+          </p>
+        </section>
+
+        <footer class="page-footer">
+          <span>SPACEHUB</span>
+          <span>Exploring beyond Earth.</span>
+        </footer>
+
       </div>
-    </div>
-
-    <div id="cesiumContainer" class="cesium-container">
-      <p class="globe-placeholder">
-        The 3D globe will appear here.
-      </p>
-    </div>
-
-    <p class="globe-caption">
-      Interactive globe powered by CesiumJS.
-    </p>
-  </section>
-
-  <footer class="page-footer">
-    <span>SPACEHUB</span>
-    <span>Exploring beyond Earth.</span>
-  </footer>
-
-</div>
 
     </main>
 
   </div>
-<!-- LAUNCH DETAILS MODAL -->
-<dialog id="launch-dialog" class="launch-dialog">
-    <div class="launch-dialog-header">
-        <h2 id="launch-dialog-title">Launch details</h2>
 
-        <button
-            id="close-launch-dialog"
-            class="close-dialog-button"
-            type="button"
-            aria-label="Close details"
-        >
-            &times;
-        </button>
+  <!-- LAUNCH DETAILS MODAL -->
+  <dialog id="launch-dialog" class="launch-dialog">
+    <div class="launch-dialog-header">
+      <h2 id="launch-dialog-title">Launch details</h2>
+
+      <button
+        id="close-launch-dialog"
+        class="close-dialog-button"
+        type="button"
+        aria-label="Close details"
+      >
+        &times;
+      </button>
     </div>
 
     <div id="launch-dialog-content">
-        <!-- Launch details will be added here with JavaScript -->
+      <!-- Launch details will be added here with JavaScript -->
     </div>
-</dialog>
+  </dialog>
+
 </body>
 </html>
-
-
-
