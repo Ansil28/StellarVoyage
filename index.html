@@ -153,33 +153,133 @@
       <!-- ROCKET GUIDE VIEW -->
       <div id="view-guide" hidden>
 
+        <!-- GUIDE HEADER -->
         <header class="page-header">
           <div>
             <p class="eyebrow">LEARN / ROCKET GUIDE</p>
+
             <h1>Rocket Guide</h1>
+
             <p class="subtitle">
-              Explore the engineering behind rockets and spaceflight.
+              Explore the science, engineering and technology
+              behind modern rockets and spaceflight.
             </p>
           </div>
         </header>
 
         <section class="launch-section">
 
+          <!-- SECTION INTRODUCTION -->
           <div class="section-heading">
             <div>
               <h2>Explore rocket engineering</h2>
+
               <p>
-                Learn how rockets work, from their structure
-                to their propulsion and onboard electronics.
+                From propulsion systems to ground support equipment,
+                discover the technology behind space exploration.
               </p>
             </div>
           </div>
 
-          <div class="guide-content">
-            <p>
-              Rocket Guide is being prepared. Educational articles
-              and explanations will be available here soon.
-            </p>
+          <!-- GUIDE TOPICS -->
+          <div class="guide-grid">
+
+            
+<div class="guide-grid">
+
+    <article class="guide-card" >
+        <img class="guide-card-image"
+             src="https://images.unsplash.com/photo-1517976487492-5750f3195933?w=900&q=85"
+             alt="Rocket launching from a launch pad">
+        <div class="guide-card-body">
+            <span class="guide-number">01 / FUNDAMENTALS</span>
+            <h2>Rocket Fundamentals</h2>
+            <p>Learn the physics and fundamental principles behind rocket flight and space exploration.</p>
+            <button class="guide-button" data-topic="fundamentals">Explore topic →</button>
+        </div>
+    </article>
+
+    <article class="guide-card">
+        <img class="guide-card-image"
+             src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=900&q=85"
+             alt="Earth viewed from space">
+        <div class="guide-card-body">
+            <span class="guide-number">02 / TYPES</span>
+            <h2>Types of Rockets</h2>
+            <p>Discover solid, liquid and hybrid rockets and understand their differences.</p>
+            <button class="guide-button" data-topic="types">Explore topic →</button>
+        </div>
+    </article>
+
+    <article class="guide-card">
+        <img class="guide-card-image"
+             src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&q=85"
+             alt="Technology and Earth from space">
+        <div class="guide-card-body">
+            <span class="guide-number">03 / PROPULSION</span>
+            <h2>Rocket Propulsion</h2>
+            <p>Explore rocket engines, combustion, thrust, propellants and specific impulse.</p>
+            <button class="guide-button" data-topic="propulsion">Explore topic →</button>
+        </div>
+    </article>
+
+    <article class="guide-card">
+        <img class="guide-card-image"
+             src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=900&q=85"
+             alt="Space and celestial objects">
+        <div class="guide-card-body">
+            <span class="guide-number">04 / ANATOMY</span>
+            <h2>Rocket Anatomy</h2>
+            <p>Understand the main components of a rocket, from tanks to avionics and payload.</p>
+            <button class="guide-button" data-topic="anatomy">Explore topic →</button>
+        </div>
+    </article>
+
+    <article class="guide-card">
+        <img class="guide-card-image"
+             src="https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=900&q=85"
+             alt="Stars and outer space">
+        <div class="guide-card-body">
+            <span class="guide-number">05 / FLIGHT</span>
+            <h2>Flight Stages</h2>
+            <p>Follow a rocket's journey from ignition and liftoff to stage separation and orbit.</p>
+            <button class="guide-button" data-topic="stages">Explore topic →</button>
+        </div>
+    </article>
+
+    <article class="guide-card guide-card-featured">
+        <img class="guide-card-image"
+             src="https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?w=900&q=85"
+             alt="Space engineering technology">
+        <div class="guide-card-body">
+            <span class="guide-number">06 / GROUND SYSTEMS</span>
+            <h2>Filling Station</h2>
+            <p>Learn about ground support equipment, propellant systems, valves and control electronics.</p>
+            <button class="guide-button" data-topic="filling-station">Explore topic →</button>
+        </div>
+    </article>
+
+    <article class="guide-card">
+        <img class="guide-card-image"
+             src="https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=900&q=85"
+             alt="Deep space and stars">
+        <div class="guide-card-body">
+            <span class="guide-number">07 / TERMINOLOGY</span>
+            <h2>Space Glossary</h2>
+            <p>A reference guide to important aerospace and rocketry terminology.</p>
+            <button class="guide-button" data-topic="glossary">Explore topic →</button>
+        </div>
+    </article>
+
+</div>
+
+
+          <!-- GUIDE ARTICLE CONTENT -->
+          <div
+            id="guide-content"
+            class="guide-content"
+            hidden
+          >
           </div>
 
         </section>
@@ -197,7 +297,9 @@
         <header class="page-header">
           <div>
             <p class="eyebrow">EXPLORE / SPACE INTELLIGENCE</p>
+
             <h1>Space Intelligence</h1>
+
             <p class="subtitle">
               Explore Earth and discover the technology
               behind satellite tracking.
@@ -206,16 +308,21 @@
         </header>
 
         <section class="launch-section">
+
           <div class="section-heading">
             <div>
               <h2>Earth Explorer</h2>
+
               <p>
                 An interactive 3D view of our planet.
               </p>
             </div>
           </div>
 
-          <div id="cesiumContainer" class="cesium-container">
+          <div
+            id="cesiumContainer"
+            class="cesium-container"
+          >
             <p class="globe-placeholder">
               The 3D globe will appear here.
             </p>
@@ -224,6 +331,7 @@
           <p class="globe-caption">
             Interactive globe powered by CesiumJS.
           </p>
+
         </section>
 
         <footer class="page-footer">
@@ -239,8 +347,12 @@
 
   <!-- LAUNCH DETAILS MODAL -->
   <dialog id="launch-dialog" class="launch-dialog">
+
     <div class="launch-dialog-header">
-      <h2 id="launch-dialog-title">Launch details</h2>
+
+      <h2 id="launch-dialog-title">
+        Launch details
+      </h2>
 
       <button
         id="close-launch-dialog"
@@ -250,11 +362,13 @@
       >
         &times;
       </button>
+
     </div>
 
     <div id="launch-dialog-content">
       <!-- Launch details will be added here with JavaScript -->
     </div>
+
   </dialog>
 
 </body>
