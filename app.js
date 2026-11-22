@@ -155,12 +155,14 @@ function showView(view) {
   navGuide.classList.toggle("active", isGuide);
   navIntelligence.classList.toggle("active", isIntelligence);
 
-  // Only update satellite positions while their view is visible
+  // Only update satellite positions and draw the globe while visible
   if (isIntelligence) {
     resumeSatelliteTracking();
   } else {
     pauseSatelliteTracking();
   }
+
+  setGlobeRendering(isIntelligence);
 }
 
 // LOAD LAUNCHES FROM THE API
@@ -945,7 +947,20 @@ function initializeSpaceIntelligence() {
       infoBox: false,
       selectionIndicator: false,
       fullscreenButton: true,
+
+      // Performance: only draw a new frame when something changes
+      // (camera movement, tiles loading or satellite updates)
+      requestRenderMode: true,
+      maximumRenderTimeChange: Infinity,
+
+      // Quality: render at the screen's real resolution (see below)
+      useBrowserRecommendedResolution: false
     });
+
+    // Sharp markers on high-DPI screens, capped at 1.5x so the globe
+    // does not get too heavy on 4K or Retina displays
+    const pixelRatio = window.devicePixelRatio || 1;
+    cesiumViewer.resolutionScale = Math.min(pixelRatio, 1.5) / pixelRatio;
 
     
     // Improve the Earth's visual appearance
@@ -990,15 +1005,209 @@ function openSpaceIntelligence() {
   requestAnimationFrame(() => {
     if (cesiumViewer) {
       cesiumViewer.resize();
+      cesiumViewer.scene.requestRender();
     }
   });
+}
+
+// Stop Cesium's render loop while the globe is hidden
+function setGlobeRendering(isVisible) {
+  if (!cesiumViewer) {
+    return;
+  }
+
+  cesiumViewer.useDefaultRenderLoop = isVisible;
+
+  if (isVisible) {
+    cesiumViewer.scene.requestRender();
+  }
+}
+
+// MARKER IMAGES
+// Drawn on a canvas at 3x size so they stay sharp on any screen
+
+const MARKER_IMAGE_SCALE = 3;
+const markerImageCache = new Map();
+
+function createMarkerImage(key, size, draw) {
+  if (markerImageCache.has(key)) {
+    return markerImageCache.get(key);
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = size * MARKER_IMAGE_SCALE;
+  canvas.height = size * MARKER_IMAGE_SCALE;
+
+  const context = canvas.getContext("2d");
+  context.scale(MARKER_IMAGE_SCALE, MARKER_IMAGE_SCALE);
+  draw(context, size);
+
+  markerImageCache.set(key, canvas);
+  return canvas;
+}
+
+// Orange badge with a small white rocket
+function getLaunchSiteImage() {
+  return createMarkerImage("launch-site", 28, (context, size) => {
+    const center = size / 2;
+
+    // Badge with a soft shadow
+    context.shadowColor = "rgba(0, 0, 0, 0.55)";
+    context.shadowBlur = 4;
+
+    const fill = context.createLinearGradient(0, 3, 0, size - 3);
+    fill.addColorStop(0, "#fdba74");
+    fill.addColorStop(1, "#ea580c");
+
+    context.beginPath();
+    context.arc(center, center, 11, 0, Math.PI * 2);
+    context.fillStyle = fill;
+    context.fill();
+
+    context.shadowBlur = 0;
+    context.lineWidth = 1.5;
+    context.strokeStyle = "rgba(255, 255, 255, 0.9)";
+    context.stroke();
+
+    // Rocket body
+    context.fillStyle = "#ffffff";
+    context.beginPath();
+    context.moveTo(center, 6.5);
+    context.quadraticCurveTo(center + 3, 9.5, center + 3, 14);
+    context.lineTo(center + 3, 17.5);
+    context.lineTo(center - 3, 17.5);
+    context.lineTo(center - 3, 14);
+    context.quadraticCurveTo(center - 3, 9.5, center, 6.5);
+    context.fill();
+
+    // Fins
+    context.beginPath();
+    context.moveTo(center - 3, 14.5);
+    context.lineTo(center - 5.5, 18.5);
+    context.lineTo(center - 3, 17.5);
+    context.moveTo(center + 3, 14.5);
+    context.lineTo(center + 5.5, 18.5);
+    context.lineTo(center + 3, 17.5);
+    context.fill();
+
+    // Window
+    context.fillStyle = "#ea580c";
+    context.beginPath();
+    context.arc(center, 11.5, 1.3, 0, Math.PI * 2);
+    context.fill();
+
+    // Flame
+    context.fillStyle = "#fde68a";
+    context.beginPath();
+    context.moveTo(center - 1.8, 18);
+    context.lineTo(center, 21.5);
+    context.lineTo(center + 1.8, 18);
+    context.fill();
+  });
+}
+
+// Bigger orange badge with the number of launches, for grouped launch sites
+function getLaunchClusterImage(count) {
+  return createMarkerImage(`launch-cluster-${count}`, 34, (context, size) => {
+    const center = size / 2;
+
+    context.beginPath();
+    context.arc(center, center, 16, 0, Math.PI * 2);
+    context.fillStyle = "rgba(251, 146, 60, 0.25)";
+    context.fill();
+
+    const fill = context.createLinearGradient(0, 4, 0, size - 4);
+    fill.addColorStop(0, "#fdba74");
+    fill.addColorStop(1, "#ea580c");
+
+    context.beginPath();
+    context.arc(center, center, 12.5, 0, Math.PI * 2);
+    context.fillStyle = fill;
+    context.fill();
+    context.lineWidth = 1.5;
+    context.strokeStyle = "rgba(255, 255, 255, 0.9)";
+    context.stroke();
+
+    context.fillStyle = "#ffffff";
+    context.font = `700 ${count > 99 ? 10 : 12}px Inter, system-ui, sans-serif`;
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(String(count), center, center + 0.5);
+  });
+}
+
+// Satellite icon (body and solar panels) with a glow in its colour
+function getSatelliteImage(color) {
+  return createMarkerImage(`satellite-${color}`, 40, (context, size) => {
+    const center = size / 2;
+    const glowColor = Cesium.Color.fromCssColorString(color);
+
+    const glow = context.createRadialGradient(center, center, 0, center, center, center);
+    glow.addColorStop(0, glowColor.withAlpha(0.55).toCssColorString());
+    glow.addColorStop(0.45, glowColor.withAlpha(0.18).toCssColorString());
+    glow.addColorStop(1, glowColor.withAlpha(0).toCssColorString());
+
+    context.fillStyle = glow;
+    context.fillRect(0, 0, size, size);
+
+    context.translate(center, center);
+    context.rotate(-Math.PI / 4);
+
+    // Boom between the panels
+    context.strokeStyle = "#e2e8f0";
+    context.lineWidth = 1.2;
+    context.beginPath();
+    context.moveTo(-12, 0);
+    context.lineTo(12, 0);
+    context.stroke();
+
+    // Solar panels
+    for (const side of [-1, 1]) {
+      const x = side === -1 ? -14 : 5;
+
+      context.fillStyle = color;
+      context.fillRect(x, -3.5, 9, 7);
+
+      context.strokeStyle = "rgba(255, 255, 255, 0.85)";
+      context.lineWidth = 0.8;
+      context.strokeRect(x, -3.5, 9, 7);
+
+      context.beginPath();
+      context.moveTo(x + 4.5, -3.5);
+      context.lineTo(x + 4.5, 3.5);
+      context.stroke();
+    }
+
+    // Body
+    context.fillStyle = "#f8fafc";
+    context.strokeStyle = "#0f172a";
+    context.lineWidth = 1;
+    context.beginPath();
+    context.roundRect(-3.5, -4.5, 7, 9, 1.5);
+    context.fill();
+    context.stroke();
+  });
+}
+
+// Shared look for the name tags next to markers
+function createMarkerLabel(text, color, offsetX) {
+  return {
+    text,
+    font: "600 12px Inter, system-ui, sans-serif",
+    fillColor: color,
+    showBackground: true,
+    backgroundColor: Cesium.Color.fromCssColorString("#080d19").withAlpha(0.82),
+    backgroundPadding: new Cesium.Cartesian2(7, 4),
+    horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+    verticalOrigin: Cesium.VerticalOrigin.CENTER,
+    pixelOffset: new Cesium.Cartesian2(offsetX, 0)
+  };
 }
 
 
 
 /* SPACE INTELLIGENCE — LAUNCH SITES */
 
-const LAUNCH_SITE_COLOR = "#fb923c";
 
 let launchSiteSource = null;
 const launchSiteLaunches = new Map(); // marker id -> launches from that pad
@@ -1011,6 +1220,29 @@ function updateLaunchSiteMarkers() {
 
   if (!launchSiteSource) {
     launchSiteSource = new Cesium.CustomDataSource("launch-sites");
+
+    // Group launch sites that are too close together on screen
+    const clustering = launchSiteSource.clustering;
+    clustering.enabled = true;
+    clustering.pixelRange = 22;
+    clustering.minimumClusterSize = 2;
+
+    clustering.clusterEvent.addEventListener((entities, cluster) => {
+      const launchCount = entities.reduce(
+        (total, entity) => total + (launchSiteLaunches.get(entity.id)?.length || 0),
+        0
+      );
+
+      cluster.label.show = false;
+      cluster.billboard.show = true;
+      cluster.billboard.id = cluster.label.id; // the grouped entities, for clicks
+      cluster.billboard.image = getLaunchClusterImage(launchCount);
+      cluster.billboard.width = 34;
+      cluster.billboard.height = 34;
+      cluster.billboard.verticalOrigin = Cesium.VerticalOrigin.CENTER;
+      cluster.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY;
+    });
+
     cesiumViewer.dataSources.add(launchSiteSource);
   }
 
@@ -1036,8 +1268,8 @@ function updateLaunchSiteMarkers() {
     sites.get(key).launches.push(launch);
   }
 
-  const color = Cesium.Color.fromCssColorString(LAUNCH_SITE_COLOR);
-  const outline = Cesium.Color.fromCssColorString("#080d19");
+  const image = getLaunchSiteImage();
+  const labelColor = Cesium.Color.fromCssColorString("#fed7aa");
 
   for (const [key, site] of sites) {
     const id = `launch-site-${key}`;
@@ -1052,33 +1284,95 @@ function updateLaunchSiteMarkers() {
         site.latitude,
         2000
       ),
-      point: {
-        pixelSize: 10,
-        color,
-        outlineColor: outline,
-        outlineWidth: 2
+      billboard: {
+        image,
+        width: 28,
+        height: 28,
+        // Slightly smaller when the camera is far away
+        scaleByDistance: new Cesium.NearFarScalar(1.5e6, 1.1, 2.5e7, 0.75),
+        // Never cut by the globe; markers behind the Earth are hidden
+        // by updateMarkerVisibility() instead
+        disableDepthTestDistance: Number.POSITIVE_INFINITY
       },
       label: {
-        text: count > 1 ? `${padName} · ${count} launches` : padName,
-        font: "12px sans-serif",
-        fillColor: Cesium.Color.WHITE,
-        outlineColor: Cesium.Color.BLACK,
-        outlineWidth: 3,
-        style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-        horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
-        pixelOffset: new Cesium.Cartesian2(10, 0),
+        ...createMarkerLabel(
+          count > 1 ? `${padName} · ${count} launches` : padName,
+          labelColor,
+          18
+        ),
         // Only show the names when the camera is close, to avoid clutter
-        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 3000000)
+        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 3000000),
+        disableDepthTestDistance: Number.POSITIVE_INFINITY
       }
     });
 
     launchSiteLaunches.set(id, site.launches);
   }
+
+  cesiumViewer.scene.requestRender();
 }
 
-// Clicking a launch site opens its next launch; clicking a satellite selects it
+// Markers ignore the globe's depth so they are never cut in half,
+// so hide the ones that are on the far side of the Earth by hand
+function updateMarkerVisibility() {
+  const occluder = new Cesium.EllipsoidalOccluder(
+    Cesium.Ellipsoid.WGS84,
+    cesiumViewer.camera.positionWC
+  );
+  const time = cesiumViewer.clock.currentTime;
+
+  const markers = [
+    ...(launchSiteSource ? launchSiteSource.entities.values : []),
+    ...[...trackedSatellites.values()].map(tracked => tracked.entity)
+  ];
+
+  for (const entity of markers) {
+    const position = entity.position?.getValue(time);
+    const isVisible = !position || occluder.isPointVisible(position);
+
+    if (entity.show !== isVisible) {
+      entity.show = isVisible;
+    }
+  }
+}
+
+// Clicking a launch site opens its next launch, clicking a group of
+// launch sites zooms in on them, and clicking a satellite selects it
 function handleGlobeClick(entity) {
   if (!entity) {
+    return;
+  }
+
+  if (Array.isArray(entity)) {
+    const time = cesiumViewer.clock.currentTime;
+    const positions = entity
+      .map(groupedEntity => groupedEntity.position?.getValue(time))
+      .filter(Boolean);
+
+    // Zoom in just enough for the closest launch sites to separate
+    let smallestGap = Infinity;
+
+    for (let i = 0; i < positions.length; i++) {
+      for (let j = i + 1; j < positions.length; j++) {
+        smallestGap = Math.min(
+          smallestGap,
+          Cesium.Cartesian3.distance(positions[i], positions[j])
+        );
+      }
+    }
+
+    const range = Math.min(
+      Math.max(smallestGap * 18, 25000),
+      cesiumViewer.camera.positionCartographic.height / 2
+    );
+
+    cesiumViewer.camera.flyToBoundingSphere(
+      Cesium.BoundingSphere.fromPoints(positions),
+      {
+        duration: 1.5,
+        offset: new Cesium.HeadingPitchRange(0, Cesium.Math.toRadians(-90), range)
+      }
+    );
     return;
   }
 
@@ -1098,6 +1392,11 @@ function getClickableEntity(screenPosition) {
   const picked = cesiumViewer.scene.pick(screenPosition);
   const entity = picked?.id;
 
+  // A group of launch sites
+  if (Array.isArray(entity) && entity.length > 0) {
+    return entity;
+  }
+
   if (!(entity instanceof Cesium.Entity)) {
     return null;
   }
@@ -1110,16 +1409,33 @@ function getClickableEntity(screenPosition) {
 }
 
 function setUpGlobeInteraction() {
+  // Runs only when a frame is drawn, and checks about 20 markers
+  cesiumViewer.scene.preRender.addEventListener(updateMarkerVisibility);
+
   const handler = new Cesium.ScreenSpaceEventHandler(cesiumViewer.scene.canvas);
 
   handler.setInputAction((click) => {
     handleGlobeClick(getClickableEntity(click.position));
   }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
-  // Show a pointer cursor over things that can be clicked
+  // Show a pointer cursor over things that can be clicked.
+  // Picking is expensive, so it runs at most every 120 ms.
+  let hoverPosition = null;
+  let hoverTimer = null;
+
   handler.setInputAction((movement) => {
-    cesiumViewer.scene.canvas.style.cursor =
-      getClickableEntity(movement.endPosition) ? "pointer" : "";
+    hoverPosition = Cesium.Cartesian2.clone(movement.endPosition);
+
+    if (hoverTimer) {
+      return;
+    }
+
+    hoverTimer = setTimeout(() => {
+      hoverTimer = null;
+
+      cesiumViewer.scene.canvas.style.cursor =
+        getClickableEntity(hoverPosition) ? "pointer" : "";
+    }, 120);
   }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 }
 
@@ -1322,6 +1638,9 @@ function updateSatellites() {
   }
 
   updateSatellitePanel(now);
+
+  // Request mode only draws when asked, so draw the new positions
+  cesiumViewer.scene.requestRender();
 }
 
 function createSatelliteEntities(config, satrec) {
@@ -1331,21 +1650,14 @@ function createSatelliteEntities(config, satrec) {
     id: `satellite-${config.id}`,
     name: config.name,
     position: Cesium.Cartesian3.fromDegrees(0, 0, 420000),
-    point: {
-      pixelSize: 12,
-      color,
-      outlineColor: Cesium.Color.WHITE,
-      outlineWidth: 2,
+    billboard: {
+      image: getSatelliteImage(config.color),
+      width: 40,
+      height: 40,
       disableDepthTestDistance: Number.POSITIVE_INFINITY
     },
     label: {
-      text: config.label,
-      font: "bold 14px sans-serif",
-      fillColor: color,
-      outlineColor: Cesium.Color.BLACK,
-      outlineWidth: 3,
-      style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-      pixelOffset: new Cesium.Cartesian2(12, -12),
+      ...createMarkerLabel(config.label, color, 20),
       disableDepthTestDistance: Number.POSITIVE_INFINITY
     }
   });
@@ -1355,9 +1667,13 @@ function createSatelliteEntities(config, satrec) {
     show: false,
     polyline: {
       positions: [],
-      width: 2,
+      width: 6,
       arcType: Cesium.ArcType.NONE,
-      material: color.withAlpha(0.6)
+      material: new Cesium.PolylineGlowMaterialProperty({
+        color: color.withAlpha(0.85),
+        glowPower: 0.18,
+        taperPower: 1
+      })
     }
   });
 
@@ -1479,6 +1795,9 @@ function selectSatellite(id) {
   // Only the selected satellite's orbit is drawn
   for (const other of trackedSatellites.values()) {
     other.orbitEntity.show = other.id === id;
+
+    // Make the selected satellite slightly bigger
+    other.entity.billboard.scale = other.id === id ? 1.2 : 0.9;
   }
 
   for (const button of document.querySelectorAll(".satellite-option")) {
@@ -1492,6 +1811,7 @@ function selectSatellite(id) {
     `Centre camera on ${tracked.label} ↗`;
 
   updateSatellitePanel(new Date());
+  cesiumViewer.scene.requestRender();
 }
 
 function focusSelectedSatellite() {
