@@ -38,7 +38,7 @@
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
-      <a href="#" class="brand">
+      <a href="#home" class="brand">
         <span class="brand-icon">✦</span>
         <span>SPACE<span class="brand-light">HUB</span></span>
       </a>
@@ -47,19 +47,27 @@
 
       <nav>
         <button
+          id="nav-overview"
+          class="nav-link active"
+          type="button"
+        >
+          <span>Overview</span>
+        </button>
+
+        <button
+          id="nav-launches"
+          class="nav-link"
+          type="button"
+        >
+          <span>Launches</span>
+        </button>
+
+        <button
           id="nav-intelligence"
           class="nav-link"
           type="button"
         >
           <span>Space Intelligence</span>
-        </button>
-
-        <button
-          id="nav-launches"
-          class="nav-link active"
-          type="button"
-        >
-          <span>Launches</span>
         </button>
 
         <button
@@ -81,8 +89,124 @@
     <!-- MAIN CONTENT -->
     <main class="main-content">
 
+      <!-- OVERVIEW VIEW (home page) -->
+      <div id="view-overview">
+
+        <header class="page-header">
+          <div>
+            <p class="eyebrow">MISSION CONTROL / OVERVIEW</p>
+            <h1>Overview</h1>
+            <p class="subtitle">
+              What is happening in space right now.
+            </p>
+          </div>
+        </header>
+
+        <section class="launch-section overview">
+
+          <!-- NEXT LAUNCH -->
+          <div class="section-heading">
+            <div>
+              <h2>Next launch</h2>
+              <p>The next mission scheduled to leave Earth.</p>
+            </div>
+          </div>
+
+          <article id="overview-next" class="overview-hero">
+            <p class="overview-loading">Loading the next launch...</p>
+          </article>
+
+          <div class="overview-columns">
+
+            <!-- COMING UP -->
+            <section class="overview-panel">
+              <div class="overview-panel-heading">
+                <h2>Coming up</h2>
+                <button
+                  class="overview-link"
+                  type="button"
+                  data-route="launches"
+                >
+                  See all launches →
+                </button>
+              </div>
+
+              <div id="overview-upcoming" class="overview-upcoming">
+                <p class="overview-loading">Loading launches...</p>
+              </div>
+            </section>
+
+            <!-- ISS RIGHT NOW -->
+            <section class="overview-panel">
+              <div class="overview-panel-heading">
+                <h2>ISS right now</h2>
+                <button
+                  class="overview-link"
+                  type="button"
+                  data-route="intelligence"
+                >
+                  Open globe →
+                </button>
+              </div>
+
+              <div class="overview-iss-grid">
+                <div class="iss-data-card">
+                  <span>ALTITUDE</span>
+                  <strong id="overview-iss-altitude">-- km</strong>
+                </div>
+
+                <div class="iss-data-card">
+                  <span>SPEED</span>
+                  <strong id="overview-iss-speed">-- km/h</strong>
+                </div>
+
+                <div class="iss-data-card">
+                  <span>LATITUDE</span>
+                  <strong id="overview-iss-latitude">--</strong>
+                </div>
+
+                <div class="iss-data-card">
+                  <span>LONGITUDE</span>
+                  <strong id="overview-iss-longitude">--</strong>
+                </div>
+              </div>
+
+              <p id="overview-iss-status" class="overview-note">
+                Loading orbital data...
+              </p>
+            </section>
+
+          </div>
+
+          <!-- FROM THE ROCKET GUIDE -->
+          <div class="section-heading overview-guide-heading">
+            <div>
+              <h2>From the Rocket Guide</h2>
+              <p>Learn how rockets work, from the basics to the launch pad.</p>
+            </div>
+
+            <button
+              class="overview-link"
+              type="button"
+              data-route="guide"
+            >
+              Browse all topics →
+            </button>
+          </div>
+
+          <div id="overview-guide" class="overview-guide-grid"></div>
+
+        </section>
+
+        <footer class="page-footer">
+          <span>SPACEHUB</span>
+          <span>Exploring beyond Earth.</span>
+        </footer>
+
+      </div>
+
       <!-- LAUNCHES VIEW -->
-      <div id="view-launches">
+      <div id="view-launches" hidden>
 
         <header class="page-header">
           <div>

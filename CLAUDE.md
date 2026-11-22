@@ -2,8 +2,9 @@
 
 Dashboard de exploração espacial em HTML, CSS e JavaScript puro (sem build, sem frameworks). Abre-se diretamente o `index.html` no browser.
 
-Tem três vistas, escolhidas pelo endereço (`#launches`, `#guide`, `#guide/<tópico>`, `#intelligence`). Os botões da sidebar mudam o `location.hash` e `handleRoute()` em `app.js` mostra a vista certa com `showView()`.
+Tem quatro vistas, escolhidas pelo endereço (`#home`, `#launches`, `#guide`, `#guide/<tópico>`, `#intelligence`). Os botões da sidebar mudam o `location.hash` e `handleRoute()` em `app.js` mostra a vista certa com `showView()`. Um endereço vazio ou desconhecido abre a Overview.
 
+- **Overview** (página inicial) — próximo lançamento em destaque com contagem decrescente, os 4 seguintes, a ISS ao vivo (só satellite.js, sem Cesium) e 3 tópicos do Rocket Guide (cópias dos cartões do guia).
 - **Launches** — lista os próximos lançamentos da API The Space Devs (`ll.thespacedevs.com/2.3.0`, guardados 15 min no `localStorage`), com pesquisa, filtro por agência, contagem decrescente e um `<dialog>` com os detalhes de cada missão e exportação para calendário (`.ics`).
 - **Rocket Guide** — grelha de cartões com tópicos sobre foguetões. Cada botão abre `#guide/<data-topic>`, e o artigo é montado em `#guide-content` a partir de `GUIDE_TOPICS`.
 - **Space Intelligence** — globo 3D com CesiumJS com:

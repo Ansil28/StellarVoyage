@@ -14,11 +14,13 @@ const launchDialogContent = document.querySelector("#launch-dialog-content");
 const closeLaunchDialogButton = document.querySelector("#close-launch-dialog");
 
 // Navigation elements
+const navOverview = document.querySelector("#nav-overview");
 const navLaunches = document.querySelector("#nav-launches");
 const navGuide = document.querySelector("#nav-guide");
 const navIntelligence = document.querySelector("#nav-intelligence");
 
 // Page sections
+const viewOverview = document.querySelector("#view-overview");
 const viewLaunches = document.querySelector("#view-launches");
 const viewGuide = document.querySelector("#view-guide");
 const viewIntelligence = document.querySelector("#view-intelligence");
@@ -108,6 +110,10 @@ function updateCountdowns() {
 // shows the matching view, so links can be shared and the browser's
 // back button works.
 
+navOverview.addEventListener("click", () => {
+  location.hash = "home";
+});
+
 navLaunches.addEventListener("click", () => {
   location.hash = "launches";
 });
@@ -138,22 +144,39 @@ function handleRoute() {
     return;
   }
 
-  showView("launches");
+  if (view === "launches") {
+    showView("launches");
+    document.title = "Launches · SpaceHub";
+    return;
+  }
+
+  // Empty, #home or unknown addresses open the Overview
+  showView("overview");
   document.title = "SpaceHub";
 }
 
 function showView(view) {
+  const isOverview = view === "overview";
   const isLaunches = view === "launches";
   const isGuide = view === "guide";
   const isIntelligence = view === "intelligence";
 
+  viewOverview.hidden = !isOverview;
   viewLaunches.hidden = !isLaunches;
   viewGuide.hidden = !isGuide;
   viewIntelligence.hidden = !isIntelligence;
 
+  navOverview.classList.toggle("active", isOverview);
   navLaunches.classList.toggle("active", isLaunches);
   navGuide.classList.toggle("active", isGuide);
   navIntelligence.classList.toggle("active", isIntelligence);
+
+  // The Overview's ISS card only updates while it is visible
+  if (isOverview) {
+    startOverviewIss();
+  } else {
+    pauseOverviewIss();
+  }
 
   // Only update satellite positions and draw the globe while visible
   if (isIntelligence) {
@@ -198,6 +221,7 @@ function showLaunches(launches) {
   populateAgencyFilter(allLaunches);
 
   renderLaunches(allLaunches);
+  renderOverviewLaunches(allLaunches);
 
   // Keep the launch site markers on the globe in sync
   updateLaunchSiteMarkers();
@@ -258,6 +282,7 @@ async function loadLaunches() {
       showLaunches(cache.results);
     } else {
       status.textContent = reason;
+      renderOverviewLaunches([]);
     }
 
     retryButton.hidden = false;
@@ -310,42 +335,7 @@ function renderLaunches(launches) {
     card.className = "launch-card";
 
     // Launch image
-    const imageContainer = document.createElement("div");
-    imageContainer.className = "launch-image";
-
-    const imageUrl =
-      launch.image?.image_url ||
-      launch.image?.thumbnail_url;
-
-    if (imageUrl) {
-      const image = document.createElement("img");
-
-      image.src = imageUrl;
-      image.alt = `Image for ${launch.name || "rocket launch"}`;
-      image.loading = "lazy";
-
-      image.addEventListener(
-        "error",
-        () => {
-          image.remove();
-
-          const fallback = document.createElement("span");
-          fallback.className = "image-placeholder";
-          fallback.textContent = "🚀";
-
-          imageContainer.prepend(fallback);
-        },
-        { once: true }
-      );
-
-      imageContainer.append(image);
-    } else {
-      const fallback = document.createElement("span");
-      fallback.className = "image-placeholder";
-      fallback.textContent = "🚀";
-
-      imageContainer.append(fallback);
-    }
+    const imageContainer = createLaunchImage(launch);
 
     // Mission name
     const title = document.createElement("h2");
@@ -356,81 +346,11 @@ function renderLaunches(launches) {
     agency.textContent = `Agency: ${getAgencyName(launch)}`;
 
     // Mission status badge
-    const missionStatus = document.createElement("span");
-    const statusName = launch.status?.name || "Unknown status";
-
-    missionStatus.className = "launch-status";
-    missionStatus.textContent = statusName;
-
-    const normalizedStatus = statusName.toLowerCase();
-
-    if (
-      normalizedStatus.includes("success") ||
-      normalizedStatus.includes("complete")
-    ) {
-      missionStatus.classList.add("status-success");
-    } else if (
-      normalizedStatus.includes("fail") ||
-      normalizedStatus.includes("scrub") ||
-      normalizedStatus.includes("cancel")
-    ) {
-      missionStatus.classList.add("status-failure");
-    } else if (
-      normalizedStatus.includes("go") ||
-      normalizedStatus.includes("in flight") ||
-      normalizedStatus.includes("flight")
-    ) {
-      missionStatus.classList.add("status-active");
-    } else if (
-      normalizedStatus.includes("tbd") ||
-      normalizedStatus.includes("unknown") ||
-      normalizedStatus.includes("to be determined")
-    ) {
-      missionStatus.classList.add("status-unknown");
-    } else {
-      missionStatus.classList.add("status-planned");
-    }
+    const missionStatus = createStatusBadge(launch);
 
     // Launch date
     const date = document.createElement("p");
-
-    if (!launch.net) {
-      date.textContent = "Date: To be confirmed";
-    } else {
-      const launchDate = new Date(launch.net);
-
-      const isMidnight =
-        launchDate.getUTCHours() === 0 &&
-        launchDate.getUTCMinutes() === 0 &&
-        launchDate.getUTCSeconds() === 0;
-
-      const isEndOfYear =
-        launchDate.getUTCMonth() === 11 &&
-        launchDate.getUTCDate() === 31;
-
-      if (isMidnight && isEndOfYear) {
-        date.textContent = "Date: To be confirmed";
-      } else {
-        const dateText = launchDate.toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-          timeZone: "UTC"
-        });
-
-        if (isMidnight) {
-          date.textContent = `Date: ${dateText}`;
-        } else {
-          const timeText = launchDate.toLocaleTimeString("en-GB", {
-            hour: "2-digit",
-            minute: "2-digit",
-            timeZone: "UTC"
-          });
-
-          date.textContent = `Date: ${dateText}, ${timeText} UTC`;
-        }
-      }
-    }
+    date.textContent = `Date: ${formatLaunchDate(launch)}`;
 
     // Countdown
     let countdown = null;
@@ -479,6 +399,129 @@ function renderLaunches(launches) {
   // Start updating countdowns every second
   updateCountdowns();
   countdownInterval = setInterval(updateCountdowns, 1000);
+}
+
+// SHARED LAUNCH CARD PARTS (used by Launches and Overview)
+
+function createLaunchImage(launch) {
+  const imageContainer = document.createElement("div");
+  imageContainer.className = "launch-image";
+
+  const imageUrl =
+    launch.image?.image_url ||
+    launch.image?.thumbnail_url;
+
+  if (imageUrl) {
+    const image = document.createElement("img");
+
+    image.src = imageUrl;
+    image.alt = `Image for ${launch.name || "rocket launch"}`;
+    image.loading = "lazy";
+
+    image.addEventListener(
+      "error",
+      () => {
+        image.remove();
+
+        const fallback = document.createElement("span");
+        fallback.className = "image-placeholder";
+        fallback.textContent = "🚀";
+
+        imageContainer.prepend(fallback);
+      },
+      { once: true }
+    );
+
+    imageContainer.append(image);
+  } else {
+    const fallback = document.createElement("span");
+    fallback.className = "image-placeholder";
+    fallback.textContent = "🚀";
+
+    imageContainer.append(fallback);
+  }
+
+  return imageContainer;
+}
+
+function createStatusBadge(launch) {
+  const missionStatus = document.createElement("span");
+  const statusName = launch.status?.name || "Unknown status";
+
+  missionStatus.className = "launch-status";
+  missionStatus.textContent = statusName;
+
+  const normalizedStatus = statusName.toLowerCase();
+
+  if (
+    normalizedStatus.includes("success") ||
+    normalizedStatus.includes("complete")
+  ) {
+    missionStatus.classList.add("status-success");
+  } else if (
+    normalizedStatus.includes("fail") ||
+    normalizedStatus.includes("scrub") ||
+    normalizedStatus.includes("cancel")
+  ) {
+    missionStatus.classList.add("status-failure");
+  } else if (
+    normalizedStatus.includes("go") ||
+    normalizedStatus.includes("in flight") ||
+    normalizedStatus.includes("flight")
+  ) {
+    missionStatus.classList.add("status-active");
+  } else if (
+    normalizedStatus.includes("tbd") ||
+    normalizedStatus.includes("unknown") ||
+    normalizedStatus.includes("to be determined")
+  ) {
+    missionStatus.classList.add("status-unknown");
+  } else {
+    missionStatus.classList.add("status-planned");
+  }
+
+  return missionStatus;
+}
+
+// "22 Nov 2026, 12:23 UTC", "22 Nov 2026" or "To be confirmed"
+function formatLaunchDate(launch) {
+  if (!launch.net) {
+    return "To be confirmed";
+  }
+
+  const launchDate = new Date(launch.net);
+
+  const isMidnight =
+    launchDate.getUTCHours() === 0 &&
+    launchDate.getUTCMinutes() === 0 &&
+    launchDate.getUTCSeconds() === 0;
+
+  const isEndOfYear =
+    launchDate.getUTCMonth() === 11 &&
+    launchDate.getUTCDate() === 31;
+
+  if (isMidnight && isEndOfYear) {
+    return "To be confirmed";
+  }
+
+  const dateText = launchDate.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC"
+  });
+
+  if (isMidnight) {
+    return dateText;
+  }
+
+  const timeText = launchDate.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC"
+  });
+
+  return `${dateText}, ${timeText} UTC`;
 }
 
 // SEARCH AND FILTERS
@@ -1899,9 +1942,280 @@ async function startSatelliteTracking() {
 }
 
 
+/* OVERVIEW (home page) */
+
+const overviewNext = document.querySelector("#overview-next");
+const overviewUpcoming = document.querySelector("#overview-upcoming");
+const overviewIssStatus = document.querySelector("#overview-iss-status");
+
+const OVERVIEW_UPCOMING_COUNT = 4;
+const OVERVIEW_GUIDE_TOPICS = ["fundamentals", "propulsion", "stages"];
+
+// Links such as "See all launches →" open another view
+for (const button of document.querySelectorAll(".overview-link[data-route]")) {
+  button.addEventListener("click", () => {
+    location.hash = button.dataset.route;
+  });
+}
+
+function createOverviewMessage(text) {
+  const message = document.createElement("p");
+  message.className = "overview-loading";
+  message.textContent = text;
+  return message;
+}
+
+function renderOverviewLaunches(launches) {
+  if (launches.length === 0) {
+    overviewNext.replaceChildren(
+      createOverviewMessage("Launch data is unavailable right now. Please try again later.")
+    );
+    overviewUpcoming.replaceChildren(
+      createOverviewMessage("No launches to show.")
+    );
+    return;
+  }
+
+  // The API's upcoming list can still include launches from the last
+  // few hours, so start from the first one that has not happened yet
+  const now = Date.now();
+  const stillToCome = launches.filter(
+    launch => launch.net && new Date(launch.net).getTime() > now
+  );
+  const list = stillToCome.length > 0 ? stillToCome : launches;
+
+  renderOverviewHero(list[0]);
+  renderOverviewUpcoming(list.slice(1, OVERVIEW_UPCOMING_COUNT + 1));
+}
+
+function renderOverviewHero(launch) {
+  const image = createLaunchImage(launch);
+
+  const body = document.createElement("div");
+  body.className = "overview-hero-body";
+
+  const title = document.createElement("h3");
+  title.className = "overview-hero-title";
+  title.textContent = launch.name || "Unknown mission";
+
+  const rocketName =
+    launch.rocket?.configuration?.full_name ||
+    launch.rocket?.configuration?.name;
+
+  const provider = document.createElement("p");
+  provider.className = "overview-hero-meta";
+  provider.textContent = [getAgencyName(launch), rocketName]
+    .filter(Boolean)
+    .join(" · ");
+
+  const place = document.createElement("p");
+  place.className = "overview-hero-meta";
+  place.textContent = launch.pad?.location?.name || "Unknown location";
+
+  const date = document.createElement("p");
+  date.className = "overview-hero-date";
+  date.textContent = formatLaunchDate(launch);
+
+  body.append(createStatusBadge(launch), title, provider, place, date);
+
+  const isConfirmed = hasConfirmedLaunchTime(launch);
+
+  if (isConfirmed) {
+    const countdown = document.createElement("p");
+    countdown.className = "launch-countdown overview-countdown";
+    countdown.dataset.target = new Date(launch.net).getTime();
+    body.append(countdown);
+  } else {
+    const note = document.createElement("p");
+    note.className = "overview-note";
+    note.textContent = "The exact launch time has not been confirmed yet.";
+    body.append(note);
+  }
+
+  const actions = document.createElement("div");
+  actions.className = "overview-hero-actions";
+
+  const detailsButton = document.createElement("button");
+  detailsButton.type = "button";
+  detailsButton.className = "load-button";
+  detailsButton.textContent = "View details";
+  detailsButton.addEventListener("click", () => showLaunchDetails(launch));
+  actions.append(detailsButton);
+
+  if (isConfirmed) {
+    const calendarButton = document.createElement("button");
+    calendarButton.type = "button";
+    calendarButton.className = "overview-secondary-button";
+    calendarButton.textContent = "Add to calendar";
+    calendarButton.addEventListener("click", () => downloadLaunchCalendarFile(launch));
+    actions.append(calendarButton);
+  }
+
+  body.append(actions);
+  overviewNext.replaceChildren(image, body);
+
+  // The countdown uses the same timer as the launch cards
+  updateCountdowns();
+}
+
+function renderOverviewUpcoming(launches) {
+  if (launches.length === 0) {
+    overviewUpcoming.replaceChildren(
+      createOverviewMessage("No other launches are scheduled yet.")
+    );
+    return;
+  }
+
+  const rows = launches.map((launch) => {
+    const row = document.createElement("button");
+    row.type = "button";
+    row.className = "overview-launch-row";
+    row.addEventListener("click", () => showLaunchDetails(launch));
+
+    // Calendar-style date block
+    const dateBlock = document.createElement("span");
+    dateBlock.className = "overview-launch-date";
+
+    const isDateKnown = formatLaunchDate(launch) !== "To be confirmed";
+    const launchDate = new Date(launch.net);
+
+    const day = document.createElement("strong");
+    const month = document.createElement("span");
+
+    day.textContent = isDateKnown
+      ? launchDate.toLocaleDateString("en-GB", { day: "2-digit", timeZone: "UTC" })
+      : "TBC";
+    month.textContent = isDateKnown
+      ? launchDate.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }).toUpperCase()
+      : "";
+
+    dateBlock.append(day, month);
+
+    const info = document.createElement("span");
+    info.className = "overview-launch-info";
+
+    const name = document.createElement("strong");
+    name.textContent = launch.name || "Unknown mission";
+
+    const details = document.createElement("span");
+    details.textContent = [
+      getAgencyName(launch),
+      launch.pad?.location?.name
+    ].filter(Boolean).join(" · ");
+
+    info.append(name, details);
+    row.append(dateBlock, info, createStatusBadge(launch));
+
+    return row;
+  });
+
+  overviewUpcoming.replaceChildren(...rows);
+}
+
+// ISS RIGHT NOW (uses satellite.js only, so the globe is not loaded)
+
+const ISS_NORAD_ID = 25544;
+
+let overviewIssSatrec = null;
+let overviewIssTimer = null;
+let overviewIssLoading = false;
+
+async function startOverviewIss() {
+  if (overviewIssTimer || overviewIssLoading) {
+    return;
+  }
+
+  if (!overviewIssSatrec) {
+    overviewIssLoading = true;
+
+    try {
+      if (typeof satellite === "undefined") {
+        throw new Error("The satellite.js library could not be loaded.");
+      }
+
+      overviewIssSatrec = satellite.twoline2satrec(
+        ...(await loadTle(ISS_NORAD_ID))
+      );
+    } catch (error) {
+      console.error("Overview ISS error:", error);
+      overviewIssStatus.textContent = "ISS data is unavailable right now.";
+      return;
+    } finally {
+      overviewIssLoading = false;
+    }
+  }
+
+  // The user may have left the Overview while the data was loading
+  if (viewOverview.hidden || overviewIssTimer) {
+    return;
+  }
+
+  updateOverviewIss();
+  overviewIssTimer = setInterval(updateOverviewIss, 1000);
+}
+
+function pauseOverviewIss() {
+  if (overviewIssTimer) {
+    clearInterval(overviewIssTimer);
+    overviewIssTimer = null;
+  }
+}
+
+function updateOverviewIss() {
+  const now = new Date();
+  const position = getSatellitePosition(overviewIssSatrec, now);
+  const velocity = satellite.propagate(overviewIssSatrec, now)?.velocity;
+
+  if (!position || !velocity) {
+    return;
+  }
+
+  // Velocity is in km/s; the ISS moves at about 27,600 km/h
+  const speedKmh = Math.hypot(velocity.x, velocity.y, velocity.z) * 3600;
+
+  document.querySelector("#overview-iss-altitude").textContent =
+    `${Math.round(position.altitudeKm)} km`;
+  document.querySelector("#overview-iss-speed").textContent =
+    `${Math.round(speedKmh).toLocaleString("en-GB")} km/h`;
+  document.querySelector("#overview-iss-latitude").textContent =
+    `${position.latitude.toFixed(2)}°`;
+  document.querySelector("#overview-iss-longitude").textContent =
+    `${position.longitude.toFixed(2)}°`;
+
+  overviewIssStatus.textContent =
+    `Live position · updated ${now.toISOString().slice(11, 19)} UTC`;
+}
+
+// FROM THE ROCKET GUIDE (copies of the guide's own cards)
+
+function renderOverviewGuide() {
+  const container = document.querySelector("#overview-guide");
+
+  for (const topic of OVERVIEW_GUIDE_TOPICS) {
+    const original = document
+      .querySelector(`#view-guide .guide-button[data-topic="${topic}"]`)
+      ?.closest(".guide-card");
+
+    if (!original) {
+      continue;
+    }
+
+    const card = original.cloneNode(true);
+    card.classList.remove("guide-card-featured");
+
+    card.querySelector(".guide-button").addEventListener("click", () => {
+      location.hash = `guide/${topic}`;
+    });
+
+    container.append(card);
+  }
+}
+
+
 // START THE APP
 // Runs last so every view's code and variables are ready
 
+renderOverviewGuide();
 loadLaunches();
 
 window.addEventListener("hashchange", handleRoute);

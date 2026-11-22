@@ -1211,6 +1211,275 @@ button {
 
 
 /* =========================================
+   OVERVIEW (home page)
+========================================= */
+
+.overview-loading {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Next launch */
+
+.overview-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 28px;
+  margin: 0 0 28px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: linear-gradient(145deg, var(--surface), #0c1526);
+}
+
+.overview-hero > .overview-loading {
+  grid-column: 1 / -1;
+}
+
+.overview-hero .launch-image {
+  height: 100%;
+  min-height: 280px;
+}
+
+.overview-hero-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.overview-hero-body .launch-status {
+  margin: 0 0 14px;
+}
+
+.overview-hero-title {
+  margin: 0 0 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(22px, 2.6vw, 30px);
+  line-height: 1.25;
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
+}
+
+.overview-hero-meta {
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.overview-hero-date {
+  margin: 12px 0 0;
+  color: #bfdbfe;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.overview-countdown {
+  align-self: stretch;
+  margin: 16px 0 0;
+  font-size: 22px;
+  text-align: center;
+}
+
+.overview-note {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.overview-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 18px;
+}
+
+.overview-secondary-button {
+  padding: 11px 15px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.overview-secondary-button:hover {
+  border-color: var(--accent);
+  background: var(--surface-hover);
+}
+
+/* Coming up and ISS panels */
+
+.overview-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 20px;
+  margin-bottom: 36px;
+}
+
+.overview-panel {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.overview-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.overview-panel-heading h2 {
+  margin: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
+}
+
+.overview-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.overview-link:hover {
+  color: #93c5fd;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.overview-upcoming {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.overview-launch-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: rgba(8, 13, 25, 0.45);
+  color: var(--text);
+  text-align: left;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.overview-launch-row:hover {
+  border-color: var(--border);
+  background: var(--surface-hover);
+}
+
+.overview-launch-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0;
+  border-radius: 8px;
+  background: var(--accent-bg);
+  color: #bfdbfe;
+  line-height: 1.15;
+}
+
+.overview-launch-date strong {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+}
+
+.overview-launch-date span {
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.overview-launch-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.overview-launch-info strong,
+.overview-launch-info span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.overview-launch-info strong {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.overview-launch-info span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.overview-launch-row .launch-status {
+  margin: 0;
+  padding: 4px 9px;
+  font-size: 11px;
+}
+
+.overview-iss-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+/* From the Rocket Guide */
+
+.overview-guide-heading {
+  align-items: flex-end;
+}
+
+.overview-guide-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 1000px) {
+  .overview-columns {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-guide-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .overview-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .overview-hero .launch-image {
+    height: 220px;
+    min-height: 0;
+  }
+}
+
+
+/* =========================================
    RESPONSIVE LAYOUT — PHONES (max-width: 600px)
    Kept at the end so it overrides the base rules above
 ========================================= */
@@ -1295,6 +1564,28 @@ button {
 
   .launch-dialog-header h2 {
     font-size: 18px;
+  }
+
+  /* Overview */
+  .overview-hero {
+    padding: 16px;
+    gap: 18px;
+  }
+
+  .overview-countdown {
+    font-size: 18px;
+  }
+
+  .overview-launch-row {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .overview-launch-row .launch-status {
+    display: none;
+  }
+
+  .overview-guide-grid {
+    grid-template-columns: 1fr;
   }
 }
 
