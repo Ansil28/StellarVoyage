@@ -1584,6 +1584,42 @@ button {
 
 
 /* =========================================
+   OFFLINE NOTICE
+========================================= */
+
+.offline-banner {
+  position: fixed;
+  left: 50%;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100% - 32px);
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--sidebar);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  color: var(--text);
+  font-size: 13px;
+  transform: translateX(-50%);
+}
+
+.offline-banner[hidden] {
+  display: none;
+}
+
+.offline-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #fbbf24;
+}
+
+
+/* =========================================
    RESPONSIVE LAYOUT — PHONES (max-width: 600px)
    Kept at the end so it overrides the base rules above
 ========================================= */

@@ -16,6 +16,13 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 
+  <!-- Installable app (PWA): full screen when added to the home screen -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="SpaceHub">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SpaceHub">
   <meta property="og:title" content="SpaceHub — What's happening in space right now">
@@ -60,6 +67,7 @@
   <!-- Satellite orbital calculations -->
   <script
     src="https://cdn.jsdelivr.net/npm/satellite.js@6.0.1/dist/satellite.min.js"
+    crossorigin="anonymous"
     defer
   ></script>
 
@@ -540,6 +548,12 @@
 
     </main>
 
+  </div>
+
+  <!-- OFFLINE NOTICE (shown by app.js when there is no internet) -->
+  <div id="offline-banner" class="offline-banner" role="status" hidden>
+    <span class="offline-dot"></span>
+    You're offline. Showing the last saved data.
   </div>
 
   <!-- LAUNCH DETAILS MODAL -->

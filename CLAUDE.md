@@ -19,8 +19,12 @@ style.css    Todos os estilos; variáveis de cor em :root; media queries a 850px
 guide-topics.js  Só dados: o texto dos artigos do Rocket Guide (GUIDE_TOPICS), indexado pelo data-topic dos cartões
 app.js       Toda a lógica: navegação por endereço, fetch e render dos lançamentos, filtros, countdown, modal, calendário, artigos do guia, globo Cesium e tracking da ISS
 README.md    Descrição curta do projeto
-assets/      favicon.svg, apple-touch-icon.png (180x180) e og-image.png (1200x630, pré-visualização ao partilhar)
+assets/      favicon.svg (logótipo), apple-touch-icon.png (180x180), icon-192/512.png e icon-maskable-512.png (app instalável) e og-image.png (1200x630, pré-visualização ao partilhar)
+manifest.webmanifest  Dados da app instalável (nome, cores, ícones, ecrã inteiro)
+sw.js        Service worker: guarda o site para abrir sem internet (ficheiros do site primeiro da rede, satellite.js e fontes primeiro da cópia guardada)
 ```
+
+**App instalável (PWA):** ao acrescentar um ficheiro novo ao site, juntá-lo à lista `APP_FILES` em `sw.js`, senão não fica disponível offline. O service worker só funciona num endereço `http(s)`, não ao abrir o `index.html` diretamente.
 
 O site está publicado em https://ansil28.github.io/SpaceHub/ (GitHub Pages). As etiquetas `og:` e `twitter:` no `<head>` usam este endereço completo.
 

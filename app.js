@@ -2446,6 +2446,38 @@ function renderOverviewGuide() {
 }
 
 
+// INSTALLABLE APP AND OFFLINE MODE
+
+// The service worker saves the site so it opens without internet.
+// It only works on a real web address (not when opening the file).
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch((error) => {
+      console.error("Service worker registration failed:", error);
+    });
+  });
+}
+
+const offlineBanner = document.querySelector("#offline-banner");
+
+function updateOnlineStatus() {
+  offlineBanner.hidden = navigator.onLine;
+}
+
+window.addEventListener("offline", updateOnlineStatus);
+
+window.addEventListener("online", () => {
+  updateOnlineStatus();
+
+  // Try again if the launches could not be loaded while offline
+  if (!retryButton.hidden) {
+    loadLaunches();
+  }
+});
+
+updateOnlineStatus();
+
+
 // START THE APP
 // Runs last so every view's code and variables are ready
 
