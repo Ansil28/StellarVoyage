@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- SpaceHub icon: four-point star on the dark blue brand tile -->
+  <rect width="64" height="64" rx="14" fill="#172c49"/>
+  <path
+    d="M32 11 C33.6 24.2 39.8 30.4 53 32 C39.8 33.6 33.6 39.8 32 53 C30.4 39.8 24.2 33.6 11 32 C24.2 30.4 30.4 24.2 32 11 Z"
+    fill="#60a5fa"
+  />
+</svg>

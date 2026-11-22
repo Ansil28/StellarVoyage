@@ -6,6 +6,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SpaceHub</title>
 
+  <!-- Description, icons and link previews (WhatsApp, Discord, etc.) -->
+  <meta
+    name="description"
+    content="Upcoming rocket launches, live satellite tracking on a 3D globe and a guide to how rockets work."
+  >
+  <meta name="theme-color" content="#080d19">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SpaceHub">
+  <meta property="og:title" content="SpaceHub — What's happening in space right now">
+  <meta
+    property="og:description"
+    content="Upcoming rocket launches, live satellite tracking on a 3D globe and a guide to how rockets work."
+  >
+  <meta property="og:url" content="https://ansil28.github.io/SpaceHub/">
+  <meta property="og:image" content="https://ansil28.github.io/SpaceHub/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta
+    property="og:image:alt"
+    content="SpaceHub: upcoming rocket launches, live satellite tracking and a rocket guide"
+  >
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SpaceHub — What's happening in space right now">
+  <meta
+    name="twitter:description"
+    content="Upcoming rocket launches, live satellite tracking on a 3D globe and a guide to how rockets work."
+  >
+  <meta name="twitter:image" content="https://ansil28.github.io/SpaceHub/assets/og-image.png">
+
   <link
     rel="stylesheet"
     href="https://cesium.com/downloads/cesiumjs/releases/1.146/Build/Cesium/Widgets/widgets.css"
@@ -43,40 +77,77 @@
         <span>SPACE<span class="brand-light">HUB</span></span>
       </a>
 
+      <!-- Hide / show the sidebar (only shown on larger screens) -->
+      <button
+        id="sidebar-toggle"
+        class="sidebar-toggle"
+        type="button"
+        aria-label="Hide sidebar"
+        title="Hide sidebar"
+        aria-expanded="true"
+        aria-controls="sidebar-nav"
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path
+            d="M15 6l-6 6 6 6"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+
+      <!-- Menu button (only shown on phones) -->
+      <button
+        id="menu-toggle"
+        class="menu-toggle"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="sidebar-nav"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
       <p class="sidebar-label">WORKSPACE</p>
 
-      <nav>
-        <button
+      <nav id="sidebar-nav" aria-label="Main">
+        <a
           id="nav-overview"
           class="nav-link active"
-          type="button"
+          href="#home"
+          aria-current="page"
         >
           <span>Overview</span>
-        </button>
+        </a>
 
-        <button
+        <a
           id="nav-launches"
           class="nav-link"
-          type="button"
+          href="#launches"
         >
           <span>Launches</span>
-        </button>
+        </a>
 
-        <button
+        <a
           id="nav-intelligence"
           class="nav-link"
-          type="button"
+          href="#intelligence"
         >
           <span>Space Intelligence</span>
-        </button>
+        </a>
 
-        <button
+        <a
           id="nav-guide"
           class="nav-link"
-          type="button"
+          href="#guide"
         >
           <span>Rocket Guide</span>
-        </button>
+        </a>
       </nav>
 
       <div class="sidebar-footer">

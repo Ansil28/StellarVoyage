@@ -105,25 +105,95 @@ function updateCountdowns() {
 
 // NAVIGATION BETWEEN TABS
 
-// Each view has its own address (#launches, #guide, #guide/<topic>,
-// #intelligence). The buttons change the address and handleRoute()
-// shows the matching view, so links can be shared and the browser's
-// back button works.
+// Each view has its own address (#home, #launches, #guide,
+// #guide/<topic>, #intelligence). The sidebar items are plain links to
+// those addresses, and handleRoute() shows the matching view, so links
+// can be shared, opened in a new tab, and the back button works.
 
-navOverview.addEventListener("click", () => {
-  location.hash = "home";
+// PHONE MENU (the ☰ button is only visible on small screens)
+
+const sidebar = document.querySelector(".sidebar");
+const menuToggle = document.querySelector("#menu-toggle");
+
+function setMenuOpen(isOpen) {
+  sidebar.classList.toggle("menu-open", isOpen);
+  menuToggle.setAttribute("aria-expanded", String(isOpen));
+  menuToggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
+}
+
+menuToggle.addEventListener("click", () => {
+  setMenuOpen(!sidebar.classList.contains("menu-open"));
 });
 
-navLaunches.addEventListener("click", () => {
-  location.hash = "launches";
+// Close after choosing a view, tapping outside or pressing Escape
+window.addEventListener("hashchange", () => setMenuOpen(false));
+
+for (const link of document.querySelectorAll(".sidebar .nav-link")) {
+  link.addEventListener("click", () => setMenuOpen(false));
+}
+
+document.addEventListener("click", (event) => {
+  if (!sidebar.contains(event.target)) {
+    setMenuOpen(false);
+  }
 });
 
-navGuide.addEventListener("click", () => {
-  location.hash = "guide";
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    setMenuOpen(false);
+  }
 });
 
-navIntelligence.addEventListener("click", () => {
-  location.hash = "intelligence";
+// HIDE / SHOW THE SIDEBAR (computer)
+
+const appLayout = document.querySelector(".app-layout");
+const sidebarToggle = document.querySelector("#sidebar-toggle");
+const mainContent = document.querySelector(".main-content");
+const SIDEBAR_STORAGE_KEY = "spacehub-sidebar-collapsed";
+
+function setSidebarCollapsed(isCollapsed, save = true) {
+  appLayout.classList.toggle("sidebar-collapsed", isCollapsed);
+
+  const label = isCollapsed ? "Show sidebar" : "Hide sidebar";
+  sidebarToggle.setAttribute("aria-label", label);
+  sidebarToggle.title = label;
+  sidebarToggle.setAttribute("aria-expanded", String(!isCollapsed));
+
+  if (save) {
+    try {
+      localStorage.setItem(SIDEBAR_STORAGE_KEY, isCollapsed ? "1" : "0");
+    } catch {
+      // Storage may be blocked; the choice just won't be remembered
+    }
+  }
+}
+
+sidebarToggle.addEventListener("click", () => {
+  setSidebarCollapsed(!appLayout.classList.contains("sidebar-collapsed"));
+});
+
+// Restore the last choice without animating it on page load
+try {
+  if (localStorage.getItem(SIDEBAR_STORAGE_KEY) === "1") {
+    appLayout.classList.add("sidebar-instant");
+    setSidebarCollapsed(true, false);
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => appLayout.classList.remove("sidebar-instant"));
+    });
+  }
+} catch {
+  // Storage may be blocked; start with the sidebar open
+}
+
+// The globe needs to know its new size once the sidebar has moved
+mainContent.addEventListener("transitionend", (event) => {
+  if (event.target === mainContent && event.propertyName === "margin-left") {
+    if (cesiumViewer && !viewIntelligence.hidden) {
+      cesiumViewer.resize();
+      cesiumViewer.scene.requestRender();
+    }
+  }
 });
 
 function handleRoute() {
@@ -170,6 +240,20 @@ function showView(view) {
   navLaunches.classList.toggle("active", isLaunches);
   navGuide.classList.toggle("active", isGuide);
   navIntelligence.classList.toggle("active", isIntelligence);
+
+  // Tell screen readers which page is open
+  for (const [link, isCurrent] of [
+    [navOverview, isOverview],
+    [navLaunches, isLaunches],
+    [navGuide, isGuide],
+    [navIntelligence, isIntelligence]
+  ]) {
+    if (isCurrent) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  }
 
   // The Overview's ISS card only updates while it is visible
   if (isOverview) {

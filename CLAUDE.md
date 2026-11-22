@@ -19,7 +19,10 @@ style.css    Todos os estilos; variáveis de cor em :root; media queries a 850px
 guide-topics.js  Só dados: o texto dos artigos do Rocket Guide (GUIDE_TOPICS), indexado pelo data-topic dos cartões
 app.js       Toda a lógica: navegação por endereço, fetch e render dos lançamentos, filtros, countdown, modal, calendário, artigos do guia, globo Cesium e tracking da ISS
 README.md    Descrição curta do projeto
+assets/      favicon.svg, apple-touch-icon.png (180x180) e og-image.png (1200x630, pré-visualização ao partilhar)
 ```
+
+O site está publicado em https://ansil28.github.io/SpaceHub/ (GitHub Pages). As etiquetas `og:` e `twitter:` no `<head>` usam este endereço completo.
 
 Dependências externas (via CDN, carregadas no `<head>` do `index.html`): CesiumJS 1.146, satellite.js 6.0.1, Google Fonts (Inter e Space Grotesk).
 
