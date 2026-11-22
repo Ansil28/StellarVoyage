@@ -31,8 +31,26 @@ let countdownInterval = null;
 const API_URL =
   "https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=50";
 
+// The site used to be called SpaceHub: move anything saved under the
+// old names to the new ones, so visitors keep their saved data
+try {
+  for (const key of Object.keys(localStorage)) {
+    if (key.startsWith("spacehub-")) {
+      const newKey = key.replace(/^spacehub-/, "stellarvoyage-");
+
+      if (localStorage.getItem(newKey) === null) {
+        localStorage.setItem(newKey, localStorage.getItem(key));
+      }
+
+      localStorage.removeItem(key);
+    }
+  }
+} catch {
+  // Storage may be blocked; nothing to move
+}
+
 // The free API allows about 15 requests per hour, so responses are cached
-const CACHE_KEY = "spacehub-launches-cache";
+const CACHE_KEY = "stellarvoyage-launches-cache";
 const CACHE_DURATION_MS = 15 * 60 * 1000;
 
 // COUNTDOWN
@@ -149,7 +167,7 @@ document.addEventListener("keydown", (event) => {
 const appLayout = document.querySelector(".app-layout");
 const sidebarToggle = document.querySelector("#sidebar-toggle");
 const mainContent = document.querySelector(".main-content");
-const SIDEBAR_STORAGE_KEY = "spacehub-sidebar-collapsed";
+const SIDEBAR_STORAGE_KEY = "stellarvoyage-sidebar-collapsed";
 
 function setSidebarCollapsed(isCollapsed, save = true) {
   appLayout.classList.toggle("sidebar-collapsed", isCollapsed);
@@ -210,19 +228,19 @@ function handleRoute() {
   if (view === "intelligence") {
     showView("intelligence");
     openSpaceIntelligence();
-    document.title = "Space Intelligence · SpaceHub";
+    document.title = "Space Intelligence · StellarVoyage";
     return;
   }
 
   if (view === "launches") {
     showView("launches");
-    document.title = "Launches · SpaceHub";
+    document.title = "Launches · StellarVoyage";
     return;
   }
 
   // Empty, #home or unknown addresses open the Overview
   showView("overview");
-  document.title = "SpaceHub";
+  document.title = "StellarVoyage";
 }
 
 function showView(view) {
@@ -886,7 +904,7 @@ function getLaunchCalendarEvent(launch) {
     launch.launch_service_provider?.name &&
       `Provider: ${launch.launch_service_provider.name}`,
     launch.mission?.description,
-    "Launch times often change. Check SpaceHub for the latest schedule."
+    "Launch times often change. Check StellarVoyage for the latest schedule."
   ].filter(Boolean);
 
   return {
@@ -910,11 +928,11 @@ function buildLaunchCalendarFile(launch) {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//SpaceHub//Launch Calendar//EN",
+    "PRODID:-//StellarVoyage//Launch Calendar//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
-    `UID:${launch.id || formatCalendarDate(start)}@spacehub`,
+    `UID:${launch.id || formatCalendarDate(start)}@stellarvoyage`,
     `DTSTAMP:${formatCalendarDate(new Date())}`,
     `DTSTART:${formatCalendarDate(start)}`,
     `DTEND:${formatCalendarDate(end)}`,
@@ -1112,7 +1130,7 @@ function showGuideTopic(topicKey) {
     guideContent.replaceChildren();
     guideContent.hidden = true;
     guideGrid.hidden = false;
-    document.title = "Rocket Guide · SpaceHub";
+    document.title = "Rocket Guide · StellarVoyage";
     return;
   }
 
@@ -1174,7 +1192,7 @@ function showGuideTopic(topicKey) {
   guideContent.replaceChildren(...article);
   guideGrid.hidden = true;
   guideContent.hidden = false;
-  document.title = `${topic.title} · SpaceHub`;
+  document.title = `${topic.title} · StellarVoyage`;
 
   window.scrollTo({ top: 0 });
 }
@@ -1795,7 +1813,7 @@ function parseTle(text) {
 }
 
 async function loadTle(noradId) {
-  const cacheKey = `spacehub-tle-${noradId}`;
+  const cacheKey = `stellarvoyage-tle-${noradId}`;
   let cache = null;
 
   try {

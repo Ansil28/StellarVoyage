@@ -63,9 +63,9 @@ button {
   margin: 0 0 48px 5px;
   color: var(--text);
   font-family: 'Space Grotesk', sans-serif;
-  font-size: 19px;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   text-decoration: none;
 }
 
@@ -133,7 +133,8 @@ button {
 /* Hide / show sidebar button, on the sidebar's right edge */
 .sidebar-toggle {
   position: absolute;
-  top: 33px;
+  /* Level with the "WORKSPACE" label, so the logo row stays free */
+  top: 106px;
   right: -15px;
   display: grid;
   place-items: center;
@@ -427,6 +428,18 @@ button {
   .main-content {
     margin-left: 205px;
     padding: 35px 25px 22px;
+  }
+
+  /* Smaller logo and name so "STELLARVOYAGE" fits the narrower sidebar */
+  .brand {
+    gap: 9px;
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+
+  .brand-icon {
+    width: 32px;
+    height: 32px;
   }
 }
 
@@ -1642,6 +1655,14 @@ button {
 
   .brand {
     margin: 0;
+    gap: 11px;
+    font-size: 18px;
+    letter-spacing: 0.5px;
+  }
+
+  .brand-icon {
+    width: 36px;
+    height: 36px;
   }
 
   .sidebar-label,

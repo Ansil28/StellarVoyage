@@ -1,6 +1,6 @@
 {
-  "name": "SpaceHub",
-  "short_name": "SpaceHub",
+  "name": "StellarVoyage",
+  "short_name": "StellarVoyage",
   "description": "Upcoming rocket launches, live satellite tracking on a 3D globe and a guide to how rockets work.",
   "start_url": "./",
   "scope": "./",

@@ -1,4 +1,4 @@
-# SpaceHub
+# StellarVoyage
 
 Dashboard de exploração espacial em HTML, CSS e JavaScript puro (sem build, sem frameworks). Abre-se diretamente o `index.html` no browser.
 
@@ -26,7 +26,7 @@ sw.js        Service worker: guarda o site para abrir sem internet (ficheiros do
 
 **App instalável (PWA):** ao acrescentar um ficheiro novo ao site, juntá-lo à lista `APP_FILES` em `sw.js`, senão não fica disponível offline. O service worker só funciona num endereço `http(s)`, não ao abrir o `index.html` diretamente.
 
-O site está publicado em https://ansil28.github.io/SpaceHub/ (GitHub Pages). As etiquetas `og:` e `twitter:` no `<head>` usam este endereço completo.
+O site está publicado em https://ansil28.github.io/StellarVoyage/ (GitHub Pages). As etiquetas `og:` e `twitter:` no `<head>` usam este endereço completo.
 
 Dependências externas (via CDN, carregadas no `<head>` do `index.html`): CesiumJS 1.146, satellite.js 6.0.1, Google Fonts (Inter e Space Grotesk).
 

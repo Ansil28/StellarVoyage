@@ -1,4 +1,4 @@
-// SPACEHUB SERVICE WORKER
+// STELLARVOYAGE SERVICE WORKER
 // Lets the site open without internet once it has been visited.
 //
 // - The site's own files: network first, so new versions show up
@@ -11,8 +11,8 @@
 // If you add a new file to the site, add it to APP_FILES too.
 
 const CACHE_VERSION = "v1";
-const APP_CACHE = `spacehub-app-${CACHE_VERSION}`;
-const LIBRARY_CACHE = `spacehub-libraries-${CACHE_VERSION}`;
+const APP_CACHE = `stellarvoyage-app-${CACHE_VERSION}`;
+const LIBRARY_CACHE = `stellarvoyage-libraries-${CACHE_VERSION}`;
 
 const APP_FILES = [
   "./",
@@ -50,7 +50,12 @@ self.addEventListener("activate", (event) => {
     caches.keys()
       .then((keys) => Promise.all(
         keys
-          .filter((key) => key.startsWith("spacehub-") && key !== APP_CACHE && key !== LIBRARY_CACHE)
+          // Also removes caches from when the site was called SpaceHub
+          .filter((key) =>
+            (key.startsWith("stellarvoyage-") || key.startsWith("spacehub-")) &&
+            key !== APP_CACHE &&
+            key !== LIBRARY_CACHE
+          )
           .map((key) => caches.delete(key))
       ))
       .then(() => self.clients.claim())
