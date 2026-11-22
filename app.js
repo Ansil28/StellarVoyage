@@ -5,6 +5,7 @@ const searchInput = document.querySelector("#search-launches");
 const agencyFilter = document.querySelector("#filter-agency");
 const resultsCount = document.querySelector("#results-count");
 const clearFiltersButton = document.querySelector("#clear-filters");
+const retryButton = document.querySelector("#retry-launches");
 
 // Launch details dialog
 const launchDialog = document.querySelector("#launch-dialog");
@@ -26,7 +27,11 @@ let allLaunches = [];
 let countdownInterval = null;
 
 const API_URL =
-  "https://lldev.thespacedevs.com/2.3.0/launches/upcoming/?limit=50";
+  "https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=50";
+
+// The free API allows about 15 requests per hour, so responses are cached
+const CACHE_KEY = "spacehub-launches-cache";
+const CACHE_DURATION_MS = 15 * 60 * 1000;
 
 // COUNTDOWN
 
@@ -98,17 +103,44 @@ function updateCountdowns() {
 
 // NAVIGATION BETWEEN TABS
 
+// Each view has its own address (#launches, #guide, #guide/<topic>,
+// #intelligence). The buttons change the address and handleRoute()
+// shows the matching view, so links can be shared and the browser's
+// back button works.
+
 navLaunches.addEventListener("click", () => {
-  showView("launches");
+  location.hash = "launches";
 });
 
 navGuide.addEventListener("click", () => {
-  showView("guide");
+  location.hash = "guide";
 });
 
 navIntelligence.addEventListener("click", () => {
-  showView("intelligence");
+  location.hash = "intelligence";
 });
+
+function handleRoute() {
+  const [view = "", topic = ""] = location.hash
+    .replace(/^#\/?/, "")
+    .split("/");
+
+  if (view === "guide") {
+    showView("guide");
+    showGuideTopic(topic);
+    return;
+  }
+
+  if (view === "intelligence") {
+    showView("intelligence");
+    openSpaceIntelligence();
+    document.title = "Space Intelligence · SpaceHub";
+    return;
+  }
+
+  showView("launches");
+  document.title = "SpaceHub";
+}
 
 function showView(view) {
   const isLaunches = view === "launches";
@@ -122,13 +154,64 @@ function showView(view) {
   navLaunches.classList.toggle("active", isLaunches);
   navGuide.classList.toggle("active", isGuide);
   navIntelligence.classList.toggle("active", isIntelligence);
+
+  // Only update the ISS position while its view is visible
+  if (isIntelligence) {
+    resumeISSTracking();
+  } else {
+    pauseISSTracking();
+  }
 }
 
 // LOAD LAUNCHES FROM THE API
 
+function readLaunchCache() {
+  try {
+    const cache = JSON.parse(localStorage.getItem(CACHE_KEY));
+
+    if (!cache || !Array.isArray(cache.results)) {
+      return null;
+    }
+
+    return cache;
+  } catch {
+    return null;
+  }
+}
+
+function saveLaunchCache(results) {
+  try {
+    localStorage.setItem(
+      CACHE_KEY,
+      JSON.stringify({ savedAt: Date.now(), results })
+    );
+  } catch {
+    // Storage may be full or blocked; the site still works without it
+  }
+}
+
+function showLaunches(launches) {
+  allLaunches = launches;
+
+  populateAgencyFilter(allLaunches);
+
+  renderLaunches(allLaunches);
+}
+
 async function loadLaunches() {
   status.textContent = "Loading launches...";
+  retryButton.hidden = true;
   launchesContainer.replaceChildren();
+
+  const cache = readLaunchCache();
+  const cacheIsFresh =
+    cache && Date.now() - cache.savedAt < CACHE_DURATION_MS;
+
+  if (cacheIsFresh) {
+    status.textContent = "";
+    showLaunches(cache.results);
+    return;
+  }
 
   try {
     const response = await fetch(API_URL);
@@ -139,18 +222,40 @@ async function loadLaunches() {
 
     const data = await response.json();
 
-    allLaunches = data.results;
+    if (!Array.isArray(data.results)) {
+      throw new Error("Unexpected API response format.");
+    }
 
-    populateAgencyFilter(allLaunches);
+    saveLaunchCache(data.results);
 
     status.textContent = "";
 
-    renderLaunches(allLaunches);
+    showLaunches(data.results);
   } catch (error) {
-    status.textContent =
-      "Could not load launches. Please try again.";
-
     console.error(error);
+
+    const isRateLimited = error.message.includes("429");
+
+    const reason = isRateLimited
+      ? "Too many requests to the launch API. Please wait a few minutes."
+      : "Could not load launches.";
+
+    // Fall back to older saved data if there is any
+    if (cache) {
+      const savedTime = new Date(cache.savedAt).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+
+      status.textContent =
+        `${reason} Showing saved data from ${savedTime}.`;
+
+      showLaunches(cache.results);
+    } else {
+      status.textContent = reason;
+    }
+
+    retryButton.hidden = false;
   }
 }
 
@@ -423,6 +528,12 @@ function applyFilters() {
   renderLaunches(filteredLaunches);
 }
 
+// RETRY LOADING LAUNCHES
+
+retryButton.addEventListener("click", () => {
+  loadLaunches();
+});
+
 // CLEAR FILTERS
 
 clearFiltersButton.addEventListener("click", () => {
@@ -562,7 +673,225 @@ function showLaunchDetails(launch) {
   }
 
 
+  // ADD TO CALENDAR (only when the exact launch time is known)
+  if (hasConfirmedLaunchTime(launch)) {
+    const calendarButton = document.createElement("button");
+
+    calendarButton.type = "button";
+    calendarButton.className = "load-button calendar-button";
+    calendarButton.textContent = "Add to calendar";
+
+    calendarButton.addEventListener("click", () => {
+      downloadLaunchCalendarFile(launch);
+    });
+
+    launchDialogContent.append(calendarButton);
+  } else {
+    const calendarNote = document.createElement("p");
+
+    calendarNote.className = "calendar-note";
+    calendarNote.textContent =
+      "Calendar export will be available once the launch time is confirmed.";
+
+    launchDialogContent.append(calendarNote);
+  }
+
   launchDialog.showModal();
+}
+
+// CALENDAR FILE (.ics)
+
+function formatCalendarDate(date) {
+  // 2026-11-22T12:23:56.000Z -> 20261122T122356Z
+  return date.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+}
+
+function escapeCalendarText(text) {
+  return String(text)
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\r?\n/g, "\\n");
+}
+
+// Calendar lines must be at most 75 bytes; longer lines continue
+// on the next line, starting with a space
+function foldCalendarLine(line) {
+  const encoder = new TextEncoder();
+  const parts = [];
+  let current = "";
+  let currentBytes = 0;
+
+  for (const character of line) {
+    const size = encoder.encode(character).length;
+    const limit = parts.length === 0 ? 75 : 74;
+
+    if (currentBytes + size > limit) {
+      parts.push(current);
+      current = "";
+      currentBytes = 0;
+    }
+
+    current += character;
+    currentBytes += size;
+  }
+
+  parts.push(current);
+
+  return parts.join("\r\n ");
+}
+
+function downloadLaunchCalendarFile(launch) {
+  const start = new Date(launch.net);
+  const windowEnd = new Date(launch.window_end);
+
+  // Use the end of the launch window, or one hour if there is none
+  const end =
+    windowEnd.getTime() > start.getTime()
+      ? windowEnd
+      : new Date(start.getTime() + 60 * 60 * 1000);
+
+  const eventLocation = [launch.pad?.name, launch.pad?.location?.name]
+    .filter(Boolean)
+    .join(", ");
+
+  const descriptionLines = [
+    launch.rocket?.configuration?.full_name &&
+      `Rocket: ${launch.rocket.configuration.full_name}`,
+    launch.launch_service_provider?.name &&
+      `Provider: ${launch.launch_service_provider.name}`,
+    launch.mission?.description,
+    "Launch times often change. Check SpaceHub for the latest schedule."
+  ].filter(Boolean);
+
+  const lines = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//SpaceHub//Launch Calendar//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    `UID:${launch.id || formatCalendarDate(start)}@spacehub`,
+    `DTSTAMP:${formatCalendarDate(new Date())}`,
+    `DTSTART:${formatCalendarDate(start)}`,
+    `DTEND:${formatCalendarDate(end)}`,
+    `SUMMARY:${escapeCalendarText(`Launch: ${launch.name || "Unknown mission"}`)}`,
+    eventLocation && `LOCATION:${escapeCalendarText(eventLocation)}`,
+    `DESCRIPTION:${escapeCalendarText(descriptionLines.join("\n\n"))}`,
+    "BEGIN:VALARM",
+    "ACTION:DISPLAY",
+    "TRIGGER:-PT30M",
+    `DESCRIPTION:${escapeCalendarText(`${launch.name || "Launch"} in 30 minutes`)}`,
+    "END:VALARM",
+    "END:VEVENT",
+    "END:VCALENDAR"
+  ].filter(Boolean);
+
+  const content = lines.map(foldCalendarLine).join("\r\n") + "\r\n";
+
+  const blob = new Blob([content], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const fileName =
+    (launch.slug || launch.name || "launch")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "") + ".ics";
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  link.click();
+
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// ROCKET GUIDE ARTICLES
+
+const guideGrid = document.querySelector("#view-guide .guide-grid");
+const guideContent = document.querySelector("#guide-content");
+
+for (const button of document.querySelectorAll(".guide-button[data-topic]")) {
+  button.addEventListener("click", () => {
+    location.hash = `guide/${button.dataset.topic}`;
+  });
+}
+
+function showGuideTopic(topicKey) {
+  const topic = Object.hasOwn(GUIDE_TOPICS, topicKey)
+    ? GUIDE_TOPICS[topicKey]
+    : null;
+
+  // No topic (or an unknown one): show the list of topics
+  if (!topic) {
+    guideContent.replaceChildren();
+    guideContent.hidden = true;
+    guideGrid.hidden = false;
+    document.title = "Rocket Guide · SpaceHub";
+    return;
+  }
+
+  const backButton = document.createElement("button");
+  backButton.type = "button";
+  backButton.className = "guide-button guide-back-button";
+  backButton.textContent = "← Back to topics";
+  backButton.addEventListener("click", () => {
+    location.hash = "guide";
+  });
+
+  const title = document.createElement("h2");
+  title.textContent = topic.title;
+
+  const intro = document.createElement("p");
+  intro.textContent = topic.intro;
+
+  const article = [backButton, title, intro];
+
+  for (const section of topic.sections) {
+    const heading = document.createElement("h3");
+    heading.textContent = section.heading;
+    article.push(heading);
+
+    // Paragraphs come before the list; "after" paragraphs follow it
+    for (const text of section.paragraphs || []) {
+      const paragraph = document.createElement("p");
+      paragraph.textContent = text;
+      article.push(paragraph);
+    }
+
+    if (section.list) {
+      const list = document.createElement("ul");
+
+      for (const item of section.list) {
+        const listItem = document.createElement("li");
+
+        if (typeof item === "string") {
+          listItem.textContent = item;
+        } else {
+          const term = document.createElement("strong");
+          term.textContent = `${item.term}: `;
+          listItem.append(term, item.text);
+        }
+
+        list.append(listItem);
+      }
+
+      article.push(list);
+    }
+
+    for (const text of section.after || []) {
+      const paragraph = document.createElement("p");
+      paragraph.textContent = text;
+      article.push(paragraph);
+    }
+  }
+
+  guideContent.replaceChildren(...article);
+  guideGrid.hidden = true;
+  guideContent.hidden = false;
+  document.title = `${topic.title} · SpaceHub`;
+
+  window.scrollTo({ top: 0 });
 }
 
 
@@ -653,7 +982,7 @@ function initializeSpaceIntelligence() {
 }
 
 // Initialize the globe when opening Space Intelligence
-navIntelligence.addEventListener("click", () => {
+function openSpaceIntelligence() {
   initializeSpaceIntelligence();
 
   // Refresh the globe size after showing its section
@@ -662,7 +991,7 @@ navIntelligence.addEventListener("click", () => {
       cesiumViewer.resize();
     }
   });
-});
+}
 
 
 
@@ -671,13 +1000,30 @@ navIntelligence.addEventListener("click", () => {
 let issEntity = null;
 let issSatrec = null;
 let issUpdateTimer = null;
+let updateISSPositionFn = null; // Set once tracking has started
+
+function pauseISSTracking() {
+  if (issUpdateTimer) {
+    clearInterval(issUpdateTimer);
+    issUpdateTimer = null;
+  }
+}
+
+function resumeISSTracking() {
+  if (!updateISSPositionFn || issUpdateTimer || viewIntelligence.hidden) {
+    return;
+  }
+
+  updateISSPositionFn();
+  issUpdateTimer = setInterval(updateISSPositionFn, 1000);
+}
 
 async function startISSTracking() {
   if (!cesiumViewer || issSatrec) return;
 
   try {
     if (typeof satellite === "undefined") {
-      throw new Error("A biblioteca satellite.js não foi carregada.");
+      throw new Error("The satellite.js library could not be loaded.");
     }
 
     const response = await fetch(
@@ -685,7 +1031,7 @@ async function startISSTracking() {
     );
 
     if (!response.ok) {
-      throw new Error("Não foi possível obter os dados orbitais.");
+      throw new Error("Could not fetch the orbital data.");
     }
 
     const tleText = await response.text();
@@ -703,7 +1049,7 @@ async function startISSTracking() {
       line1Index < 0 ||
       !lines[line1Index + 1]?.startsWith("2 ")
     ) {
-      throw new Error("O formato dos dados orbitais é inválido.");
+      throw new Error("The orbital data format is invalid.");
     }
 
     const tleLine1 = lines[line1Index];
@@ -867,18 +1213,13 @@ async function startISSTracking() {
       );
     }
 
-    updateISSPosition();
+    updateISSPositionFn = updateISSPosition;
+    resumeISSTracking();
 
-    if (issUpdateTimer) {
-      clearInterval(issUpdateTimer);
-    }
-
-    issUpdateTimer = setInterval(updateISSPosition, 1000);
-
-    console.log("Rastreamento da ISS iniciado.");
+    console.log("ISS tracking started.");
 
   } catch (error) {
-    console.error("Erro no rastreamento da ISS:", error);
+    console.error("ISS tracking error:", error);
   }
 }
 
@@ -888,3 +1229,8 @@ async function startISSTracking() {
 
 
 
+// START THE ROUTER
+// Runs last so every view's code and variables are ready
+
+window.addEventListener("hashchange", handleRoute);
+handleRoute();

@@ -1,0 +1,28 @@
+# SpaceHub
+
+Dashboard de exploração espacial em HTML, CSS e JavaScript puro (sem build, sem frameworks). Abre-se diretamente o `index.html` no browser.
+
+Tem três vistas, escolhidas pelo endereço (`#launches`, `#guide`, `#guide/<tópico>`, `#intelligence`). Os botões da sidebar mudam o `location.hash` e `handleRoute()` em `app.js` mostra a vista certa com `showView()`.
+
+- **Launches** — lista os próximos lançamentos da API The Space Devs (`ll.thespacedevs.com/2.3.0`, guardados 15 min no `localStorage`), com pesquisa, filtro por agência, contagem decrescente e um `<dialog>` com os detalhes de cada missão e exportação para calendário (`.ics`).
+- **Rocket Guide** — grelha de cartões com tópicos sobre foguetões. Cada botão abre `#guide/<data-topic>`, e o artigo é montado em `#guide-content` a partir de `GUIDE_TOPICS`.
+- **Space Intelligence** — globo 3D com CesiumJS e posição da ISS em tempo real, calculada com satellite.js a partir do TLE da CelesTrak.
+
+## Estrutura dos ficheiros
+
+```
+index.html   Estrutura das três vistas (#view-launches, #view-guide, #view-intelligence), sidebar e modal de detalhes
+style.css    Todos os estilos; variáveis de cor em :root; media queries a 850px e 600px
+guide-topics.js  Só dados: o texto dos artigos do Rocket Guide (GUIDE_TOPICS), indexado pelo data-topic dos cartões
+app.js       Toda a lógica: navegação por endereço, fetch e render dos lançamentos, filtros, countdown, modal, calendário, artigos do guia, globo Cesium e tracking da ISS
+README.md    Descrição curta do projeto
+```
+
+Dependências externas (via CDN, carregadas no `<head>` do `index.html`): CesiumJS 1.146, satellite.js 6.0.1, Google Fonts (Inter e Space Grotesk).
+
+## Regras
+
+1. **A interface é em inglês.** Todo o texto visível ao utilizador (títulos, botões, mensagens de estado e de erro) tem de estar em inglês.
+2. **Manter o tema azul escuro.** Usar as variáveis de `:root` em `style.css` (`--bg`, `--surface`, `--accent`, etc.) em vez de cores novas soltas. Componentes novos devem seguir o visual dos existentes.
+3. **Não reescrever código que funciona.** Fazer alterações pequenas e localizadas; não refatorar, renomear ou reorganizar código que não faz parte do pedido.
+4. **Explicar antes de alterar.** Antes de editar ficheiros, descrever o que vai mudar, em que ficheiro e porquê, e esperar pela confirmação.

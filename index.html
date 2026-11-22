@@ -29,6 +29,7 @@
     defer
   ></script>
 
+  <script src="guide-topics.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 
@@ -135,6 +136,15 @@
             Preparing your mission dashboard...
           </p>
 
+          <button
+            id="retry-launches"
+            class="load-button"
+            type="button"
+            hidden
+          >
+            Retry
+          </button>
+
           <div class="results-toolbar">
             <p id="results-count">No launches loaded yet.</p>
           </div>
@@ -183,9 +193,6 @@
 
           <!-- GUIDE TOPICS -->
           <div class="guide-grid">
-
-            
-<div class="guide-grid">
 
     <article class="guide-card" >
         <img class="guide-card-image"
