@@ -5,7 +5,7 @@ Dashboard de exploração espacial em HTML, CSS e JavaScript puro (sem build, se
 Tem quatro vistas, escolhidas pelo endereço (`#home`, `#launches`, `#guide`, `#guide/<tópico>`, `#intelligence`). Os botões da sidebar mudam o `location.hash` e `handleRoute()` em `app.js` mostra a vista certa com `showView()`. Um endereço vazio ou desconhecido abre a Overview.
 
 - **Overview** (página inicial) — próximo lançamento em destaque com contagem decrescente, os 4 seguintes, a ISS ao vivo (só satellite.js, sem Cesium) e 3 tópicos do Rocket Guide (cópias dos cartões do guia).
-- **Launches** — lista os próximos lançamentos da API The Space Devs (`ll.thespacedevs.com/2.3.0`, guardados 15 min no `localStorage`), com pesquisa, filtro por agência, contagem decrescente e um `<dialog>` com os detalhes de cada missão e exportação para calendário (`.ics`).
+- **Launches** — lista os próximos lançamentos da API The Space Devs (`ll.thespacedevs.com/2.3.0`, guardados 15 min no `localStorage`), com pesquisa, filtro por agência, contagem decrescente e um `<dialog>` com os detalhes de cada missão. O botão "Add to calendar" (`createCalendarControl()`) abre o Calendário do iPhone no Safari do iOS, o Google Calendar no Android e noutros browsers do iOS, e no computador mostra um menu com Google Calendar ou ficheiro `.ics`.
 - **Rocket Guide** — grelha de cartões com tópicos sobre foguetões. Cada botão abre `#guide/<data-topic>`, e o artigo é montado em `#guide-content` a partir de `GUIDE_TOPICS`.
 - **Space Intelligence** — globo 3D com CesiumJS com:
   - marcadores laranja nas plataformas dos próximos lançamentos (clicar abre o modal do próximo lançamento);
@@ -14,7 +14,7 @@ Tem quatro vistas, escolhidas pelo endereço (`#home`, `#launches`, `#guide`, `#
 ## Estrutura dos ficheiros
 
 ```
-index.html   Estrutura das três vistas (#view-launches, #view-guide, #view-intelligence), sidebar e modal de detalhes
+index.html   Estrutura das quatro vistas (#view-overview, #view-launches, #view-guide, #view-intelligence), sidebar e modal de detalhes
 style.css    Todos os estilos; variáveis de cor em :root; media queries a 850px e 600px
 guide-topics.js  Só dados: o texto dos artigos do Rocket Guide (GUIDE_TOPICS), indexado pelo data-topic dos cartões
 app.js       Toda a lógica: navegação por endereço, fetch e render dos lançamentos, filtros, countdown, modal, calendário, artigos do guia, globo Cesium e tracking da ISS

@@ -678,9 +678,58 @@ button {
 }
 
 /* ADD TO CALENDAR */
-.calendar-button {
+.calendar-control {
+    position: relative;
+}
+
+#launch-dialog-content .calendar-control {
     align-self: flex-start;
     margin-top: 6px;
+}
+
+/* Choice of calendars (computer only) */
+.calendar-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    min-width: 240px;
+    padding: 6px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--sidebar);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+}
+
+.calendar-menu[hidden] {
+    display: none;
+}
+
+/* In the details dialog the button is at the bottom, so open upwards */
+#launch-dialog-content .calendar-menu {
+    top: auto;
+    bottom: calc(100% + 6px);
+}
+
+.calendar-menu-item {
+    padding: 10px 12px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--text);
+    font-size: 13px;
+    text-align: left;
+    white-space: nowrap;
+    transition: background 0.2s;
+}
+
+.calendar-menu-item:hover,
+.calendar-menu-item:focus-visible {
+    background: var(--accent-bg);
+    color: #bfdbfe;
+    outline: none;
 }
 
 #launch-dialog-content .calendar-note {

@@ -723,17 +723,9 @@ function showLaunchDetails(launch) {
 
   // ADD TO CALENDAR (only when the exact launch time is known)
   if (hasConfirmedLaunchTime(launch)) {
-    const calendarButton = document.createElement("button");
-
-    calendarButton.type = "button";
-    calendarButton.className = "load-button calendar-button";
-    calendarButton.textContent = "Add to calendar";
-
-    calendarButton.addEventListener("click", () => {
-      downloadLaunchCalendarFile(launch);
-    });
-
-    launchDialogContent.append(calendarButton);
+    launchDialogContent.append(
+      createCalendarControl(launch, "load-button calendar-button")
+    );
   } else {
     const calendarNote = document.createElement("p");
 
@@ -789,7 +781,8 @@ function foldCalendarLine(line) {
   return parts.join("\r\n ");
 }
 
-function downloadLaunchCalendarFile(launch) {
+// Details shared by the .ics file and the Google Calendar link
+function getLaunchCalendarEvent(launch) {
   const start = new Date(launch.net);
   const windowEnd = new Date(launch.window_end);
 
@@ -812,6 +805,24 @@ function downloadLaunchCalendarFile(launch) {
     "Launch times often change. Check SpaceHub for the latest schedule."
   ].filter(Boolean);
 
+  return {
+    start,
+    end,
+    title: `Launch: ${launch.name || "Unknown mission"}`,
+    location: eventLocation,
+    descriptionLines
+  };
+}
+
+function buildLaunchCalendarFile(launch) {
+  const {
+    start,
+    end,
+    title,
+    location: eventLocation,
+    descriptionLines
+  } = getLaunchCalendarEvent(launch);
+
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
@@ -823,7 +834,7 @@ function downloadLaunchCalendarFile(launch) {
     `DTSTAMP:${formatCalendarDate(new Date())}`,
     `DTSTART:${formatCalendarDate(start)}`,
     `DTEND:${formatCalendarDate(end)}`,
-    `SUMMARY:${escapeCalendarText(`Launch: ${launch.name || "Unknown mission"}`)}`,
+    `SUMMARY:${escapeCalendarText(title)}`,
     eventLocation && `LOCATION:${escapeCalendarText(eventLocation)}`,
     `DESCRIPTION:${escapeCalendarText(descriptionLines.join("\n\n"))}`,
     "BEGIN:VALARM",
@@ -835,7 +846,12 @@ function downloadLaunchCalendarFile(launch) {
     "END:VCALENDAR"
   ].filter(Boolean);
 
-  const content = lines.map(foldCalendarLine).join("\r\n") + "\r\n";
+  return lines.map(foldCalendarLine).join("\r\n") + "\r\n";
+}
+
+// Downloads an .ics file (Apple Calendar on Mac, Outlook and others)
+function downloadLaunchCalendarFile(launch) {
+  const content = buildLaunchCalendarFile(launch);
 
   const blob = new Blob([content], { type: "text/calendar;charset=utf-8" });
   const url = URL.createObjectURL(blob);
@@ -852,6 +868,143 @@ function downloadLaunchCalendarFile(launch) {
   link.click();
 
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// Opens Google Calendar with the event already filled in
+function openGoogleCalendar(launch) {
+  const event = getLaunchCalendarEvent(launch);
+
+  // Keep the link short enough for every browser
+  let details = event.descriptionLines.join("\n\n");
+  if (details.length > 900) {
+    details = `${details.slice(0, 897)}...`;
+  }
+
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: event.title,
+    dates: `${formatCalendarDate(event.start)}/${formatCalendarDate(event.end)}`,
+    details,
+    location: event.location
+  });
+
+  window.open(
+    `https://calendar.google.com/calendar/render?${params}`,
+    "_blank",
+    "noopener"
+  );
+}
+
+// On iPhone and iPad, Safari opens calendar data straight in the
+// Calendar app's "Add Event" screen
+function addToIPhoneCalendar(launch) {
+  const content = buildLaunchCalendarFile(launch);
+
+  window.location.href =
+    `data:text/calendar;charset=utf-8,${encodeURIComponent(content)}`;
+}
+
+function getCalendarPlatform() {
+  const userAgent = navigator.userAgent;
+
+  // iPadOS reports itself as a Mac, but has a touch screen
+  const isIOS =
+    /iPhone|iPad|iPod/.test(userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+
+  if (isIOS) {
+    // Chrome, Firefox, Edge and in-app browsers on iOS cannot open
+    // calendar files, so they use Google Calendar instead
+    const isOtherBrowser =
+      /CriOS|FxiOS|EdgiOS|OPiOS|GSA|FBAN|FBAV|Instagram|Line\//.test(userAgent);
+
+    return isOtherBrowser ? "ios-other" : "ios-safari";
+  }
+
+  if (/Android/i.test(userAgent)) {
+    return "android";
+  }
+
+  return "desktop";
+}
+
+// "Add to calendar" button: goes straight to the phone's calendar on
+// mobile, and shows a choice of calendars on a computer
+function createCalendarControl(launch, buttonClassName) {
+  const control = document.createElement("div");
+  control.className = "calendar-control";
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = buttonClassName;
+  button.textContent = "Add to calendar";
+
+  control.append(button);
+
+  const platform = getCalendarPlatform();
+
+  if (platform === "ios-safari") {
+    button.addEventListener("click", () => addToIPhoneCalendar(launch));
+    return control;
+  }
+
+  if (platform !== "desktop") {
+    button.addEventListener("click", () => openGoogleCalendar(launch));
+    return control;
+  }
+
+  // Computer: small menu with both options
+  const menu = document.createElement("div");
+  menu.className = "calendar-menu";
+  menu.hidden = true;
+
+  const options = [
+    { label: "Google Calendar", action: () => openGoogleCalendar(launch) },
+    { label: "Apple Calendar / Outlook (.ics)", action: () => downloadLaunchCalendarFile(launch) }
+  ];
+
+  for (const option of options) {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "calendar-menu-item";
+    item.textContent = option.label;
+
+    item.addEventListener("click", () => {
+      menu.hidden = true;
+      option.action();
+    });
+
+    menu.append(item);
+  }
+
+  const closeMenu = (event) => {
+    if (event.type === "keydown" && event.key !== "Escape") {
+      return;
+    }
+
+    if (event.type === "click" && control.contains(event.target)) {
+      return;
+    }
+
+    menu.hidden = true;
+    document.removeEventListener("click", closeMenu);
+    document.removeEventListener("keydown", closeMenu);
+  };
+
+  button.setAttribute("aria-haspopup", "true");
+
+  button.addEventListener("click", () => {
+    menu.hidden = !menu.hidden;
+    button.setAttribute("aria-expanded", String(!menu.hidden));
+
+    if (!menu.hidden) {
+      document.addEventListener("click", closeMenu);
+      document.addEventListener("keydown", closeMenu);
+    }
+  });
+
+  control.append(menu);
+  return control;
 }
 
 // ROCKET GUIDE ARTICLES
@@ -2043,12 +2196,9 @@ function renderOverviewHero(launch) {
   actions.append(detailsButton);
 
   if (isConfirmed) {
-    const calendarButton = document.createElement("button");
-    calendarButton.type = "button";
-    calendarButton.className = "overview-secondary-button";
-    calendarButton.textContent = "Add to calendar";
-    calendarButton.addEventListener("click", () => downloadLaunchCalendarFile(launch));
-    actions.append(calendarButton);
+    actions.append(
+      createCalendarControl(launch, "overview-secondary-button")
+    );
   }
 
   body.append(actions);
