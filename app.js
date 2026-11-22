@@ -155,11 +155,11 @@ function showView(view) {
   navGuide.classList.toggle("active", isGuide);
   navIntelligence.classList.toggle("active", isIntelligence);
 
-  // Only update the ISS position while its view is visible
+  // Only update satellite positions while their view is visible
   if (isIntelligence) {
-    resumeISSTracking();
+    resumeSatelliteTracking();
   } else {
-    pauseISSTracking();
+    pauseSatelliteTracking();
   }
 }
 
@@ -196,6 +196,9 @@ function showLaunches(launches) {
   populateAgencyFilter(allLaunches);
 
   renderLaunches(allLaunches);
+
+  // Keep the launch site markers on the globe in sync
+  updateLaunchSiteMarkers();
 }
 
 async function loadLaunches() {
@@ -909,10 +912,6 @@ launchDialog.addEventListener("click", (event) => {
   }
 });
 
-// LOAD THE WEBSITE
-
-loadLaunches();
-
 
 // SPACE INTELLIGENCE — 3D GLOBE
 let cesiumViewer = null;
@@ -965,7 +964,9 @@ function initializeSpaceIntelligence() {
       duration: 2
     });
 
-    startISSTracking();
+    setUpGlobeInteraction();
+    updateLaunchSiteMarkers();
+    startSatelliteTracking();
 
   } catch (error) {
   console.error("Cesium initialization failed:", error);
@@ -995,242 +996,593 @@ function openSpaceIntelligence() {
 
 
 
-/* SPACE INTELLIGENCE — ISS TRACKING */
+/* SPACE INTELLIGENCE — LAUNCH SITES */
 
-let issEntity = null;
-let issSatrec = null;
-let issUpdateTimer = null;
-let updateISSPositionFn = null; // Set once tracking has started
+const LAUNCH_SITE_COLOR = "#fb923c";
 
-function pauseISSTracking() {
-  if (issUpdateTimer) {
-    clearInterval(issUpdateTimer);
-    issUpdateTimer = null;
-  }
-}
+let launchSiteSource = null;
+const launchSiteLaunches = new Map(); // marker id -> launches from that pad
 
-function resumeISSTracking() {
-  if (!updateISSPositionFn || issUpdateTimer || viewIntelligence.hidden) {
+// One marker per launch pad, built from the upcoming launches
+function updateLaunchSiteMarkers() {
+  if (!cesiumViewer) {
     return;
   }
 
-  updateISSPositionFn();
-  issUpdateTimer = setInterval(updateISSPositionFn, 1000);
-}
+  if (!launchSiteSource) {
+    launchSiteSource = new Cesium.CustomDataSource("launch-sites");
+    cesiumViewer.dataSources.add(launchSiteSource);
+  }
 
-async function startISSTracking() {
-  if (!cesiumViewer || issSatrec) return;
+  launchSiteSource.entities.removeAll();
+  launchSiteLaunches.clear();
 
-  try {
-    if (typeof satellite === "undefined") {
-      throw new Error("The satellite.js library could not be loaded.");
+  const sites = new Map();
+
+  for (const launch of allLaunches) {
+    const latitude = Number(launch.pad?.latitude);
+    const longitude = Number(launch.pad?.longitude);
+
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      continue;
     }
 
-    const response = await fetch(
-      "https://celestrak.org/NORAD/elements/gp.php?CATNR=25544&FORMAT=TLE"
-    );
+    const key = launch.pad.id ?? `${latitude},${longitude}`;
 
-    if (!response.ok) {
-      throw new Error("Could not fetch the orbital data.");
+    if (!sites.has(key)) {
+      sites.set(key, { pad: launch.pad, latitude, longitude, launches: [] });
     }
 
-    const tleText = await response.text();
+    sites.get(key).launches.push(launch);
+  }
 
-    const lines = tleText
-      .split(/\r?\n/)
-      .map(line => line.trim())
-      .filter(Boolean);
+  const color = Cesium.Color.fromCssColorString(LAUNCH_SITE_COLOR);
+  const outline = Cesium.Color.fromCssColorString("#080d19");
 
-    const line1Index = lines.findIndex(line =>
-      line.startsWith("1 ")
-    );
+  for (const [key, site] of sites) {
+    const id = `launch-site-${key}`;
+    const count = site.launches.length;
+    const padName = site.pad.name || "Launch site";
 
-    if (
-      line1Index < 0 ||
-      !lines[line1Index + 1]?.startsWith("2 ")
-    ) {
-      throw new Error("The orbital data format is invalid.");
-    }
-
-    const tleLine1 = lines[line1Index];
-    const tleLine2 = lines[line1Index + 1];
-
-    issSatrec = satellite.twoline2satrec(
-      tleLine1,
-      tleLine2
-    );
-
-    issEntity = cesiumViewer.entities.add({
-      name: "ISS — International Space Station",
-
-      position: Cesium.Cartesian3.fromDegrees(0, 0, 420000),
-
+    launchSiteSource.entities.add({
+      id,
+      name: padName,
+      position: Cesium.Cartesian3.fromDegrees(
+        site.longitude,
+        site.latitude,
+        2000
+      ),
       point: {
-        pixelSize: 12,
-        color: Cesium.Color.CYAN,
-        outlineColor: Cesium.Color.WHITE,
-        outlineWidth: 2,
-        disableDepthTestDistance: Number.POSITIVE_INFINITY
+        pixelSize: 10,
+        color,
+        outlineColor: outline,
+        outlineWidth: 2
       },
-
       label: {
-        text: "ISS",
-        font: "bold 14px sans-serif",
-        fillColor: Cesium.Color.CYAN,
+        text: count > 1 ? `${padName} · ${count} launches` : padName,
+        font: "12px sans-serif",
+        fillColor: Cesium.Color.WHITE,
         outlineColor: Cesium.Color.BLACK,
         outlineWidth: 3,
         style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-        pixelOffset: new Cesium.Cartesian2(12, -12),
-        disableDepthTestDistance: Number.POSITIVE_INFINITY
+        horizontalOrigin: Cesium.HorizontalOrigin.LEFT,
+        pixelOffset: new Cesium.Cartesian2(10, 0),
+        // Only show the names when the camera is close, to avoid clutter
+        distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 3000000)
       }
     });
 
-    
-    // ISS information panel
-    let issPanel = document.querySelector("#iss-info-panel");
-
-    if (!issPanel) {
-      issPanel = document.createElement("div");
-      issPanel.id = "iss-info-panel";
-      issPanel.className = "iss-info-panel";
-
-      issPanel.innerHTML = `
-        <div class="iss-panel-header">
-          <div>
-            <p class="iss-panel-eyebrow">LIVE ORBITAL TRACKING</p>
-            <h3>International Space Station</h3>
-          </div>
-          <span class="iss-status">
-            <span class="iss-status-dot"></span>
-            Tracking
-          </span>
-        </div>
-
-        <div class="iss-panel-grid">
-          <div class="iss-data-card">
-            <span>ALTITUDE</span>
-            <strong id="iss-altitude">-- km</strong>
-          </div>
-
-          <div class="iss-data-card">
-            <span>LATITUDE</span>
-            <strong id="iss-latitude">--</strong>
-          </div>
-
-          <div class="iss-data-card">
-            <span>LONGITUDE</span>
-            <strong id="iss-longitude">--</strong>
-          </div>
-
-          <div class="iss-data-card">
-            <span>LAST UPDATE (UTC)</span>
-            <strong id="iss-update-time">--:--:--</strong>
-          </div>
-        </div>
-
-        <button id="iss-focus-button" type="button">
-          Centre camera on ISS ↗
-        </button>
-      `;
-
-      document.querySelector("#cesiumContainer")
-        .insertAdjacentElement("afterend", issPanel);
-
-      document.querySelector("#iss-focus-button")
-        .addEventListener("click", () => {
-          if (!cesiumViewer || !issEntity) return;
-
-          const currentPosition = issEntity.position.getValue(
-            Cesium.JulianDate.now()
-          );
-
-          if (!currentPosition) return;
-
-          const cartographic =
-            Cesium.Cartographic.fromCartesian(currentPosition);
-
-          cesiumViewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromRadians(
-              cartographic.longitude,
-              cartographic.latitude,
-              cartographic.height + 1800000
-            ),
-            duration: 1.5
-          });
-        });
-    }
-
-
-    function updateISSPosition() {
-      if (!cesiumViewer || !issSatrec || !issEntity) return;
-
-      const now = new Date();
-      const result = satellite.propagate(issSatrec, now);
-
-      if (!result || !result.position) return;
-
-      const gmst = satellite.gstime(now);
-
-      const geodetic = satellite.eciToGeodetic(
-        result.position,
-        gmst
-      );
-
-      const longitude = satellite.degreesLong(geodetic.longitude);
-      const latitude = satellite.degreesLat(geodetic.latitude);
-      const altitudeMeters = geodetic.height * 1000;
-      
-      const altitudeElement = document.querySelector("#iss-altitude");
-      const latitudeElement = document.querySelector("#iss-latitude");
-      const longitudeElement = document.querySelector("#iss-longitude");
-      const updateElement = document.querySelector("#iss-update-time");
-
-      if (altitudeElement) {
-        altitudeElement.textContent =
-          `${Math.round(geodetic.height)} km`;
-      }
-
-      if (latitudeElement) {
-        latitudeElement.textContent =
-          `${latitude.toFixed(2)}°`;
-      }
-
-      if (longitudeElement) {
-        longitudeElement.textContent =
-          `${longitude.toFixed(2)}°`;
-      }
-
-      if (updateElement) {
-        updateElement.textContent =
-          now.toISOString().slice(11, 19);
-      }
-
-
-      issEntity.position = Cesium.Cartesian3.fromDegrees(
-        longitude,
-        latitude,
-        altitudeMeters
-      );
-    }
-
-    updateISSPositionFn = updateISSPosition;
-    resumeISSTracking();
-
-    console.log("ISS tracking started.");
-
-  } catch (error) {
-    console.error("ISS tracking error:", error);
+    launchSiteLaunches.set(id, site.launches);
   }
 }
 
+// Clicking a launch site opens its next launch; clicking a satellite selects it
+function handleGlobeClick(entity) {
+  if (!entity) {
+    return;
+  }
+
+  if (launchSiteLaunches.has(entity.id)) {
+    showLaunchDetails(launchSiteLaunches.get(entity.id)[0]);
+    return;
+  }
+
+  const satelliteId = String(entity.id).replace(/^satellite-/, "");
+
+  if (trackedSatellites.has(satelliteId)) {
+    selectSatellite(satelliteId);
+  }
+}
+
+function getClickableEntity(screenPosition) {
+  const picked = cesiumViewer.scene.pick(screenPosition);
+  const entity = picked?.id;
+
+  if (!(entity instanceof Cesium.Entity)) {
+    return null;
+  }
+
+  const isClickable =
+    launchSiteLaunches.has(entity.id) ||
+    String(entity.id).startsWith("satellite-");
+
+  return isClickable ? entity : null;
+}
+
+function setUpGlobeInteraction() {
+  const handler = new Cesium.ScreenSpaceEventHandler(cesiumViewer.scene.canvas);
+
+  handler.setInputAction((click) => {
+    handleGlobeClick(getClickableEntity(click.position));
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+  // Show a pointer cursor over things that can be clicked
+  handler.setInputAction((movement) => {
+    cesiumViewer.scene.canvas.style.cursor =
+      getClickableEntity(movement.endPosition) ? "pointer" : "";
+  }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+}
 
 
+/* SPACE INTELLIGENCE — SATELLITE TRACKING */
+
+// noradId is the satellite's number in the NORAD catalogue (used by CelesTrak)
+const SATELLITES = [
+  {
+    id: "iss",
+    label: "ISS",
+    name: "International Space Station",
+    noradId: 25544,
+    color: "#00ffff"
+  },
+  {
+    id: "tiangong",
+    label: "Tiangong",
+    name: "Tiangong Space Station",
+    noradId: 48274,
+    color: "#a78bfa"
+  },
+  {
+    id: "hubble",
+    label: "Hubble",
+    name: "Hubble Space Telescope",
+    noradId: 20580,
+    color: "#4ade80"
+  }
+];
+
+// CelesTrak asks clients not to download the same data more than
+// once every 2 hours, so orbital data is cached for that long
+const TLE_CACHE_DURATION_MS = 2 * 60 * 60 * 1000;
+const ORBIT_STEP_SECONDS = 30;
+const ORBIT_REFRESH_MS = 60 * 1000;
+
+const trackedSatellites = new Map(); // id -> config, satrec and entities
+let selectedSatelliteId = "iss";
+let satelliteTrackingStarted = false;
+let satelliteUpdateTimer = null;
+let lastOrbitUpdate = 0;
+
+function pauseSatelliteTracking() {
+  if (satelliteUpdateTimer) {
+    clearInterval(satelliteUpdateTimer);
+    satelliteUpdateTimer = null;
+  }
+}
+
+function resumeSatelliteTracking() {
+  if (
+    trackedSatellites.size === 0 ||
+    satelliteUpdateTimer ||
+    viewIntelligence.hidden
+  ) {
+    return;
+  }
+
+  updateSatellites();
+  satelliteUpdateTimer = setInterval(updateSatellites, 1000);
+}
+
+function parseTle(text) {
+  const lines = text
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(Boolean);
+
+  const line1Index = lines.findIndex(line => line.startsWith("1 "));
+
+  if (line1Index < 0 || !lines[line1Index + 1]?.startsWith("2 ")) {
+    throw new Error("The orbital data format is invalid.");
+  }
+
+  return [lines[line1Index], lines[line1Index + 1]];
+}
+
+async function loadTle(noradId) {
+  const cacheKey = `spacehub-tle-${noradId}`;
+  let cache = null;
+
+  try {
+    cache = JSON.parse(localStorage.getItem(cacheKey));
+  } catch {
+    cache = null;
+  }
+
+  const hasCache = Array.isArray(cache?.lines) && cache.lines.length === 2;
+
+  if (hasCache && Date.now() - cache.savedAt < TLE_CACHE_DURATION_MS) {
+    return cache.lines;
+  }
+
+  try {
+    const response = await fetch(
+      `https://celestrak.org/NORAD/elements/gp.php?CATNR=${noradId}&FORMAT=TLE`
+    );
+
+    if (!response.ok) {
+      throw new Error(`Could not fetch the orbital data (HTTP ${response.status}).`);
+    }
+
+    const lines = parseTle(await response.text());
+
+    try {
+      localStorage.setItem(
+        cacheKey,
+        JSON.stringify({ savedAt: Date.now(), lines })
+      );
+    } catch {
+      // Storage may be full or blocked; tracking still works without it
+    }
+
+    return lines;
+  } catch (error) {
+    // Older orbital data is still accurate enough for a few days
+    if (hasCache) {
+      return cache.lines;
+    }
+
+    throw error;
+  }
+}
+
+function getSatellitePosition(satrec, date) {
+  const result = satellite.propagate(satrec, date);
+
+  if (!result || !result.position) {
+    return null;
+  }
+
+  const geodetic = satellite.eciToGeodetic(
+    result.position,
+    satellite.gstime(date)
+  );
+
+  return {
+    latitude: satellite.degreesLat(geodetic.latitude),
+    longitude: satellite.degreesLong(geodetic.longitude),
+    altitudeKm: geodetic.height
+  };
+}
+
+function toCartesian(position) {
+  return Cesium.Cartesian3.fromDegrees(
+    position.longitude,
+    position.latitude,
+    position.altitudeKm * 1000
+  );
+}
+
+// Predicted path for one full orbit (about 90 minutes for the ISS).
+// It is drawn over the rotating Earth, so it does not close into a loop.
+function getOrbitPath(satrec, startDate) {
+  const periodMinutes = (2 * Math.PI) / satrec.no; // satrec.no is in radians per minute
+  const steps = Math.ceil((periodMinutes * 60) / ORBIT_STEP_SECONDS);
+  const points = [];
+
+  for (let step = 0; step <= steps; step++) {
+    const date = new Date(
+      startDate.getTime() + step * ORBIT_STEP_SECONDS * 1000
+    );
+    const position = getSatellitePosition(satrec, date);
+
+    if (position) {
+      points.push(toCartesian(position));
+    }
+  }
+
+  return points;
+}
+
+function updateSatellites() {
+  if (!cesiumViewer) {
+    return;
+  }
+
+  const now = new Date();
+  const refreshOrbits = now.getTime() - lastOrbitUpdate > ORBIT_REFRESH_MS;
+
+  for (const tracked of trackedSatellites.values()) {
+    const position = getSatellitePosition(tracked.satrec, now);
+
+    if (!position) {
+      continue;
+    }
+
+    tracked.position = position;
+    tracked.entity.position = toCartesian(position);
+
+    if (refreshOrbits) {
+      tracked.orbitEntity.polyline.positions =
+        getOrbitPath(tracked.satrec, now);
+    }
+  }
+
+  if (refreshOrbits) {
+    lastOrbitUpdate = now.getTime();
+  }
+
+  updateSatellitePanel(now);
+}
+
+function createSatelliteEntities(config, satrec) {
+  const color = Cesium.Color.fromCssColorString(config.color);
+
+  const entity = cesiumViewer.entities.add({
+    id: `satellite-${config.id}`,
+    name: config.name,
+    position: Cesium.Cartesian3.fromDegrees(0, 0, 420000),
+    point: {
+      pixelSize: 12,
+      color,
+      outlineColor: Cesium.Color.WHITE,
+      outlineWidth: 2,
+      disableDepthTestDistance: Number.POSITIVE_INFINITY
+    },
+    label: {
+      text: config.label,
+      font: "bold 14px sans-serif",
+      fillColor: color,
+      outlineColor: Cesium.Color.BLACK,
+      outlineWidth: 3,
+      style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+      pixelOffset: new Cesium.Cartesian2(12, -12),
+      disableDepthTestDistance: Number.POSITIVE_INFINITY
+    }
+  });
+
+  const orbitEntity = cesiumViewer.entities.add({
+    id: `orbit-${config.id}`,
+    show: false,
+    polyline: {
+      positions: [],
+      width: 2,
+      arcType: Cesium.ArcType.NONE,
+      material: color.withAlpha(0.6)
+    }
+  });
+
+  return { entity, orbitEntity };
+}
+
+function createSatellitePanel() {
+  let panel = document.querySelector("#iss-info-panel");
+
+  if (panel) {
+    return;
+  }
+
+  panel = document.createElement("div");
+  panel.id = "iss-info-panel";
+  panel.className = "iss-info-panel";
+
+  panel.innerHTML = `
+    <div class="iss-panel-header">
+      <div>
+        <p class="iss-panel-eyebrow">LIVE ORBITAL TRACKING</p>
+        <h3 id="satellite-name">--</h3>
+      </div>
+      <span class="iss-status">
+        <span class="iss-status-dot"></span>
+        Tracking
+      </span>
+    </div>
+
+    <div class="satellite-selector" aria-label="Choose a satellite"></div>
+
+    <div class="iss-panel-grid">
+      <div class="iss-data-card">
+        <span>ALTITUDE</span>
+        <strong id="satellite-altitude">-- km</strong>
+      </div>
+
+      <div class="iss-data-card">
+        <span>LATITUDE</span>
+        <strong id="satellite-latitude">--</strong>
+      </div>
+
+      <div class="iss-data-card">
+        <span>LONGITUDE</span>
+        <strong id="satellite-longitude">--</strong>
+      </div>
+
+      <div class="iss-data-card">
+        <span>LAST UPDATE (UTC)</span>
+        <strong id="satellite-update-time">--:--:--</strong>
+      </div>
+    </div>
+
+    <button id="satellite-focus-button" type="button">
+      Centre camera ↗
+    </button>
+  `;
+
+  const selector = panel.querySelector(".satellite-selector");
+
+  for (const tracked of trackedSatellites.values()) {
+    const button = document.createElement("button");
+    const dot = document.createElement("span");
+
+    button.type = "button";
+    button.className = "satellite-option";
+    button.dataset.satellite = tracked.id;
+
+    dot.className = "satellite-option-dot";
+    dot.style.setProperty("--dot-color", tracked.color);
+
+    button.append(dot, tracked.label);
+    button.addEventListener("click", () => selectSatellite(tracked.id));
+
+    selector.append(button);
+  }
+
+  panel
+    .querySelector("#satellite-focus-button")
+    .addEventListener("click", focusSelectedSatellite);
+
+  document
+    .querySelector("#cesiumContainer")
+    .insertAdjacentElement("afterend", panel);
+}
+
+function updateSatellitePanel(now) {
+  const tracked = trackedSatellites.get(selectedSatelliteId);
+
+  if (!tracked) {
+    return;
+  }
+
+  const position = tracked.position;
+
+  document.querySelector("#satellite-name").textContent = tracked.name;
+
+  document.querySelector("#satellite-altitude").textContent =
+    position ? `${Math.round(position.altitudeKm)} km` : "-- km";
+
+  document.querySelector("#satellite-latitude").textContent =
+    position ? `${position.latitude.toFixed(2)}°` : "--";
+
+  document.querySelector("#satellite-longitude").textContent =
+    position ? `${position.longitude.toFixed(2)}°` : "--";
+
+  document.querySelector("#satellite-update-time").textContent =
+    position ? now.toISOString().slice(11, 19) : "--:--:--";
+}
+
+function selectSatellite(id) {
+  if (!trackedSatellites.has(id)) {
+    return;
+  }
+
+  selectedSatelliteId = id;
+  const tracked = trackedSatellites.get(id);
+
+  // Only the selected satellite's orbit is drawn
+  for (const other of trackedSatellites.values()) {
+    other.orbitEntity.show = other.id === id;
+  }
+
+  for (const button of document.querySelectorAll(".satellite-option")) {
+    const isSelected = button.dataset.satellite === id;
+
+    button.classList.toggle("active", isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+  }
+
+  document.querySelector("#satellite-focus-button").textContent =
+    `Centre camera on ${tracked.label} ↗`;
+
+  updateSatellitePanel(new Date());
+}
+
+function focusSelectedSatellite() {
+  const tracked = trackedSatellites.get(selectedSatelliteId);
+
+  if (!cesiumViewer || !tracked?.position) {
+    return;
+  }
+
+  cesiumViewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(
+      tracked.position.longitude,
+      tracked.position.latitude,
+      tracked.position.altitudeKm * 1000 + 1800000
+    ),
+    duration: 1.5
+  });
+}
+
+function showGlobeMessage(text) {
+  const message = document.createElement("p");
+
+  message.className = "globe-caption";
+  message.textContent = text;
+
+  document
+    .querySelector("#cesiumContainer")
+    .insertAdjacentElement("afterend", message);
+}
+
+async function startSatelliteTracking() {
+  if (!cesiumViewer || satelliteTrackingStarted) {
+    return;
+  }
+
+  satelliteTrackingStarted = true;
+
+  if (typeof satellite === "undefined") {
+    console.error("The satellite.js library could not be loaded.");
+    showGlobeMessage("Satellite tracking is unavailable. Please refresh the page.");
+    return;
+  }
+
+  // Load every satellite independently, so one failure does not stop the rest
+  const results = await Promise.allSettled(
+    SATELLITES.map(config => loadTle(config.noradId))
+  );
+
+  results.forEach((result, index) => {
+    const config = SATELLITES[index];
+
+    if (result.status === "rejected") {
+      console.error(`${config.name} tracking error:`, result.reason);
+      return;
+    }
+
+    const satrec = satellite.twoline2satrec(...result.value);
+    const { entity, orbitEntity } = createSatelliteEntities(config, satrec);
+
+    trackedSatellites.set(config.id, {
+      ...config,
+      satrec,
+      entity,
+      orbitEntity,
+      position: null
+    });
+  });
+
+  if (trackedSatellites.size === 0) {
+    showGlobeMessage("Satellite data could not be loaded. Please try again later.");
+    return;
+  }
+
+  createSatellitePanel();
+
+  selectSatellite(
+    trackedSatellites.has(selectedSatelliteId)
+      ? selectedSatelliteId
+      : trackedSatellites.keys().next().value
+  );
+
+  resumeSatelliteTracking();
+
+  console.log("Satellite tracking started.");
+}
 
 
-
-
-// START THE ROUTER
+// START THE APP
 // Runs last so every view's code and variables are ready
+
+loadLaunches();
 
 window.addEventListener("hashchange", handleRoute);
 handleRoute();

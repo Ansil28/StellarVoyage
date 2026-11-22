@@ -923,7 +923,7 @@ button {
   font-weight: 600;
 }
 
-#iss-focus-button {
+#satellite-focus-button {
   margin-top: 18px;
   padding: 11px 16px;
   border: 1px solid rgba(80, 165, 255, 0.35);
@@ -934,10 +934,50 @@ button {
   transition: background 0.2s, border-color 0.2s;
 }
 
-#iss-focus-button:hover {
+#satellite-focus-button:hover {
   background: rgba(30, 90, 150, 0.55);
   border-color: rgba(100, 190, 255, 0.7);
   box-shadow: 0 0 18px rgba(0, 180, 255, 0.1);
+}
+
+/* Satellite selector */
+.satellite-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.satellite-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 13px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.satellite-option:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.satellite-option.active {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: #bfdbfe;
+}
+
+.satellite-option-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--dot-color);
 }
 
 @media (max-width: 800px) {

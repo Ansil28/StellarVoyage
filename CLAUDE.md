@@ -6,7 +6,9 @@ Tem três vistas, escolhidas pelo endereço (`#launches`, `#guide`, `#guide/<tó
 
 - **Launches** — lista os próximos lançamentos da API The Space Devs (`ll.thespacedevs.com/2.3.0`, guardados 15 min no `localStorage`), com pesquisa, filtro por agência, contagem decrescente e um `<dialog>` com os detalhes de cada missão e exportação para calendário (`.ics`).
 - **Rocket Guide** — grelha de cartões com tópicos sobre foguetões. Cada botão abre `#guide/<data-topic>`, e o artigo é montado em `#guide-content` a partir de `GUIDE_TOPICS`.
-- **Space Intelligence** — globo 3D com CesiumJS e posição da ISS em tempo real, calculada com satellite.js a partir do TLE da CelesTrak.
+- **Space Intelligence** — globo 3D com CesiumJS com:
+  - marcadores laranja nas plataformas dos próximos lançamentos (clicar abre o modal do próximo lançamento);
+  - ISS, Tiangong e Hubble em tempo real (lista `SATELLITES` em `app.js`), com seletor no painel e a órbita prevista do satélite escolhido. As posições são calculadas com satellite.js a partir dos TLE da CelesTrak, guardados 2 h no `localStorage`.
 
 ## Estrutura dos ficheiros
 
