@@ -480,9 +480,9 @@ function renderLaunches(launches) {
     // View details button
     const detailsButton = document.createElement("button");
 
-    detailsButton.className = "launch-details-button";
+    detailsButton.className = "guide-button";
     detailsButton.type = "button";
-    detailsButton.textContent = "View details";
+    detailsButton.textContent = "View details →";
 
     detailsButton.addEventListener("click", () => {
       showLaunchDetails(launch);
@@ -1056,13 +1056,22 @@ function openGoogleCalendar(launch) {
   );
 }
 
-// On iPhone and iPad, Safari opens calendar data straight in the
-// Calendar app's "Add Event" screen
+// On iPhone and iPad, Safari opens a calendar file straight in the
+// Calendar app's "Add Event" screen. The service worker (sw.js) turns
+// the launch.ics link into that file, so no server is needed.
 function addToIPhoneCalendar(launch) {
-  const content = buildLaunchCalendarFile(launch);
+  // Without the service worker (first visit, or the site opened as a
+  // file) the link would not work, so use Google Calendar instead
+  if (!navigator.serviceWorker?.controller) {
+    openGoogleCalendar(launch);
+    return;
+  }
 
-  window.location.href =
-    `data:text/calendar;charset=utf-8,${encodeURIComponent(content)}`;
+  const params = new URLSearchParams({
+    event: buildLaunchCalendarFile(launch)
+  });
+
+  window.location.href = `launch.ics?${params}`;
 }
 
 function getCalendarPlatform() {

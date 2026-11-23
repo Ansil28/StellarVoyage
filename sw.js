@@ -71,6 +71,22 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(request.url);
 
+  // "Add to calendar" on iPhone: app.js puts the event in the link and
+  // this returns it as a real calendar file, which Safari opens in the
+  // Calendar app (iPhone Safari refuses calendar data in a data: link)
+  if (
+    url.origin === self.location.origin &&
+    url.pathname.endsWith("/launch.ics")
+  ) {
+    event.respondWith(new Response(url.searchParams.get("event") || "", {
+      headers: {
+        "Content-Type": "text/calendar; charset=utf-8",
+        "Content-Disposition": 'inline; filename="launch.ics"'
+      }
+    }));
+    return;
+  }
+
   if (url.origin === self.location.origin) {
     event.respondWith(networkFirst(request));
     return;

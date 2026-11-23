@@ -5,7 +5,7 @@ Dashboard de exploração espacial em HTML, CSS e JavaScript puro (sem build, se
 Tem quatro vistas, escolhidas pelo endereço (`#home`, `#launches`, `#launches/<id>`, `#guide`, `#guide/<tópico>`, `#intelligence`). Os botões da sidebar mudam o `location.hash` e `handleRoute()` em `app.js` mostra a vista certa com `showView()`. Um endereço vazio ou desconhecido abre a Overview.
 
 - **Overview** (página inicial) — próximo lançamento em destaque com contagem decrescente, os 4 seguintes, a ISS ao vivo (só satellite.js, sem Cesium) e 3 tópicos do Rocket Guide (cópias dos cartões do guia).
-- **Launches** — lista os próximos lançamentos da API The Space Devs (`ll.thespacedevs.com/2.3.0`, guardados 15 min no `localStorage`), com pesquisa, filtro por agência, contagem decrescente e uma página de detalhes para cada missão: `showLaunchDetails()` abre `#launches/<id>` e `showLaunchPage()` monta-a em `#launch-content` (imagem, detalhes, link e calendário), com o mesmo visual dos artigos do Rocket Guide. O botão "Add to calendar" (`createCalendarControl()`) abre o Calendário do iPhone no Safari do iOS, o Google Calendar no Android e noutros browsers do iOS, e no computador mostra um menu com Google Calendar ou ficheiro `.ics`.
+- **Launches** — lista os próximos lançamentos da API The Space Devs (`ll.thespacedevs.com/2.3.0`, guardados 15 min no `localStorage`), com pesquisa, filtro por agência, contagem decrescente e uma página de detalhes para cada missão: `showLaunchDetails()` abre `#launches/<id>` e `showLaunchPage()` monta-a em `#launch-content` (imagem, detalhes, link e calendário), com o mesmo visual dos artigos do Rocket Guide. O botão "Add to calendar" (`createCalendarControl()`) abre o Calendário do iPhone no Safari do iOS e na app instalada (através do endereço `launch.ics?event=...`, que o `sw.js` devolve como ficheiro de calendário, porque o Safari recusa links `data:`; sem service worker usa o Google Calendar), o Google Calendar no Android e noutros browsers do iOS, e no computador mostra um menu com Google Calendar ou ficheiro `.ics`.
 - **Rocket Guide** — grelha de cartões com tópicos sobre foguetões. Cada botão abre `#guide/<data-topic>`, e o artigo é montado em `#guide-content` a partir de `GUIDE_TOPICS`.
 - **Space Intelligence** — globo 3D com CesiumJS com:
   - marcadores laranja nas plataformas dos próximos lançamentos (clicar abre a página do próximo lançamento);
@@ -21,7 +21,7 @@ app.js       Toda a lógica: navegação por endereço, fetch e render dos lanç
 README.md    Descrição curta do projeto
 assets/      favicon.svg (logótipo), apple-touch-icon.png (180x180), icon-192/512.png e icon-maskable-512.png (app instalável) e og-image.png (1200x630, pré-visualização ao partilhar)
 manifest.webmanifest  Dados da app instalável (nome, cores, ícones, ecrã inteiro)
-sw.js        Service worker: guarda o site para abrir sem internet (ficheiros do site primeiro da rede, satellite.js e fontes primeiro da cópia guardada)
+sw.js        Service worker: guarda o site para abrir sem internet (ficheiros do site primeiro da rede, satellite.js e fontes primeiro da cópia guardada) e gera o `launch.ics` do "Add to calendar" no iPhone
 ```
 
 **App instalável (PWA):** ao acrescentar um ficheiro novo ao site, juntá-lo à lista `APP_FILES` em `sw.js`, senão não fica disponível offline. O service worker só funciona num endereço `http(s)`, não ao abrir o `index.html` diretamente.
