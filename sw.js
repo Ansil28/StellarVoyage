@@ -24,7 +24,15 @@ const APP_FILES = [
   "./assets/favicon.svg",
   "./assets/apple-touch-icon.png",
   "./assets/icon-192.png",
-  "./assets/icon-512.png"
+  "./assets/icon-512.png",
+  "./assets/icon-maskable-512.png",
+  "./assets/guide/fundamentals.jpg",
+  "./assets/guide/types.jpg",
+  "./assets/guide/propulsion.jpg",
+  "./assets/guide/anatomy.jpg",
+  "./assets/guide/stages.jpg",
+  "./assets/guide/filling-station.jpg",
+  "./assets/guide/glossary.jpg"
 ];
 
 const LIBRARY_HOSTS = [

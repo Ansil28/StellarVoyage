@@ -19,7 +19,7 @@ style.css    Todos os estilos; variáveis de cor em :root; media queries a 850px
 guide-topics.js  Só dados: o texto dos artigos do Rocket Guide (GUIDE_TOPICS), indexado pelo data-topic dos cartões
 app.js       Toda a lógica: navegação por endereço, fetch e render dos lançamentos, filtros, countdown, página de detalhes, calendário, artigos do guia, globo Cesium e tracking da ISS
 README.md    Descrição curta do projeto
-assets/      favicon.svg (logótipo), apple-touch-icon.png (180x180), icon-192/512.png e icon-maskable-512.png (app instalável) e og-image.png (1200x630, pré-visualização ao partilhar)
+assets/      favicon.svg (logótipo), apple-touch-icon.png (180x180), icon-192/512.png e icon-maskable-512.png (app instalável), og-image.png (1200x630, pré-visualização ao partilhar) e guide/ (fotos dos cartões do Rocket Guide, NASA e SpaceX, uma por tópico com o nome do data-topic)
 manifest.webmanifest  Dados da app instalável (nome, cores, ícones, ecrã inteiro)
 sw.js        Service worker: guarda o site para abrir sem internet (ficheiros do site primeiro da rede, satellite.js e fontes primeiro da cópia guardada) e gera o `launch.ics` do "Add to calendar" no iPhone
 ```

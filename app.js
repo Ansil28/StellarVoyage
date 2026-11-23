@@ -704,7 +704,15 @@ clearFiltersButton.addEventListener("click", () => {
 // SHOW LAUNCH DETAILS
 // Each launch has its own page at #launches/<id>, like the guide articles
 
+// Where the launch list was scrolled to, so going back returns there
+let launchListScroll = null;
+
 function showLaunchDetails(launch) {
+  // Only remember the position when opened from the Launches list
+  // (not from the Overview or the globe)
+  const isOnLaunchList = !viewLaunches.hidden && !launchListSection.hidden;
+  launchListScroll = isOnLaunchList ? window.scrollY : null;
+
   location.hash = `launches/${encodeURIComponent(launch.id)}`;
 }
 
@@ -715,6 +723,12 @@ function showLaunchPage(launchId) {
     launchContent.hidden = true;
     launchListSection.hidden = false;
     document.title = "Launches · StellarVoyage";
+
+    if (launchListScroll !== null) {
+      window.scrollTo({ top: launchListScroll });
+      launchListScroll = null;
+    }
+
     return;
   }
 
