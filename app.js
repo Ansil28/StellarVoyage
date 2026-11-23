@@ -1237,6 +1237,20 @@ function showGuideTopic(topicKey) {
     heading.textContent = section.heading;
     article.push(heading);
 
+    // Optional image (diagram or photo) under the section heading
+    if (section.image) {
+      const figure = document.createElement("figure");
+      figure.className = "guide-figure";
+
+      const image = document.createElement("img");
+      image.src = section.image.src;
+      image.alt = section.image.alt || "";
+      image.loading = "lazy";
+
+      figure.append(image);
+      article.push(figure);
+    }
+
     // Paragraphs come before the list; "after" paragraphs follow it
     for (const text of section.paragraphs || []) {
       const paragraph = document.createElement("p");

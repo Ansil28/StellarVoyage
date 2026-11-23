@@ -3,6 +3,7 @@
 // Each section can have "paragraphs" (shown first), a "list" and
 // "after" (paragraphs shown after the list).
 // List items are plain strings, or { term, text } for definition-style items.
+// A section can also have an "image" ({ src, alt }), shown under its heading.
 
 const GUIDE_TOPICS = {
   fundamentals: {
@@ -18,15 +19,29 @@ const GUIDE_TOPICS = {
           "Rockets work because of Newton's third law: every action has an equal and opposite reaction. " +
           "The engine throws hot gas out of the nozzle at very high speed, and the gas pushes the rocket in the opposite direction.",
           "The rocket does not push against the ground or the air. It pushes against its own exhaust, " +
-          "so it actually works slightly better in a vacuum than at sea level."
+          "so it actually works slightly better in a vacuum than at sea level. " +
+          "This is because the surrounding air pressure pushes back against the exhaust leaving the nozzle. " +
+          "With no air outside, that loss disappears."
         ]
       },
       {
         heading: "The four forces",
+        image: {
+          src: "assets/guide/rocket-forces.svg",
+          alt:
+            "Diagram of a rocket climbing at an angle, with arrows for thrust, drag, lift and weight, " +
+            "and the exhaust gas pushed out of the nozzle. Liftoff needs thrust greater than weight (TWR above 1)."
+        },
         list: [
           { term: "Thrust", text: "the force produced by the engines, pushing the rocket forward." },
           { term: "Weight", text: "gravity pulling the rocket down. It drops during flight as propellant is burned." },
-          { term: "Drag", text: "air resistance, which is strongest in the lower, denser atmosphere." },
+          {
+            term: "Drag",
+            text:
+              "air resistance. It depends on both air density and speed, so it peaks at a point called Max-Q, " +
+              "usually about a minute after liftoff at roughly 10–15 km altitude, " +
+              "where the rocket is already fast but the air is still fairly dense."
+          },
           { term: "Lift", text: "small for most rockets, which are designed to fly mostly straight through the air." }
         ],
         after: [
@@ -39,9 +54,24 @@ const GUIDE_TOPICS = {
         paragraphs: [
           "The Tsiolkovsky rocket equation explains how much a rocket can change its speed, known as delta-v (Δv):",
           "Δv = Isp × g₀ × ln(full mass / empty mass)",
-          "Here Isp is the engine's efficiency, g₀ is standard gravity (9.81 m/s²), the full mass includes the propellant and the empty mass is what is left once it is burned. " +
+          "Here Isp is the specific impulse, a measure of engine efficiency given in seconds (Isp × g₀ is the effective exhaust velocity). " +
+          "Typical values are around 250–270 s for solid motors, about 300 s for kerosene engines and around 450 s for hydrogen engines in vacuum. " +
+          "g₀ is standard gravity (9.81 m/s²), the full mass includes the propellant and the empty mass is what is left once it is burned.",
           "Because of the logarithm, each extra bit of speed needs much more propellant. " +
-          "Reaching low Earth orbit takes about 9.4 km/s of delta-v, which is why most of a rocket's mass at liftoff is propellant."
+          "Reaching low Earth orbit takes about 9.4 km/s of delta-v, which is why most of a rocket's mass at liftoff is propellant. " +
+          "Orbital speed itself is about 7.8 km/s; the rest is lost to gravity and drag on the way up.",
+          "Example: an engine with an Isp of 300 s on a rocket that is 90% propellant (full mass 10 times the empty mass) " +
+          "gives Δv = 300 × 9.81 × ln(10) ≈ 6.8 km/s. " +
+          "That is still short of the 9.4 km/s needed for orbit, even though nine tenths of the rocket is fuel."
+        ]
+      },
+      {
+        heading: "Staging",
+        paragraphs: [
+          "Because of the rocket equation, carrying empty tanks all the way to orbit is wasteful. " +
+          "Most rockets are split into stages: when a stage runs out of propellant it is dropped, " +
+          "and the next stage continues with a much lighter rocket. " +
+          "This resets the mass ratio and is the reason almost every orbital rocket has two or more stages."
         ]
       }
     ]

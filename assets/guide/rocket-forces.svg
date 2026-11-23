@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 660" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">The four forces on a rocket</title>
+  <desc id="desc">A rocket climbing at an angle with arrows for thrust, drag, lift and weight, and the exhaust gas pushed out of the nozzle.</desc>
+
+  <defs>
+    <marker id="aThrust" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#ff922b"/></marker>
+    <marker id="aDrag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#ff6b6b"/></marker>
+    <marker id="aLift" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#63e6be"/></marker>
+    <marker id="aWeight" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#91a7ff"/></marker>
+    <marker id="aExhaust" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 Z" fill="#ffc078"/></marker>
+    <linearGradient id="flame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff3bf"/>
+      <stop offset="0.35" stop-color="#ffa94d"/>
+      <stop offset="1" stop-color="#f03e3e" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#b8c4d4"/>
+      <stop offset="0.45" stop-color="#f1f4f8"/>
+      <stop offset="1" stop-color="#9aa8bb"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="660" rx="18" fill="#0b1628"/>
+  <g fill="#ffffff" opacity="0.5">
+    <circle cx="120" cy="140" r="1.2"/><circle cx="210" cy="420" r="1"/><circle cx="760" cy="120" r="1.4"/>
+    <circle cx="820" cy="300" r="1"/><circle cx="680" cy="210" r="1"/><circle cx="90" cy="520" r="1.3"/>
+    <circle cx="330" cy="160" r="1"/><circle cx="600" cy="460" r="1"/><circle cx="160" cy="300" r="1"/>
+    <circle cx="850" cy="460" r="1.2"/><circle cx="420" cy="625" r="1"/><circle cx="700" cy="40" r="1"/>
+  </g>
+
+  <!-- Title -->
+  <text x="40" y="52" fill="#e6edf7" font-size="26" font-weight="700">The Four Forces on a Rocket</text>
+  <text x="40" y="80" fill="#8fa3bf" font-size="15">Newton's third law: action and reaction</text>
+
+
+  <!-- Rocket and forces along its axis (tilted 20° in a gravity turn) -->
+  <g transform="translate(450 330) rotate(20)">
+    <!-- Flame -->
+    <path d="M-19,137 Q-30,192 0,245 Q30,192 19,137 Z" fill="url(#flame)"/>
+    <path d="M-9,137 Q-13,170 0,200 Q13,170 9,137 Z" fill="#fff9db" opacity="0.9"/>
+    <!-- Nozzle -->
+    <path d="M-15,110 L-22,137 L22,137 L15,110 Z" fill="#5c6b80"/>
+    <!-- Fins -->
+    <path d="M-25,58 L-58,118 L-25,106 Z" fill="#c92a2a"/>
+    <path d="M25,58 L58,118 L25,106 Z" fill="#c92a2a"/>
+    <!-- Body -->
+    <rect x="-25" y="-110" width="50" height="220" fill="url(#body)"/>
+    <!-- Nose cone -->
+    <path d="M-25,-110 C-25,-140 -10,-160 0,-172 C10,-160 25,-140 25,-110 Z" fill="#c92a2a"/>
+    <!-- Details -->
+    <rect x="-25" y="-52" width="50" height="8" fill="#2b4a7a"/>
+    <rect x="-25" y="40" width="50" height="8" fill="#2b4a7a"/>
+    <circle cx="0" cy="-82" r="10" fill="#1c3b66" stroke="#9fb4d0" stroke-width="2.5"/>
+
+    <!-- Thrust: forward along the axis -->
+    <line x1="0" y1="-182" x2="0" y2="-280" stroke="#ff922b" stroke-width="5" stroke-linecap="round" marker-end="url(#aThrust)"/>
+    <!-- Drag: opposite to the motion -->
+    <line x1="78" y1="-95" x2="78" y2="5" stroke="#ff6b6b" stroke-width="5" stroke-linecap="round" marker-end="url(#aDrag)"/>
+    <!-- Lift: perpendicular to the motion -->
+    <line x1="-30" y1="0" x2="-110" y2="0" stroke="#63e6be" stroke-width="5" stroke-linecap="round" marker-end="url(#aLift)"/>
+    <!-- Exhaust: gas thrown backwards -->
+    <line x1="-52" y1="150" x2="-52" y2="235" stroke="#ffc078" stroke-width="3" stroke-dasharray="6 5" stroke-linecap="round" marker-end="url(#aExhaust)"/>
+  </g>
+
+  <!-- Weight (always straight down, not rotated) -->
+  <line x1="450" y1="330" x2="450" y2="500" stroke="#91a7ff" stroke-width="5" stroke-linecap="round" marker-end="url(#aWeight)"/>
+
+  <!-- Centre of mass -->
+  <circle cx="450" cy="330" r="6" fill="#0b1628" stroke="#ffffff" stroke-width="2.5"/>
+
+  <!-- Labels -->
+  <text x="566" y="62" fill="#ff922b" font-size="18" font-weight="700">Thrust (reaction)</text>
+  <text x="566" y="83" fill="#8fa3bf" font-size="13">engines push the rocket forward</text>
+
+  <text x="545" y="398" fill="#ff6b6b" font-size="18" font-weight="700">Drag</text>
+  <text x="545" y="419" fill="#8fa3bf" font-size="13">air resistance, opposite to motion</text>
+
+  <text x="330" y="262" fill="#63e6be" font-size="18" font-weight="700" text-anchor="end">Lift</text>
+  <text x="330" y="283" fill="#8fa3bf" font-size="13" text-anchor="end">small, perpendicular to motion</text>
+
+  <text x="466" y="488" fill="#91a7ff" font-size="18" font-weight="700">Weight</text>
+  <text x="466" y="509" fill="#8fa3bf" font-size="13">gravity, always straight down</text>
+
+  <text x="305" y="575" fill="#ffc078" font-size="18" font-weight="700" text-anchor="end">Exhaust gas (action)</text>
+  <text x="305" y="596" fill="#8fa3bf" font-size="13" text-anchor="end">hot gas thrown out at high speed</text>
+
+  <!-- Liftoff condition box -->
+  <rect x="610" y="525" width="260" height="112" rx="12" fill="#12233d" stroke="#24406a" stroke-width="1.5"/>
+  <text x="630" y="553" fill="#e6edf7" font-size="16" font-weight="700">Liftoff condition</text>
+  <text x="630" y="579" fill="#e6edf7" font-size="15">Thrust &gt; Weight</text>
+  <text x="630" y="603" fill="#e6edf7" font-size="15">TWR = Thrust ÷ Weight &gt; 1</text>
+  <text x="630" y="625" fill="#8fa3bf" font-size="13">Typical at liftoff: 1.2 – 1.5</text>
+</svg>

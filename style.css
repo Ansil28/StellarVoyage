@@ -1115,6 +1115,19 @@ button {
     margin-bottom: 22px;
 }
 
+/* Images inside guide articles (diagrams and photos) */
+.guide-figure {
+    max-width: 720px;
+    margin: 14px 0 20px;
+}
+
+.guide-figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 14px;
+}
+
 /* display: grid would otherwise override the hidden attribute */
 .guide-grid[hidden] {
     display: none;
