@@ -7,11 +7,9 @@ const resultsCount = document.querySelector("#results-count");
 const clearFiltersButton = document.querySelector("#clear-filters");
 const retryButton = document.querySelector("#retry-launches");
 
-// Launch details dialog
-const launchDialog = document.querySelector("#launch-dialog");
-const launchDialogTitle = document.querySelector("#launch-dialog-title");
-const launchDialogContent = document.querySelector("#launch-dialog-content");
-const closeLaunchDialogButton = document.querySelector("#close-launch-dialog");
+// Launch details page (#launches/<id>)
+const launchListSection = document.querySelector("#view-launches .launch-section");
+const launchContent = document.querySelector("#launch-content");
 
 // Navigation elements
 const navOverview = document.querySelector("#nav-overview");
@@ -234,7 +232,7 @@ function handleRoute() {
 
   if (view === "launches") {
     showView("launches");
-    document.title = "Launches · StellarVoyage";
+    showLaunchPage(topic);
     return;
   }
 
@@ -327,6 +325,11 @@ function showLaunches(launches) {
 
   // Keep the launch site markers on the globe in sync
   updateLaunchSiteMarkers();
+
+  // A launch page opened before the launches loaded can now be filled in
+  if (!launchContent.hidden) {
+    handleRoute();
+  }
 }
 
 async function loadLaunches() {
@@ -388,6 +391,11 @@ async function loadLaunches() {
     }
 
     retryButton.hidden = false;
+
+    // Update a launch page that was waiting for the launches
+    if (!launchContent.hidden) {
+      handleRoute();
+    }
   }
 }
 
@@ -694,13 +702,66 @@ clearFiltersButton.addEventListener("click", () => {
 });
 
 // SHOW LAUNCH DETAILS
-
+// Each launch has its own page at #launches/<id>, like the guide articles
 
 function showLaunchDetails(launch) {
-  launchDialogTitle.textContent =
-    launch.name || "Unknown mission";
+  location.hash = `launches/${encodeURIComponent(launch.id)}`;
+}
 
-  launchDialogContent.replaceChildren();
+function showLaunchPage(launchId) {
+  // No launch in the address: show the list of launches
+  if (!launchId) {
+    launchContent.replaceChildren();
+    launchContent.hidden = true;
+    launchListSection.hidden = false;
+    document.title = "Launches · StellarVoyage";
+    return;
+  }
+
+  const id = decodeURIComponent(launchId);
+  const launch = allLaunches.find((item) => item.id === id);
+
+  const backButton = document.createElement("button");
+  backButton.type = "button";
+  backButton.className = "guide-button guide-back-button";
+  backButton.textContent = "← Back to launches";
+  backButton.addEventListener("click", () => {
+    location.hash = "launches";
+  });
+
+  launchListSection.hidden = true;
+  launchContent.hidden = false;
+  window.scrollTo({ top: 0 });
+
+  // Still loading, loading failed, or the launch is no longer upcoming
+  if (!launch) {
+    const message = document.createElement("p");
+
+    if (allLaunches.length === 0 && retryButton.hidden) {
+      message.textContent = "Loading launch details...";
+    } else if (allLaunches.length === 0) {
+      message.textContent =
+        "Could not load the launches. Go back and press Retry.";
+    } else {
+      message.textContent =
+        "Launch not found. It may have already happened or been removed.";
+    }
+
+    launchContent.replaceChildren(backButton, message);
+    document.title = "Launches · StellarVoyage";
+    return;
+  }
+
+  const title = document.createElement("h2");
+  title.textContent = launch.name || "Unknown mission";
+
+  launchContent.replaceChildren(
+    backButton,
+    createLaunchImage(launch),
+    title
+  );
+
+  document.title = `${launch.name || "Launch details"} · StellarVoyage`;
 
   const details = [
     {
@@ -782,7 +843,7 @@ function showLaunchDetails(launch) {
     label.textContent = `${detail.label}: `;
 
     paragraph.append(label, detail.value);
-    launchDialogContent.append(paragraph);
+    launchContent.append(paragraph);
   }
 
 
@@ -815,7 +876,7 @@ function showLaunchDetails(launch) {
 
         paragraph.append(anchor);
         section.append(heading, paragraph);
-        launchDialogContent.append(section);
+        launchContent.append(section);
       }
     } catch {
       // Ignore invalid URLs
@@ -825,7 +886,7 @@ function showLaunchDetails(launch) {
 
   // ADD TO CALENDAR (only when the exact launch time is known)
   if (hasConfirmedLaunchTime(launch)) {
-    launchDialogContent.append(
+    launchContent.append(
       createCalendarControl(launch, "load-button calendar-button")
     );
   } else {
@@ -835,10 +896,8 @@ function showLaunchDetails(launch) {
     calendarNote.textContent =
       "Calendar export will be available once the launch time is confirmed.";
 
-    launchDialogContent.append(calendarNote);
+    launchContent.append(calendarNote);
   }
-
-  launchDialog.showModal();
 }
 
 // CALENDAR FILE (.ics)
@@ -1196,21 +1255,6 @@ function showGuideTopic(topicKey) {
 
   window.scrollTo({ top: 0 });
 }
-
-
-// CLOSE LAUNCH DETAILS
-
-closeLaunchDialogButton.addEventListener("click", () => {
-  launchDialog.close();
-});
-
-// CLOSE WHEN CLICKING OUTSIDE THE DIALOG
-
-launchDialog.addEventListener("click", (event) => {
-  if (event.target === launchDialog) {
-    launchDialog.close();
-  }
-});
 
 
 // SPACE INTELLIGENCE — 3D GLOBE
