@@ -1655,6 +1655,20 @@ button {
   background: var(--surface-hover);
 }
 
+/* "Find stream" / "Watch replay": a link that looks like the buttons
+   next to it (see createStreamLink in app.js) */
+a.stream-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+/* While the webcast is on, in the same red as the "Live" badge */
+a.stream-link-live {
+  border-color: var(--live);
+  color: var(--text-strong);
+}
+
 /* Coming up and ISS panels */
 
 .overview-columns {

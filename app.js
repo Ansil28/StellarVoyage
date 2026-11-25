@@ -1288,8 +1288,82 @@ function showLaunchPage(launchId) {
     launchContent.append(calendarNote);
   }
 
+  // "Find stream" / "Watch replay", only around the launch itself
+  const streamLink = createStreamLink(launch, "guide-button");
+
+  if (streamLink) {
+    actions.append(streamLink);
+  }
+
   actions.append(createShareButton(launch));
   launchContent.append(actions);
+}
+
+// "FIND STREAM" / "WATCH REPLAY"
+// The launch API only gives official webcast links in its much larger
+// "detailed" mode, so this opens a YouTube search instead. It is only
+// offered when a stream can exist: from 48 hours before an exact launch
+// time, while it is live, and as a replay for 3 days after launch.
+
+const STREAM_SHOWN_BEFORE_MS = 48 * 60 * 60 * 1000;
+const STREAM_SHOWN_AFTER_MS = 6 * 60 * 60 * 1000;
+const REPLAY_SHOWN_FOR_MS = 3 * 24 * 60 * 60 * 1000;
+
+// { label, url }, or null when there is nothing to watch yet
+function getStreamLink(launch) {
+  const launchTime = new Date(launch.net).getTime();
+  const now = Date.now();
+  // "Falcon 9 | Starlink 10-12" → "Falcon 9 Starlink 10-12" for the search
+  const name = (launch.name || "rocket").replace(/\s*\|\s*/g, " ");
+
+  let label = null;
+  let search = null;
+
+  if (hasLaunched(launch)) {
+    if (Number.isFinite(launchTime) && now - launchTime <= REPLAY_SHOWN_FOR_MS) {
+      label = "Watch replay";
+      search = `${name} launch replay`;
+    }
+  } else if (
+    launch.webcast_live === true ||
+    (hasConfirmedLaunchTime(launch) &&
+      launchTime - now <= STREAM_SHOWN_BEFORE_MS &&
+      now - launchTime <= STREAM_SHOWN_AFTER_MS)
+  ) {
+    label = "Find stream";
+    search = `${name} launch live`;
+  }
+
+  if (!label) {
+    return null;
+  }
+
+  const params = new URLSearchParams({ search_query: search });
+
+  return { label, url: `https://www.youtube.com/results?${params}` };
+}
+
+// The link itself (opens in a new tab), styled with the given class
+function createStreamLink(launch, className) {
+  const stream = getStreamLink(launch);
+
+  if (!stream) {
+    return null;
+  }
+
+  const link = document.createElement("a");
+  link.className = `${className} stream-link`;
+
+  // Stands out (in the "Live" red) while the webcast is on
+  if (launch.webcast_live === true) {
+    link.classList.add("stream-link-live");
+  }
+
+  link.href = stream.url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = stream.label;
+  return link;
 }
 
 // "Share" button: the phone's share sheet where available,
@@ -2987,6 +3061,13 @@ function renderOverviewHero(launch) {
     actions.append(
       createCalendarControl(launch, "overview-secondary-button")
     );
+  }
+
+  // "Find stream" when the next launch is close (see getStreamLink)
+  const streamLink = createStreamLink(launch, "overview-secondary-button");
+
+  if (streamLink) {
+    actions.append(streamLink);
   }
 
   body.append(actions);
