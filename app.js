@@ -3,6 +3,9 @@ const status = document.querySelector("#status");
 const launchesContainer = document.querySelector("#launches");
 const searchInput = document.querySelector("#search-launches");
 const agencyFilter = document.querySelector("#filter-agency");
+const periodFilter = document.querySelector("#filter-period");
+const hideStarlinkFilter = document.querySelector("#filter-hide-starlink");
+const confirmedFilter = document.querySelector("#filter-confirmed");
 const resultsCount = document.querySelector("#results-count");
 const clearFiltersButton = document.querySelector("#clear-filters");
 const retryButton = document.querySelector("#retry-launches");
@@ -505,7 +508,10 @@ function renderLaunches(launches) {
 
   const hasFilters =
     searchInput.value.trim() !== "" ||
-    agencyFilter.value !== "all";
+    agencyFilter.value !== "all" ||
+    periodFilter.value !== "all" ||
+    hideStarlinkFilter.checked ||
+    confirmedFilter.checked;
 
   resultsCount.textContent = hasFilters
     ? `${count} ${count === 1 ? "launch" : "launches"} found`
@@ -583,9 +589,17 @@ function renderLaunches(launches) {
       imageContainer,
       title,
       agency,
-      missionStatus,
-      date
+      missionStatus
     );
+
+    // "Live" next to the status while the webcast is on
+    const liveBadge = createLiveBadge(launch);
+
+    if (liveBadge) {
+      card.append(liveBadge);
+    }
+
+    card.append(date);
 
     if (countdown) {
       card.append(countdown);
@@ -683,7 +697,69 @@ function createStatusBadge(launch) {
   return missionStatus;
 }
 
-// "22 Nov 2026, 12:23 UTC", "22 Nov 2026" or "To be confirmed"
+// LAUNCH DATES
+// The API says how precise each date is (net_precision). Approximate
+// dates are stored as the END of the period (a "Q4 2026" launch has the
+// date 31 Dec 2026), so they are shown as the period, never as a day.
+
+// "time" (second, minute or hour), "day", "week", "month", "quarter",
+// "half", "year", or null when the API does not say
+function getDatePrecision(launch) {
+  const name = (
+    typeof launch.net_precision === "string"
+      ? launch.net_precision
+      : launch.net_precision?.name || ""
+  ).toLowerCase();
+
+  for (const precision of ["second", "minute", "hour"]) {
+    if (name.includes(precision)) {
+      return "time";
+    }
+  }
+
+  for (const precision of ["day", "week", "month", "quarter", "half", "year"]) {
+    if (name.includes(precision)) {
+      return precision;
+    }
+  }
+
+  return null;
+}
+
+// For quarter and half precision: the number in "Quarter 4" or
+// "Half 2", or worked out from the date's month
+function getPeriodNumber(launch, launchDate, monthsPerPeriod) {
+  const number = (launch.net_precision?.name || "").match(/\d/);
+
+  return number
+    ? Number(number[0])
+    : Math.floor(launchDate.getUTCMonth() / monthsPerPeriod) + 1;
+}
+
+// Dates and times in the viewer's own time zone ("your time")
+function formatLocalDate(date) {
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
+}
+
+function formatLocalTime(date) {
+  return date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+}
+
+function formatUtcTime(date) {
+  return date.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC"
+  });
+}
+
+// "29 Nov 2026, 05:39 your time · 04:39 UTC", "22 Nov 2026",
+// "Week of 22 Nov 2026", "December 2026", "Q4 2026", "H2 2026",
+// "2026" or "To be confirmed"
 function formatLaunchDate(launch) {
   if (!launch.net) {
     return "To be confirmed";
@@ -691,6 +767,39 @@ function formatLaunchDate(launch) {
 
   const launchDate = new Date(launch.net);
 
+  if (Number.isNaN(launchDate.getTime())) {
+    return "To be confirmed";
+  }
+
+  const year = launchDate.getUTCFullYear();
+  const utcDateText = launchDate.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC"
+  });
+
+  switch (getDatePrecision(launch)) {
+    case "year":
+      return String(year);
+    case "half":
+      return `H${getPeriodNumber(launch, launchDate, 6)} ${year}`;
+    case "quarter":
+      return `Q${getPeriodNumber(launch, launchDate, 3)} ${year}`;
+    case "month":
+      return launchDate.toLocaleDateString("en-GB", {
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC"
+      });
+    case "week":
+      return `Week of ${utcDateText}`;
+    case "day":
+      return utcDateText;
+  }
+
+  // Exact time, or no precision given: midnight UTC means the time is
+  // not known yet (and 31 December at midnight, not even the date)
   const isMidnight =
     launchDate.getUTCHours() === 0 &&
     launchDate.getUTCMinutes() === 0 &&
@@ -704,30 +813,192 @@ function formatLaunchDate(launch) {
     return "To be confirmed";
   }
 
-  const dateText = launchDate.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC"
-  });
-
   if (isMidnight) {
-    return dateText;
+    return utcDateText;
   }
 
-  const timeText = launchDate.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "UTC"
-  });
+  const utcTime = formatUtcTime(launchDate);
 
-  return `${dateText}, ${timeText} UTC`;
+  // The viewer is on UTC already: no need to show it twice
+  if (launchDate.getTimezoneOffset() === 0) {
+    return `${utcDateText}, ${utcTime} UTC`;
+  }
+
+  const localDateText = formatLocalDate(launchDate);
+
+  // Mention the UTC day when it is not the same as the viewer's
+  const utcDay = localDateText === utcDateText
+    ? ""
+    : ` on ${launchDate.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" })}`;
+
+  return `${localDateText}, ${formatLocalTime(launchDate)} your time · ${utcTime} UTC${utcDay}`;
+}
+
+// The two lines of the small calendar-style date in launch rows:
+// "29" / "NOV", "Q4" / "2026", "DEC" / "2026", "2026" / "" or "TBC" / ""
+function getDateBlockText(launch) {
+  const launchDate = new Date(launch.net);
+
+  if (!launch.net || Number.isNaN(launchDate.getTime())) {
+    return ["TBC", ""];
+  }
+
+  const year = String(launchDate.getUTCFullYear());
+
+  switch (getDatePrecision(launch)) {
+    case "year":
+      return [year, ""];
+    case "half":
+      return [`H${getPeriodNumber(launch, launchDate, 6)}`, year];
+    case "quarter":
+      return [`Q${getPeriodNumber(launch, launchDate, 3)}`, year];
+    case "month":
+      return [
+        launchDate.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }).toUpperCase(),
+        year
+      ];
+  }
+
+  if (formatLaunchDate(launch) === "To be confirmed") {
+    return ["TBC", ""];
+  }
+
+  // A known time is shown on the viewer's own day; a date alone stays in UTC
+  const timeZone = hasConfirmedLaunchTime(launch) ? undefined : "UTC";
+
+  return [
+    launchDate.toLocaleDateString("en-GB", { day: "2-digit", timeZone }),
+    launchDate.toLocaleDateString("en-GB", { month: "short", timeZone }).toUpperCase()
+  ];
+}
+
+// "20:39 PST" at the launch site, or null if its time zone is unknown
+function formatLaunchSiteTime(launch) {
+  const timeZone = launch.pad?.location?.timezone_name;
+
+  if (!timeZone || !hasConfirmedLaunchTime(launch)) {
+    return null;
+  }
+
+  try {
+    const launchDate = new Date(launch.net);
+
+    const time = launchDate.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone,
+      timeZoneName: "short"
+    });
+
+    const date = launchDate.toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+      timeZone
+    });
+
+    return `${date}, ${time}`;
+  } catch {
+    // Time zone name not known to this browser
+    return null;
+  }
+}
+
+// "05:39 – 09:39 your time · 04:39 – 08:39 UTC", "Instantaneous"
+// (it must launch at that exact moment), or null if not known yet
+function formatLaunchWindow(launch) {
+  if (!hasConfirmedLaunchTime(launch)) {
+    return null;
+  }
+
+  const start = new Date(launch.window_start);
+  const end = new Date(launch.window_end);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return null;
+  }
+
+  if (end.getTime() <= start.getTime()) {
+    return "Instantaneous (it must launch at that exact moment)";
+  }
+
+  const utcRange = `${formatUtcTime(start)} – ${formatUtcTime(end)} UTC`;
+
+  if (start.getTimezoneOffset() === 0) {
+    return utcRange;
+  }
+
+  return `${formatLocalTime(start)} – ${formatLocalTime(end)} your time · ${utcRange}`;
+}
+
+// 1 → "1st", 22 → "22nd", 7449 → "7,449th"
+function formatOrdinal(number) {
+  const lastTwo = number % 100;
+  const suffix =
+    lastTwo >= 11 && lastTwo <= 13
+      ? "th"
+      : { 1: "st", 2: "nd", 3: "rd" }[number % 10] || "th";
+
+  return `${number.toLocaleString("en-GB")}${suffix}`;
+}
+
+// "7,449th orbital launch attempt ever · 276th this year", and the
+// same for the launch provider and the launch pad
+function getLaunchNumbers(launch) {
+  const isCount = (value) => Number.isInteger(value) && value > 0;
+
+  const line = (total, thisYear, text) => {
+    if (!isCount(total)) {
+      return null;
+    }
+
+    return isCount(thisYear)
+      ? `${formatOrdinal(total)} ${text} · ${formatOrdinal(thisYear)} this year`
+      : `${formatOrdinal(total)} ${text}`;
+  };
+
+  return [
+    line(
+      launch.orbital_launch_attempt_count,
+      launch.orbital_launch_attempt_count_year,
+      "orbital launch attempt ever"
+    ),
+    line(
+      launch.agency_launch_attempt_count,
+      launch.agency_launch_attempt_count_year,
+      `launch by ${getAgencyName(launch)}`
+    ),
+    line(
+      launch.pad_launch_attempt_count,
+      launch.pad_launch_attempt_count_year,
+      `launch from ${launch.pad?.name || "this launch pad"}`
+    )
+  ].filter(Boolean);
+}
+
+// Red "LIVE" badge while the launch webcast is on, or null
+function createLiveBadge(launch) {
+  if (launch.webcast_live !== true) {
+    return null;
+  }
+
+  const badge = document.createElement("span");
+  badge.className = "live-badge";
+  badge.textContent = "Live";
+  return badge;
 }
 
 // SEARCH AND FILTERS
 
 searchInput.addEventListener("input", applyFilters);
 agencyFilter.addEventListener("change", applyFilters);
+periodFilter.addEventListener("change", applyFilters);
+hideStarlinkFilter.addEventListener("change", applyFilters);
+confirmedFilter.addEventListener("change", applyFilters);
+
+// Starlink flights are frequent enough to fill the list on their own
+function isStarlinkLaunch(launch) {
+  return /starlink/i.test(`${launch.name || ""} ${launch.mission?.name || ""}`);
+}
 
 function getAgencyName(launch) {
   return launch.launch_service_provider?.name
@@ -767,6 +1038,11 @@ function applyFilters() {
   const query = searchInput.value.toLowerCase().trim();
   const selectedAgency = agencyFilter.value;
 
+  // "Next N days": launches from now until then
+  const periodEnd = periodFilter.value === "all"
+    ? null
+    : Date.now() + Number(periodFilter.value) * 24 * 60 * 60 * 1000;
+
   const filteredLaunches = allLaunches.filter((launch) => {
     if (hasLaunched(launch)) {
       return false;
@@ -781,7 +1057,23 @@ function applyFilters() {
       selectedAgency === "all" ||
       agency === selectedAgency;
 
-    return matchesSearch && matchesAgency;
+    // Approximate dates (a month, a quarter...) are not "in the next
+    // N days", even if the period has started
+    const matchesPeriod =
+      periodEnd === null ||
+      (hasConfirmedLaunchTime(launch) || getDatePrecision(launch) === "day") &&
+        new Date(launch.net).getTime() <= periodEnd;
+
+    const matchesStarlink = !hideStarlinkFilter.checked || !isStarlinkLaunch(launch);
+    const matchesConfirmed = !confirmedFilter.checked || hasConfirmedLaunchTime(launch);
+
+    return (
+      matchesSearch &&
+      matchesAgency &&
+      matchesPeriod &&
+      matchesStarlink &&
+      matchesConfirmed
+    );
   });
 
   renderLaunches(filteredLaunches);
@@ -798,6 +1090,9 @@ retryButton.addEventListener("click", () => {
 clearFiltersButton.addEventListener("click", () => {
   searchInput.value = "";
   agencyFilter.value = "all";
+  periodFilter.value = "all";
+  hideStarlinkFilter.checked = false;
+  confirmedFilter.checked = false;
 
   applyFilters();
 });
@@ -876,6 +1171,12 @@ function showLaunchPage(launchId) {
     title
   );
 
+  const liveBadge = createLiveBadge(launch);
+
+  if (liveBadge) {
+    launchContent.append(liveBadge);
+  }
+
   // Countdown (only when the exact launch time is known, like the cards).
   // updateCountdowns() already updates every .launch-countdown each second.
   if (hasConfirmedLaunchTime(launch)) {
@@ -939,13 +1240,15 @@ function showLaunchPage(launchId) {
     },
     {
       label: "Launch date",
-      value: launch.net
-        ? new Date(launch.net).toLocaleString("en-GB", {
-            dateStyle: "long",
-            timeStyle: "short",
-            timeZone: "UTC"
-          }) + " UTC"
-        : null
+      value: formatLaunchDate(launch)
+    },
+    {
+      label: "Launch window",
+      value: formatLaunchWindow(launch)
+    },
+    {
+      label: "Time at the launch site",
+      value: formatLaunchSiteTime(launch)
     }
   ];
 
@@ -967,41 +1270,84 @@ function showLaunchPage(launchId) {
     launchContent.append(paragraph);
   }
 
+  // BY THE NUMBERS (counts the API already sends with each launch)
+  const numbers = getLaunchNumbers(launch);
 
-    
-  // MISSION LINKS
-  const wikipediaUrl = launch.pad?.wiki_url;
+  if (numbers.length > 0) {
+    const heading = document.createElement("p");
+    const headingText = document.createElement("strong");
+    headingText.textContent = "By the numbers";
+    heading.append(headingText);
 
-  if (wikipediaUrl) {
+    const list = document.createElement("ul");
+    list.className = "launch-numbers";
+
+    for (const text of numbers) {
+      const item = document.createElement("li");
+      item.textContent = text;
+      list.append(item);
+    }
+
+    launchContent.append(heading, list);
+
+    // Counts for future launches assume the ones before them fly first
+    if (!hasLaunched(launch)) {
+      const note = document.createElement("p");
+      note.className = "calendar-note";
+      note.textContent = "Counted as if every earlier launch flies as scheduled.";
+      launchContent.append(note);
+    }
+  }
+
+  // USEFUL LINKS (only to the sites we expect, over https)
+  const links = [
+    {
+      text: "Launch pad on Wikipedia",
+      url: launch.pad?.wiki_url,
+      hosts: ["en.wikipedia.org"]
+    },
+    {
+      text: "Launch pad on Google Maps",
+      url: launch.pad?.map_url,
+      hosts: ["www.google.com", "maps.google.com"]
+    }
+  ];
+
+  const anchors = [];
+
+  for (const link of links) {
+    if (!link.url) {
+      continue;
+    }
+
     try {
-      const url = new URL(wikipediaUrl);
+      const url = new URL(link.url);
 
-      if (
-        url.protocol === "https:" &&
-        url.hostname === "en.wikipedia.org"
-      ) {
-        const section = document.createElement("div");
-        const heading = document.createElement("p");
-        const headingText = document.createElement("strong");
-        const paragraph = document.createElement("p");
+      if (url.protocol === "https:" && link.hosts.includes(url.hostname)) {
         const anchor = document.createElement("a");
-
-        headingText.textContent = "Useful links";
-        heading.append(headingText);
-
         anchor.href = url.href;
-        anchor.textContent = "Launch Pad Wikipedia";
+        anchor.textContent = link.text;
         anchor.target = "_blank";
         anchor.rel = "noopener noreferrer";
         anchor.className = "mission-link";
-
-        paragraph.append(anchor);
-        section.append(heading, paragraph);
-        launchContent.append(section);
+        anchors.push(anchor);
       }
     } catch {
       // Ignore invalid URLs
     }
+  }
+
+  if (anchors.length > 0) {
+    const heading = document.createElement("p");
+    const headingText = document.createElement("strong");
+    headingText.textContent = "Useful links";
+    heading.append(headingText);
+
+    const paragraph = document.createElement("p");
+    paragraph.className = "mission-links";
+    paragraph.append(...anchors);
+
+    launchContent.append(heading, paragraph);
   }
 
 
@@ -2620,7 +2966,15 @@ function renderOverviewHero(launch) {
   date.className = "overview-hero-date";
   date.textContent = formatLaunchDate(launch);
 
-  body.append(createStatusBadge(launch), title, provider, place, date);
+  body.append(createStatusBadge(launch));
+
+  const liveBadge = createLiveBadge(launch);
+
+  if (liveBadge) {
+    body.append(liveBadge);
+  }
+
+  body.append(title, provider, place, date);
 
   const isConfirmed = hasConfirmedLaunchTime(launch);
 
@@ -2682,18 +3036,13 @@ function createLaunchRow(launch) {
   const dateBlock = document.createElement("span");
   dateBlock.className = "overview-launch-date";
 
-  const isDateKnown = formatLaunchDate(launch) !== "To be confirmed";
-  const launchDate = new Date(launch.net);
+  const [dayText, monthText] = getDateBlockText(launch);
 
   const day = document.createElement("strong");
   const month = document.createElement("span");
 
-  day.textContent = isDateKnown
-    ? launchDate.toLocaleDateString("en-GB", { day: "2-digit", timeZone: "UTC" })
-    : "TBC";
-  month.textContent = isDateKnown
-    ? launchDate.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }).toUpperCase()
-    : "";
+  day.textContent = dayText;
+  month.textContent = monthText;
 
   dateBlock.append(day, month);
 

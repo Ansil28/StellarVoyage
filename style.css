@@ -368,6 +368,48 @@ button {
   box-shadow: 0 0 0 2px #60a5fa22;
 }
 
+/* Second row: time period, "Hide Starlink" and "Confirmed time only" */
+.filter-options {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.filters .filter-options select {
+  width: auto;
+}
+
+.filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: #cbd5e1;
+  font-size: 12px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.filter-toggle:hover,
+.filter-toggle:focus-within {
+  border-color: var(--accent);
+}
+
+/* Undo the text-box styles of ".filters input" for the checkboxes */
+.filters .filter-toggle input {
+  width: auto;
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
 /* Status message */
 
 #status {
@@ -430,6 +472,17 @@ button {
   color: #64748b;
   font-size: 10px;
   letter-spacing: 0.5px;
+}
+
+/* "Launch data by The Space Devs · Orbits by CelesTrak" */
+.footer-credit a {
+  color: var(--muted);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.footer-credit a:hover {
+  color: var(--text);
 }
 
 /* Responsive layout */
@@ -782,6 +835,62 @@ button {
 .mission-link:hover {
     color: #d1d5db;
     text-decoration-color: #ffffff;
+}
+
+/* Several links side by side, wrapping on small screens */
+.mission-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+}
+
+/* "By the numbers" on the launch page */
+.launch-numbers {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.launch-numbers li {
+    margin-bottom: 4px;
+}
+
+/* Red "LIVE" badge while the webcast is on (same red as the countdown) */
+.live-badge {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 6px;
+    margin: 8px 0 8px 6px;
+    padding: 6px 10px;
+    border: 1px solid #ff1f1f;
+    border-radius: 999px;
+    background: rgba(255, 0, 0, 0.16);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.live-badge::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ff4d4d;
+    animation: live-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+    50% {
+        opacity: 0.3;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .live-badge::before {
+        animation: none;
+    }
 }
 
 /* ==========================================
