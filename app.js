@@ -179,6 +179,8 @@ function setSidebarCollapsed(isCollapsed, save = true) {
   sidebarToggle.title = label;
   sidebarToggle.setAttribute("aria-expanded", String(!isCollapsed));
 
+  updateBrandLabel();
+
   if (save) {
     try {
       localStorage.setItem(SIDEBAR_STORAGE_KEY, isCollapsed ? "1" : "0");
@@ -191,6 +193,39 @@ function setSidebarCollapsed(isCollapsed, save = true) {
 sidebarToggle.addEventListener("click", () => {
   setSidebarCollapsed(!appLayout.classList.contains("sidebar-collapsed"));
 });
+
+// LOGO WHILE THE SIDEBAR IS HIDDEN
+// Only the logo icon stays visible, and clicking it opens the sidebar
+// instead of going to the Overview. Phones (600px or less) have no
+// hidden sidebar, so there the logo always goes to the Overview.
+
+const brandLink = document.querySelector(".brand");
+const phoneLayout = window.matchMedia("(max-width: 600px)");
+
+function isSidebarHidden() {
+  return appLayout.classList.contains("sidebar-collapsed") && !phoneLayout.matches;
+}
+
+// With the name hidden, the link needs its own label
+function updateBrandLabel() {
+  if (isSidebarHidden()) {
+    brandLink.setAttribute("aria-label", "Show sidebar");
+    brandLink.title = "Show sidebar";
+  } else {
+    brandLink.removeAttribute("aria-label");
+    brandLink.removeAttribute("title");
+  }
+}
+
+brandLink.addEventListener("click", (event) => {
+  if (isSidebarHidden()) {
+    event.preventDefault();
+    setSidebarCollapsed(false);
+  }
+});
+
+// Moving between phone and computer sizes changes what the logo does
+phoneLayout.addEventListener("change", updateBrandLabel);
 
 // Restore the last choice without animating it on page load
 try {
@@ -325,10 +360,34 @@ function saveLaunchCache(results) {
   }
 }
 
+// The API's "upcoming" list keeps launches for a while after they fly.
+// Status ids: 3 = success, 4 = failure, 7 = partial failure.
+const LAUNCHED_STATUS_IDS = [3, 4, 7];
+
+function hasLaunched(launch) {
+  return LAUNCHED_STATUS_IDS.includes(launch.status?.id);
+}
+
+// "Just launched" section above the upcoming list (hidden when empty).
+// Most recent first; each row opens the launch's page.
+const justLaunchedSection = document.querySelector("#just-launched");
+const justLaunchedList = document.querySelector("#just-launched-list");
+
+function renderJustLaunched(launches) {
+  const newestFirst = [...launches].sort(
+    (a, b) => new Date(b.net).getTime() - new Date(a.net).getTime()
+  );
+
+  justLaunchedList.replaceChildren(...newestFirst.map(createLaunchRow));
+  justLaunchedSection.hidden = newestFirst.length === 0;
+}
+
 function showLaunches(launches) {
   allLaunches = launches;
 
-  populateAgencyFilter(allLaunches);
+  // Launches that already flew only appear under "Just launched"
+  populateAgencyFilter(allLaunches.filter((launch) => !hasLaunched(launch)));
+  renderJustLaunched(allLaunches.filter(hasLaunched));
 
   // Keeps the current search and agency filter when launches reload
   applyFilters();
@@ -709,6 +768,10 @@ function applyFilters() {
   const selectedAgency = agencyFilter.value;
 
   const filteredLaunches = allLaunches.filter((launch) => {
+    if (hasLaunched(launch)) {
+      return false;
+    }
+
     const name = (launch.name || "").toLowerCase();
     const agency = getAgencyName(launch);
 
@@ -844,11 +907,6 @@ function showLaunchPage(launchId) {
       value:
         launch.rocket?.configuration?.full_name ||
         launch.rocket?.configuration?.name
-    },
-    {
-      label: "Manufacturer",
-      value:
-        launch.rocket?.configuration?.manufacturer?.name
     },
     {
       label: "Launch provider",
@@ -1836,6 +1894,11 @@ function updateLaunchSiteMarkers() {
   const sites = new Map();
 
   for (const launch of allLaunches) {
+    // Only upcoming launches get a marker
+    if (hasLaunched(launch)) {
+      continue;
+    }
+
     const latitude = Number(launch.pad?.latitude);
     const longitude = Number(launch.pad?.longitude);
 
@@ -2604,50 +2667,52 @@ function renderOverviewUpcoming(launches) {
     return;
   }
 
-  const rows = launches.map((launch) => {
-    const row = document.createElement("button");
-    row.type = "button";
-    row.className = "overview-launch-row";
-    row.addEventListener("click", () => showLaunchDetails(launch));
+  overviewUpcoming.replaceChildren(...launches.map(createLaunchRow));
+}
 
-    // Calendar-style date block
-    const dateBlock = document.createElement("span");
-    dateBlock.className = "overview-launch-date";
+// Compact launch row (date, name, agency and status), used by the
+// Overview's upcoming list and the "Just launched" section
+function createLaunchRow(launch) {
+  const row = document.createElement("button");
+  row.type = "button";
+  row.className = "overview-launch-row";
+  row.addEventListener("click", () => showLaunchDetails(launch));
 
-    const isDateKnown = formatLaunchDate(launch) !== "To be confirmed";
-    const launchDate = new Date(launch.net);
+  // Calendar-style date block
+  const dateBlock = document.createElement("span");
+  dateBlock.className = "overview-launch-date";
 
-    const day = document.createElement("strong");
-    const month = document.createElement("span");
+  const isDateKnown = formatLaunchDate(launch) !== "To be confirmed";
+  const launchDate = new Date(launch.net);
 
-    day.textContent = isDateKnown
-      ? launchDate.toLocaleDateString("en-GB", { day: "2-digit", timeZone: "UTC" })
-      : "TBC";
-    month.textContent = isDateKnown
-      ? launchDate.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }).toUpperCase()
-      : "";
+  const day = document.createElement("strong");
+  const month = document.createElement("span");
 
-    dateBlock.append(day, month);
+  day.textContent = isDateKnown
+    ? launchDate.toLocaleDateString("en-GB", { day: "2-digit", timeZone: "UTC" })
+    : "TBC";
+  month.textContent = isDateKnown
+    ? launchDate.toLocaleDateString("en-GB", { month: "short", timeZone: "UTC" }).toUpperCase()
+    : "";
 
-    const info = document.createElement("span");
-    info.className = "overview-launch-info";
+  dateBlock.append(day, month);
 
-    const name = document.createElement("strong");
-    name.textContent = launch.name || "Unknown mission";
+  const info = document.createElement("span");
+  info.className = "overview-launch-info";
 
-    const details = document.createElement("span");
-    details.textContent = [
-      getAgencyName(launch),
-      launch.pad?.location?.name
-    ].filter(Boolean).join(" · ");
+  const name = document.createElement("strong");
+  name.textContent = launch.name || "Unknown mission";
 
-    info.append(name, details);
-    row.append(dateBlock, info, createStatusBadge(launch));
+  const details = document.createElement("span");
+  details.textContent = [
+    getAgencyName(launch),
+    launch.pad?.location?.name
+  ].filter(Boolean).join(" · ");
 
-    return row;
-  });
+  info.append(name, details);
+  row.append(dateBlock, info, createStatusBadge(launch));
 
-  overviewUpcoming.replaceChildren(...rows);
+  return row;
 }
 
 // ISS RIGHT NOW (uses satellite.js only, so the globe is not loaded)

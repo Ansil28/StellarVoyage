@@ -67,6 +67,12 @@ button {
   font-weight: 700;
   letter-spacing: 0.5px;
   text-decoration: none;
+  /* Same timing as the sidebar, see "Sidebar hidden" below */
+  transition: transform 0.25s ease;
+}
+
+.brand > span {
+  transition: opacity 0.2s ease;
 }
 
 /* Logo image (assets/favicon.svg) */
@@ -133,7 +139,7 @@ button {
 /* Hide / show sidebar button, on the sidebar's right edge */
 .sidebar-toggle {
   position: absolute;
-  /* Level with the "WORKSPACE" label, so the logo row stays free */
+  /* Level with the "NAVIGATION" label, so the logo row stays free */
   top: 106px;
   right: -15px;
   display: grid;
@@ -167,14 +173,30 @@ button {
   transform: translateX(24px) rotate(180deg);
 }
 
+/* The logo icon stays top left: it moves right while the sidebar slides
+   left, ending 16px from the edge (250px sidebar - 25px logo position
+   + 16px = 241px). The name is hidden, as it does not fit the margin. */
+.app-layout.sidebar-collapsed .brand {
+  visibility: visible;
+  transform: translateX(241px);
+}
+
+.app-layout.sidebar-collapsed .brand > span {
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* Room for the logo icon, with a clear gap before the content */
 .app-layout.sidebar-collapsed .main-content {
   margin-left: 0;
-  padding-left: 72px;
+  padding-left: 100px;
 }
 
 /* Used when restoring the saved state, so it does not animate on load */
 .app-layout.sidebar-instant .sidebar,
 .app-layout.sidebar-instant .sidebar-toggle,
+.app-layout.sidebar-instant .brand,
+.app-layout.sidebar-instant .brand > span,
 .app-layout.sidebar-instant .main-content {
   transition: none;
 }
@@ -440,6 +462,12 @@ button {
   .brand-icon {
     width: 32px;
     height: 32px;
+  }
+
+  /* Sidebar hidden: the same 16px from the edge with this narrower
+     sidebar (205px - 20px logo position + 16px = 201px) */
+  .app-layout.sidebar-collapsed .brand {
+    transform: translateX(201px);
   }
 }
 
@@ -1671,6 +1699,19 @@ button {
   font-size: 11px;
 }
 
+/* "Just launched" in Launches: the same rows as the Overview's
+   upcoming list, in a panel like the Overview's */
+.just-launched {
+  margin-bottom: 36px;
+}
+
+.just-launched-list {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
 .overview-iss-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1793,6 +1834,15 @@ button {
   .app-layout.sidebar-collapsed .sidebar {
     transform: none;
     visibility: visible;
+  }
+
+  .app-layout.sidebar-collapsed .brand {
+    transform: none;
+  }
+
+  .app-layout.sidebar-collapsed .brand > span {
+    visibility: visible;
+    opacity: 1;
   }
 
   .app-layout.sidebar-collapsed .main-content {

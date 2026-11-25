@@ -127,7 +127,7 @@
         <span></span>
       </button>
 
-      <p class="sidebar-label">WORKSPACE</p>
+      <p class="sidebar-label">NAVIGATION</p>
 
       <nav id="sidebar-nav" aria-label="Main">
         <a
@@ -302,6 +302,18 @@
         </header>
 
         <section class="launch-section">
+
+          <!-- JUST LAUNCHED (launches that already flew; filled by app.js,
+               hidden when there are none) -->
+          <div id="just-launched" class="just-launched" hidden>
+            <div class="section-heading">
+              <div>
+                <h2>Just launched</h2>
+              </div>
+            </div>
+
+            <div id="just-launched-list" class="overview-upcoming just-launched-list"></div>
+          </div>
 
           <div class="section-heading">
             <div>
