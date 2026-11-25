@@ -1513,7 +1513,9 @@ function initializeSpaceIntelligence() {
   container.replaceChildren();
 
   try {
-    Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6Im52NDMzaElfYUxnNzB3dFgiLCJqdGkiOiJlZGNkZjNmOC1lMWNhLTQzMmItOWYzMi0yMWNmNGFjZDRiM2EiLCJpZCI6NTI5NDQ5LCJpc3MiOiJodHRwczovL2FwaS5jZXNpdW0uY29tIiwiYXVkIjoidW5kZWZpbmVkX2RlZmF1bHQiLCJpYXQiOjE3OTIzNDMwNzh9.ygxySbSj2TPhQCyxRPOpUpsSW-vUCdSnILH_YxToBxo";
+    // Public token, limited in Cesium ion to the published site and the
+    // VS Code Live Server (127.0.0.1:5500 / localhost:5500), read-only
+    Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6Ilo2V2JraDUyaHRQN0dFU08iLCJqdGkiOiIyNDM4NzdmYy1hMTQ1LTQ5MDgtODczMi0xMDgzODdmODljNzMiLCJpZCI6NTI5NDQ5LCJzdWIiOiJhbnNpbDI4IiwiaXNzIjoiaHR0cHM6Ly9hcGkuY2VzaXVtLmNvbSIsImF1ZCI6IlN0ZWxsYXJWb3lhZ2UiLCJpYXQiOjE3OTU2MjExNTl9.S26jb-Gz0zMK2zR-x4zBUY2huFikEX3Z1zmeFQeQ-mU";
     cesiumViewer = new Cesium.Viewer("cesiumContainer", {
       animation: false,
       timeline: false,
