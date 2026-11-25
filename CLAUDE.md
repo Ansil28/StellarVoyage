@@ -19,7 +19,7 @@ Tem quatro vistas, escolhidas pelo endereço (`#home`, `#launches`, `#launches/<
 
 ```
 index.html   Estrutura das quatro vistas (#view-overview, #view-launches, #view-guide, #view-intelligence), sidebar, página de detalhes dos lançamentos (#launch-content) e visualizador de imagens (#image-viewer)
-style.css    Todos os estilos; variáveis de cor em :root; media queries a 850px e 600px
+style.css    Todos os estilos; media queries a 850px e 600px. Tudo vem das escalas em :root: cores (--bg … --live, transparências com color-mix(in srgb, var(--x) N%, transparent)), letra (--fs-2xs 11px … --fs-3xl 26px, --fs-title, --fs-display), espaçamento (--space-1 4px … --space-16 64px, de 4 em 4px) e cantos (--radius-xs/sm/md/lg/pill). Não usar valores soltos; só as sombras pretas (rgba(0, 0, 0, …)) ficam fora das escalas
 guide-topics.js  Só dados: o texto dos artigos do Rocket Guide (GUIDE_TOPICS), indexado pelo data-topic dos cartões
 app.js       Toda a lógica: navegação por endereço, fetch e render dos lançamentos, filtros, countdown, página de detalhes, calendário, artigos do guia, globo Cesium e tracking da ISS
 README.md    Descrição curta do projeto
@@ -27,6 +27,14 @@ assets/      favicon.svg (logótipo), apple-touch-icon.png (180x180), icon-192/5
 manifest.webmanifest  Dados da app instalável (nome, cores, ícones, modo app "standalone", sem a barra do browser)
 sw.js        Service worker: guarda o site para abrir sem internet (ficheiros do site primeiro da rede, satellite.js e fontes primeiro da cópia guardada) e gera o `launch.ics` do "Add to calendar" no iPhone
 ```
+
+**Estilo visual (para o site não parecer "gerado"):**
+- **Três níveis de texto, sempre iguais:** `--text` (títulos, nomes, números, peso 600), `--text-soft` (texto de leitura e datas), `--muted` (só metadados: agências, rótulos, legendas, rodapés). Rótulos em minúsculas normais ("Altitude"), não em MAIÚSCULAS espaçadas.
+- **Sem bordas nem brilhos em cartões e painéis:** distinguem-se só pelo fundo `--surface` (e `--surface-hover` ao passar o rato). Bordas só em elementos interativos (botões, campos, filtros), selos, tabela e linhas finas entre dados. Sem gradientes nem sombras coloridas.
+- **Artigos do guia e página da missão sem caixa:** texto direto na página, `.guide-content` com `max-width: 760px`.
+- **Links em vez de botões em pastilha** para ações secundárias: classe `.text-link` ("View details", "Back to …"; "Read article" nos cartões do guia, que mantêm `.guide-button` porque o JS os procura por essa classe). Sem setas (→ ↗ ←) nos textos.
+- **Contagem decrescente só tipográfica** (`.launch-countdown`): números de largura fixa, o "T−" vem do CSS (`::before`) e não do texto. Vermelho (`--live`) só para o selo "Live".
+- **Sem emojis** na interface: quando falta imagem, `createImagePlaceholder()` mostra o nome do foguetão.
 
 **App instalável (PWA):** ao acrescentar um ficheiro novo ao site, juntá-lo à lista `APP_FILES` em `sw.js`, senão não fica disponível offline. Exceção: as imagens do globo (`assets/globe/`, cerca de 1,8 MB) ficam fora da lista para não as descarregar a quem nunca abre o globo; o service worker guarda-as na primeira vez que o globo abre. O service worker só funciona num endereço `http(s)`, não ao abrir o `index.html` diretamente.
 

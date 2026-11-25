@@ -116,8 +116,9 @@ function updateCountdowns() {
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
+    // The "T−" in front is added by the CSS (.launch-countdown::before)
     countdown.textContent =
-      `T− ${days}d ${String(hours).padStart(2, "0")}h ` +
+      `${days}d ${String(hours).padStart(2, "0")}h ` +
       `${String(minutes).padStart(2, "0")}m ` +
       `${String(seconds).padStart(2, "0")}s`;
 
@@ -541,20 +542,25 @@ function renderLaunches(launches) {
     // Launch image
     const imageContainer = createLaunchImage(launch);
 
-    // Mission name
+    // Status badge, and "Live" next to it while the webcast is on
+    const badges = document.createElement("div");
+    badges.className = "launch-card-badges";
+    badges.append(createStatusBadge(launch));
+
+    const liveBadge = createLiveBadge(launch);
+
+    if (liveBadge) {
+      badges.append(liveBadge);
+    }
+
+    // Mission name (the most important text on the card)
     const title = document.createElement("h2");
     title.textContent = launch.name || "Unknown mission";
 
-    // Launch agency
-    const agency = document.createElement("p");
-    agency.textContent = `Agency: ${getAgencyName(launch)}`;
-
-    // Mission status badge
-    const missionStatus = createStatusBadge(launch);
-
-    // Launch date
+    // Launch date (second most important)
     const date = document.createElement("p");
-    date.textContent = `Date: ${formatLaunchDate(launch)}`;
+    date.className = "launch-card-date";
+    date.textContent = formatLaunchDate(launch);
 
     // Countdown
     let countdown = null;
@@ -565,45 +571,33 @@ function renderLaunches(launches) {
       countdown.dataset.target = new Date(launch.net).getTime();
     }
 
-    // Launch location
-    const location = document.createElement("p");
-    location.textContent = `Location: ${
+    // Agency and location in one small line: "SpaceX · Cape Canaveral"
+    const meta = document.createElement("p");
+    meta.className = "launch-card-meta";
+    meta.textContent = [
+      getAgencyName(launch),
       launch.pad?.location?.name || "Unknown location"
-    }`;
+    ].join(" · ");
 
-    // View details button
+    // View details link
     const detailsButton = document.createElement("button");
 
-    detailsButton.className = "guide-button";
+    detailsButton.className = "text-link";
     detailsButton.type = "button";
-    detailsButton.textContent = "View details →";
+    detailsButton.textContent = "View details";
 
     detailsButton.addEventListener("click", () => {
       showLaunchDetails(launch);
     });
 
     // Add information to the card
-    card.append(
-      imageContainer,
-      title,
-      agency,
-      missionStatus
-    );
-
-    // "Live" next to the status while the webcast is on
-    const liveBadge = createLiveBadge(launch);
-
-    if (liveBadge) {
-      card.append(liveBadge);
-    }
-
-    card.append(date);
+    card.append(imageContainer, badges, title, date);
 
     if (countdown) {
       card.append(countdown);
     }
 
-    card.append(location, detailsButton);
+    card.append(meta, detailsButton);
 
     launchesContainer.append(card);
   }
@@ -634,26 +628,28 @@ function createLaunchImage(launch) {
       "error",
       () => {
         image.remove();
-
-        const fallback = document.createElement("span");
-        fallback.className = "image-placeholder";
-        fallback.textContent = "🚀";
-
-        imageContainer.prepend(fallback);
+        imageContainer.prepend(createImagePlaceholder(launch));
       },
       { once: true }
     );
 
     imageContainer.append(image);
   } else {
-    const fallback = document.createElement("span");
-    fallback.className = "image-placeholder";
-    fallback.textContent = "🚀";
-
-    imageContainer.append(fallback);
+    imageContainer.append(createImagePlaceholder(launch));
   }
 
   return imageContainer;
+}
+
+// Shown when a launch has no image: the rocket's name, quietly
+function createImagePlaceholder(launch) {
+  const placeholder = document.createElement("span");
+  placeholder.className = "image-placeholder";
+  placeholder.textContent =
+    launch.rocket?.configuration?.full_name ||
+    launch.rocket?.configuration?.name ||
+    "No image yet";
+  return placeholder;
 }
 
 function createStatusBadge(launch) {
@@ -1122,8 +1118,8 @@ function showLaunchPage(launchId) {
 
   const backButton = document.createElement("button");
   backButton.type = "button";
-  backButton.className = "guide-button guide-back-button";
-  backButton.textContent = "← Back to launches";
+  backButton.className = "text-link guide-back-button";
+  backButton.textContent = "Back to launches";
   backButton.addEventListener("click", () => {
     location.hash = "launches";
   });
@@ -1716,8 +1712,8 @@ function showGuideTopic(topicKey) {
 
   const backButton = document.createElement("button");
   backButton.type = "button";
-  backButton.className = "guide-button guide-back-button";
-  backButton.textContent = "← Back to topics";
+  backButton.className = "text-link guide-back-button";
+  backButton.textContent = "Back to topics";
   backButton.addEventListener("click", () => {
     location.hash = "guide";
   });
@@ -2739,7 +2735,7 @@ function createSatellitePanel() {
   panel.innerHTML = `
     <div class="iss-panel-header">
       <div>
-        <p class="iss-panel-eyebrow">LIVE ORBITAL TRACKING</p>
+        <p class="iss-panel-eyebrow">Live orbital tracking</p>
         <h3 id="satellite-name">--</h3>
       </div>
       <span class="iss-status">
@@ -2752,28 +2748,28 @@ function createSatellitePanel() {
 
     <div class="iss-panel-grid">
       <div class="iss-data-card">
-        <span>ALTITUDE</span>
+        <span>Altitude</span>
         <strong id="satellite-altitude">-- km</strong>
       </div>
 
       <div class="iss-data-card">
-        <span>LATITUDE</span>
+        <span>Latitude</span>
         <strong id="satellite-latitude">--</strong>
       </div>
 
       <div class="iss-data-card">
-        <span>LONGITUDE</span>
+        <span>Longitude</span>
         <strong id="satellite-longitude">--</strong>
       </div>
 
       <div class="iss-data-card">
-        <span>LAST UPDATE (UTC)</span>
+        <span>Last update (UTC)</span>
         <strong id="satellite-update-time">--:--:--</strong>
       </div>
     </div>
 
     <button id="satellite-focus-button" type="button">
-      Centre camera ↗
+      Centre camera
     </button>
   `;
 
@@ -2854,7 +2850,7 @@ function selectSatellite(id) {
   }
 
   document.querySelector("#satellite-focus-button").textContent =
-    `Centre camera on ${tracked.label} ↗`;
+    `Centre camera on ${tracked.label}`;
 
   updateSatellitePanel(new Date());
   cesiumViewer.scene.requestRender();
@@ -2954,7 +2950,7 @@ const overviewIssStatus = document.querySelector("#overview-iss-status");
 const OVERVIEW_UPCOMING_COUNT = 4;
 const OVERVIEW_GUIDE_TOPICS = ["fundamentals", "propulsion", "stages"];
 
-// Links such as "See all launches →" open another view
+// Links such as "See all launches" open another view
 for (const button of document.querySelectorAll(".overview-link[data-route]")) {
   button.addEventListener("click", () => {
     location.hash = button.dataset.route;
