@@ -70,11 +70,15 @@ function hasConfirmedLaunchTime(launch) {
       : launch.net_precision?.name || ""
   ).toLowerCase();
 
-  if (
-    precision.includes("day") ||
-    precision.includes("month") ||
-    precision.includes("year")
-  ) {
+  // Only a time known to the second, minute or hour counts as exact.
+  // Anything else ("day", "week", "quarter", "year"...) is approximate.
+  const isExactPrecision =
+    precision === "" ||
+    precision.includes("second") ||
+    precision.includes("minute") ||
+    precision.includes("hour");
+
+  if (!isExactPrecision) {
     return false;
   }
 
