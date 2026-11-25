@@ -368,7 +368,7 @@ button {
   box-shadow: 0 0 0 2px #60a5fa22;
 }
 
-/* Second row: time period, "Hide Starlink" and "Confirmed time only" */
+/* Second row: time period and "Confirmed time only" */
 .filter-options {
   grid-column: 1 / -1;
   display: flex;

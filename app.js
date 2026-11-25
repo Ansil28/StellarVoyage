@@ -4,7 +4,6 @@ const launchesContainer = document.querySelector("#launches");
 const searchInput = document.querySelector("#search-launches");
 const agencyFilter = document.querySelector("#filter-agency");
 const periodFilter = document.querySelector("#filter-period");
-const hideStarlinkFilter = document.querySelector("#filter-hide-starlink");
 const confirmedFilter = document.querySelector("#filter-confirmed");
 const resultsCount = document.querySelector("#results-count");
 const clearFiltersButton = document.querySelector("#clear-filters");
@@ -510,7 +509,6 @@ function renderLaunches(launches) {
     searchInput.value.trim() !== "" ||
     agencyFilter.value !== "all" ||
     periodFilter.value !== "all" ||
-    hideStarlinkFilter.checked ||
     confirmedFilter.checked;
 
   resultsCount.textContent = hasFilters
@@ -992,13 +990,7 @@ function createLiveBadge(launch) {
 searchInput.addEventListener("input", applyFilters);
 agencyFilter.addEventListener("change", applyFilters);
 periodFilter.addEventListener("change", applyFilters);
-hideStarlinkFilter.addEventListener("change", applyFilters);
 confirmedFilter.addEventListener("change", applyFilters);
-
-// Starlink flights are frequent enough to fill the list on their own
-function isStarlinkLaunch(launch) {
-  return /starlink/i.test(`${launch.name || ""} ${launch.mission?.name || ""}`);
-}
 
 function getAgencyName(launch) {
   return launch.launch_service_provider?.name
@@ -1064,14 +1056,12 @@ function applyFilters() {
       (hasConfirmedLaunchTime(launch) || getDatePrecision(launch) === "day") &&
         new Date(launch.net).getTime() <= periodEnd;
 
-    const matchesStarlink = !hideStarlinkFilter.checked || !isStarlinkLaunch(launch);
     const matchesConfirmed = !confirmedFilter.checked || hasConfirmedLaunchTime(launch);
 
     return (
       matchesSearch &&
       matchesAgency &&
       matchesPeriod &&
-      matchesStarlink &&
       matchesConfirmed
     );
   });
@@ -1091,7 +1081,6 @@ clearFiltersButton.addEventListener("click", () => {
   searchInput.value = "";
   agencyFilter.value = "all";
   periodFilter.value = "all";
-  hideStarlinkFilter.checked = false;
   confirmedFilter.checked = false;
 
   applyFilters();

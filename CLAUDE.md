@@ -5,7 +5,7 @@ Dashboard de exploração espacial em HTML, CSS e JavaScript puro (sem build, se
 Tem quatro vistas, escolhidas pelo endereço (`#home`, `#launches`, `#launches/<id>`, `#guide`, `#guide/<tópico>`, `#intelligence`). Os botões da sidebar mudam o `location.hash` e `handleRoute()` em `app.js` mostra a vista certa com `showView()`. Um endereço vazio ou desconhecido abre a Overview.
 
 - **Overview** (página inicial) — próximo lançamento em destaque com contagem decrescente, os 4 seguintes, a ISS ao vivo (só satellite.js, sem Cesium) e 3 tópicos do Rocket Guide (cópias dos cartões do guia).
-- **Launches** — lista os próximos lançamentos da API The Space Devs (`ll.thespacedevs.com/2.3.0`, guardados 15 min no `localStorage`), com pesquisa, filtro por agência, período ("Next 24 hours / 7 days / 30 days"), "Hide Starlink" e "Confirmed time only", contagem decrescente e uma página de detalhes para cada missão.
+- **Launches** — lista os próximos lançamentos da API The Space Devs (`ll.thespacedevs.com/2.3.0`, guardados 15 min no `localStorage`), com pesquisa, filtro por agência, período ("Next 24 hours / 7 days / 30 days") e "Confirmed time only", contagem decrescente e uma página de detalhes para cada missão.
 
   **Datas** (secção "Launch dates" do `app.js`): `formatLaunchDate()` mostra as horas exatas no fuso de quem vê e em UTC ("26 Nov 2026, 21:05 your time · 00:05 UTC on 27 Nov"; só UTC quando o fuso local é UTC). `getDatePrecision()` lê o `net_precision` da API; as datas aproximadas vêm com o **fim** do período (um "Quarter 4" chega como 31 Dec à meia-noite), por isso aparecem como o período ("2026", "Q4 2026", "H2 2026", "November 2026", "Week of …") e nunca como um dia. `getDateBlockText()` faz o mesmo para o quadradinho de data das linhas compactas.
 
