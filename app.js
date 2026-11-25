@@ -775,6 +775,17 @@ function showLaunchPage(launchId) {
     title
   );
 
+  // Countdown (only when the exact launch time is known, like the cards).
+  // updateCountdowns() already updates every .launch-countdown each second.
+  if (hasConfirmedLaunchTime(launch)) {
+    const countdown = document.createElement("p");
+    countdown.className = "launch-countdown";
+    countdown.dataset.target = new Date(launch.net).getTime();
+
+    launchContent.append(countdown);
+    updateCountdowns();
+  }
+
   document.title = `${launch.name || "Launch details"} · StellarVoyage`;
 
   const details = [
@@ -898,9 +909,12 @@ function showLaunchPage(launchId) {
   }
 
 
-  // ADD TO CALENDAR (only when the exact launch time is known)
+  // ADD TO CALENDAR (only when the exact launch time is known) AND SHARE
+  const actions = document.createElement("div");
+  actions.className = "launch-actions";
+
   if (hasConfirmedLaunchTime(launch)) {
-    launchContent.append(
+    actions.append(
       createCalendarControl(launch, "load-button calendar-button")
     );
   } else {
@@ -912,6 +926,59 @@ function showLaunchPage(launchId) {
 
     launchContent.append(calendarNote);
   }
+
+  actions.append(createShareButton(launch));
+  launchContent.append(actions);
+}
+
+// "Share" button: the phone's share sheet where available,
+// otherwise copies the link to this launch's page
+function createShareButton(launch) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "guide-button";
+  button.textContent = "Share";
+
+  let resetTimer = null;
+
+  function showResult(text) {
+    button.textContent = text;
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => {
+      button.textContent = "Share";
+    }, 2000);
+  }
+
+  button.addEventListener("click", async () => {
+    const url = location.href;
+    const title = launch.name || "Rocket launch";
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text: `${title} on StellarVoyage`,
+          url
+        });
+        return;
+      } catch (error) {
+        // Closing the share sheet is not an error
+        if (error.name === "AbortError") {
+          return;
+        }
+        // Any other problem: copy the link instead
+      }
+    }
+
+    try {
+      await navigator.clipboard.writeText(url);
+      showResult("Link copied");
+    } catch {
+      showResult("Could not copy link");
+    }
+  });
+
+  return button;
 }
 
 // CALENDAR FILE (.ics)

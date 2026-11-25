@@ -686,6 +686,24 @@ button {
     margin-top: 6px;
 }
 
+/* "Add to calendar" and "Share" side by side on the launch page */
+.launch-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.launch-actions .calendar-control {
+    align-self: center;
+    margin-top: 0;
+}
+
+.launch-actions .guide-button {
+    margin-top: 0;
+}
+
 /* Choice of calendars (computer only) */
 .calendar-menu {
     position: absolute;
