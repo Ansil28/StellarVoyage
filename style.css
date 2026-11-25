@@ -240,14 +240,6 @@ button {
   margin-bottom: 48px;
 }
 
-.eyebrow {
-  margin: 0 0 13px;
-  color: var(--accent);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.8px;
-}
-
 .page-header h1 {
   margin: 0;
   font-family: 'Space Grotesk', sans-serif;
@@ -256,6 +248,8 @@ button {
 }
 
 .subtitle {
+  /* Keeps longer descriptions easy to read on wide screens */
+  max-width: 720px;
   margin: 12px 0 0;
   color: var(--muted);
   font-size: 14px;
