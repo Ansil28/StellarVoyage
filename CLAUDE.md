@@ -2,9 +2,9 @@
 
 Dashboard de exploração espacial em HTML, CSS e JavaScript puro (sem build, sem frameworks). Abre-se diretamente o `index.html` no browser (o service worker e o "Add to calendar" do iPhone só funcionam num endereço `http(s)`, como o site publicado ou o Live Server do VS Code).
 
-Tem quatro vistas, escolhidas pelo endereço (`#home`, `#launches`, `#launches/<id>`, `#guide`, `#guide/<tópico>`, `#intelligence`). Os links da barra de cima (`.site-header`: logótipo à esquerda e as quatro vistas à direita, fixa no topo; no telemóvel os links passam para um menu ☰) mudam o `location.hash` e `handleRoute()` em `app.js` mostra a vista certa com `showView()`. Um endereço vazio ou desconhecido abre a Overview.
+Tem quatro vistas, escolhidas pelo endereço (`#home`, `#launches`, `#launches/<id>`, `#guide`, `#guide/<tópico>`, `#intelligence`). Os links da barra de cima (`.site-header`: logótipo à esquerda e as quatro vistas à direita, fixa no topo; no telemóvel cada vista é um ícone SVG desenhado no `index.html`, `.nav-icon`, com o texto `.nav-label` escondido só visualmente para leitores de ecrã; abaixo de 430px o nome do site esconde-se e fica só o logótipo) mudam o `location.hash` e `handleRoute()` em `app.js` mostra a vista certa com `showView()`. Um endereço vazio ou desconhecido abre a Overview.
 
-- **Overview** (página inicial) — próximo lançamento em destaque com contagem decrescente, os 4 seguintes, a ISS ao vivo (só satellite.js, sem Cesium) e 3 tópicos do Rocket Guide (cópias dos cartões do guia).
+- **Overview** (página inicial) — próximo lançamento em destaque com contagem decrescente, os 4 seguintes, a ISS ao vivo (só satellite.js, sem Cesium), as últimas notícias ("Space news": `loadNews()` pede 6 artigos à Spaceflight News API, `api.spaceflightnewsapi.net/v4`, gratuita e sem chave; guardadas 30 min no `localStorage`, com os dados antigos se a API falhar; cada cartão é um link para o artigo, só endereços `https`) e 3 tópicos do Rocket Guide (cópias dos cartões do guia).
 - **Launches** — lista os próximos lançamentos da API The Space Devs (`ll.thespacedevs.com/2.3.0`, guardados 15 min no `localStorage`), com pesquisa, filtro por agência, período ("Next 24 hours / 7 days / 30 days") e "Confirmed time only", contagem decrescente e uma página de detalhes para cada missão.
 
   **Datas** (secção "Launch dates" do `app.js`): `formatLaunchDate()` mostra as horas exatas no fuso de quem vê e em UTC ("26 Nov 2026, 21:05 your time · 00:05 UTC on 27 Nov"; só UTC quando o fuso local é UTC). `getDatePrecision()` lê o `net_precision` da API; as datas aproximadas vêm com o **fim** do período (um "Quarter 4" chega como 31 Dec à meia-noite), por isso aparecem como o período ("2026", "Q4 2026", "H2 2026", "November 2026", "Week of …") e nunca como um dia. `getDateBlockText()` faz o mesmo para o quadradinho de data das linhas compactas.
@@ -42,7 +42,7 @@ O site está publicado em https://ansil28.github.io/StellarVoyage/ (GitHub Pages
 
 Dependências externas (via CDN, carregadas no `<head>` do `index.html`): CesiumJS 1.146, satellite.js 6.0.1, Google Fonts (Inter e Space Grotesk).
 
-Os rodapés das quatro vistas (`.page-footer`) dão crédito às fontes de dados ("Launch data by The Space Devs · Orbits by CelesTrak", e na Space Intelligence também "Earth imagery by NASA · Globe by CesiumJS"); manter esse crédito se o rodapé mudar.
+Os rodapés das quatro vistas (`.page-footer`) dão crédito às fontes de dados ("Launch data by The Space Devs · Orbits by CelesTrak", na Overview também "News by Spaceflight News API" e na Space Intelligence "Earth imagery by NASA · Globe by CesiumJS"); manter esse crédito se o rodapé mudar.
 
 ## Regras
 

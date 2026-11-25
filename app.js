@@ -133,40 +133,8 @@ function updateCountdowns() {
 // those addresses, and handleRoute() shows the matching view, so links
 // can be shared, opened in a new tab, and the back button works.
 
-// PHONE MENU (the ☰ button is only visible on small screens; on larger
-// screens the links are always shown in the top bar)
-
-const siteHeader = document.querySelector(".site-header");
-const menuToggle = document.querySelector("#menu-toggle");
-
-function setMenuOpen(isOpen) {
-  siteHeader.classList.toggle("menu-open", isOpen);
-  menuToggle.setAttribute("aria-expanded", String(isOpen));
-  menuToggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
-}
-
-menuToggle.addEventListener("click", () => {
-  setMenuOpen(!siteHeader.classList.contains("menu-open"));
-});
-
-// Close after choosing a view, tapping outside or pressing Escape
-window.addEventListener("hashchange", () => setMenuOpen(false));
-
-for (const link of document.querySelectorAll(".site-header .nav-link")) {
-  link.addEventListener("click", () => setMenuOpen(false));
-}
-
-document.addEventListener("click", (event) => {
-  if (!siteHeader.contains(event.target)) {
-    setMenuOpen(false);
-  }
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    setMenuOpen(false);
-  }
-});
+// The top bar's links work the same everywhere: words on computers and
+// icons on phones (only the CSS changes), so no menu code is needed.
 
 // The old sidebar remembered whether it was hidden; that is no longer
 // needed, so clear the saved choice
@@ -3204,6 +3172,162 @@ function updateOverviewIss() {
     `Live position · updated ${now.toISOString().slice(11, 19)} UTC`;
 }
 
+// SPACE NEWS
+// The latest articles from the Spaceflight News API (free, no key, the
+// same kind of source the launch data comes from). Saved for 30 minutes
+// so each visit does not ask again; older saved news is shown if the
+// API cannot be reached.
+
+const NEWS_URL = "https://api.spaceflightnewsapi.net/v4/articles/?limit=6";
+const NEWS_CACHE_KEY = "stellarvoyage-news-cache";
+const NEWS_CACHE_DURATION_MS = 30 * 60 * 1000;
+
+const overviewNews = document.querySelector("#overview-news");
+let lastNewsLoad = 0;
+
+function readNewsCache() {
+  try {
+    const cache = JSON.parse(localStorage.getItem(NEWS_CACHE_KEY));
+    return cache && Array.isArray(cache.results) ? cache : null;
+  } catch {
+    return null;
+  }
+}
+
+async function loadNews() {
+  lastNewsLoad = Date.now();
+
+  const cache = readNewsCache();
+
+  if (cache && Date.now() - cache.savedAt < NEWS_CACHE_DURATION_MS) {
+    renderNews(cache.results);
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      NEWS_URL,
+      typeof AbortSignal.timeout === "function"
+        ? { signal: AbortSignal.timeout(API_TIMEOUT_MS) }
+        : {}
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!Array.isArray(data.results)) {
+      throw new Error("Unexpected news API response format.");
+    }
+
+    try {
+      localStorage.setItem(
+        NEWS_CACHE_KEY,
+        JSON.stringify({ savedAt: Date.now(), results: data.results })
+      );
+    } catch {
+      // Storage may be full or blocked; the news still shows
+    }
+
+    renderNews(data.results);
+  } catch (error) {
+    console.error("News error:", error);
+
+    if (cache) {
+      renderNews(cache.results);
+    } else {
+      overviewNews.replaceChildren(
+        createOverviewMessage("News is unavailable right now. Please try again later.")
+      );
+    }
+  }
+}
+
+// Only https links and images from the API are used
+function getSafeUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
+// "45 min ago", "3 hours ago", "2 days ago"
+function formatTimeAgo(date) {
+  const minutes = Math.round((Date.now() - date.getTime()) / 60000);
+  const format = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+
+  if (minutes < 60) {
+    return format.format(-Math.max(minutes, 1), "minute");
+  }
+
+  if (minutes < 24 * 60) {
+    return format.format(-Math.round(minutes / 60), "hour");
+  }
+
+  return format.format(-Math.round(minutes / (24 * 60)), "day");
+}
+
+// One card per article: image, title, then "NASA · 3 hours ago".
+// The whole card is a link to the article on its own site (new tab).
+function renderNews(articles) {
+  const cards = [];
+
+  for (const article of articles) {
+    const url = getSafeUrl(article.url);
+
+    if (!url || !article.title) {
+      continue;
+    }
+
+    const card = document.createElement("a");
+    card.className = "news-card";
+    card.href = url;
+    card.target = "_blank";
+    card.rel = "noopener noreferrer";
+
+    const imageBox = document.createElement("div");
+    imageBox.className = "news-card-image";
+
+    const imageUrl = getSafeUrl(article.image_url);
+
+    if (imageUrl) {
+      const image = document.createElement("img");
+      image.src = imageUrl;
+      image.alt = "";
+      image.loading = "lazy";
+
+      // A broken image just leaves the plain background
+      image.addEventListener("error", () => image.remove(), { once: true });
+
+      imageBox.append(image);
+    }
+
+    const title = document.createElement("strong");
+    title.className = "news-card-title";
+    title.textContent = article.title;
+
+    const meta = document.createElement("span");
+    meta.className = "news-card-meta";
+
+    const published = new Date(article.published_at);
+    meta.textContent = [
+      article.news_site,
+      Number.isNaN(published.getTime()) ? null : formatTimeAgo(published)
+    ].filter(Boolean).join(" · ");
+
+    card.append(imageBox, title, meta);
+    cards.push(card);
+  }
+
+  overviewNews.replaceChildren(
+    ...(cards.length > 0 ? cards : [createOverviewMessage("No news to show right now.")])
+  );
+}
+
 // FROM THE ROCKET GUIDE (copies of the guide's own cards)
 
 function renderOverviewGuide() {
@@ -3274,6 +3398,11 @@ document.addEventListener("visibilitychange", () => {
     loadLaunches();
   }
 
+  // Space news, at most every 30 minutes like its cache
+  if (Date.now() - lastNewsLoad >= NEWS_CACHE_DURATION_MS) {
+    loadNews();
+  }
+
   // The Overview's ISS orbit data, refreshed like the saved TLE (2 h)
   if (
     overviewIssSatrec &&
@@ -3294,6 +3423,7 @@ document.addEventListener("visibilitychange", () => {
 
 renderOverviewGuide();
 loadLaunches();
+loadNews();
 
 window.addEventListener("hashchange", handleRoute);
 handleRoute();

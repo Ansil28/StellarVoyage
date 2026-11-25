@@ -96,8 +96,8 @@ button {
 }
 
 /* Top bar: logo on the left, the four views on the right. It stays at
-   the top while scrolling. On phones the views move into a ☰ menu
-   (see the 600px section at the end). */
+   the top while scrolling. On phones the words become icons (see the
+   600px section at the end). */
 
 .site-header {
   position: sticky;
@@ -183,9 +183,23 @@ button {
   outline-offset: 2px;
 }
 
-/* Phone menu button (☰), hidden on larger screens */
-.menu-toggle {
+/* View icons (drawn in index.html): only shown on phones, in place of
+   the words. Thin rounded lines in the current text colour. */
+.nav-icon {
   display: none;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The satellite dot in the Space Intelligence icon is filled */
+.nav-icon .nav-icon-fill {
+  fill: currentColor;
+  stroke: none;
 }
 
 /* Main content: centred, so it does not stretch on wide screens */
@@ -1816,6 +1830,72 @@ a.stream-link-live {
   gap: var(--space-3);
 }
 
+/* Space news: three columns of small cards (image, title, source and
+   time); each card is a link to the article */
+
+.overview-news {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin-bottom: var(--space-10);
+}
+
+.overview-news > .overview-loading {
+  grid-column: 1 / -1;
+}
+
+.news-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.news-card:hover {
+  background: var(--surface-hover);
+}
+
+.news-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.news-card-image {
+  height: 140px;
+  background: var(--surface-hover);
+}
+
+.news-card-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* At most three lines of title, so the cards stay the same size */
+.news-card-title {
+  display: -webkit-box;
+  margin: var(--space-4) var(--space-4) var(--space-2);
+  overflow: hidden;
+  font-size: var(--fs-md);
+  font-weight: 600;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
+.news-card-meta {
+  margin: auto var(--space-4) var(--space-4);
+  color: var(--muted);
+  font-size: var(--fs-xs);
+}
+
 /* From the Rocket Guide */
 
 .overview-guide-heading {
@@ -1833,8 +1913,38 @@ a.stream-link-live {
     grid-template-columns: 1fr;
   }
 
-  .overview-guide-grid {
+  .overview-guide-grid,
+  .overview-news {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Phones: one article per row, with a small image on the left */
+@media (max-width: 600px) {
+  .overview-news {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+
+  .news-card {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+
+  .news-card-image {
+    grid-row: 1 / 3;
+    height: 100%;
+    min-height: 96px;
+  }
+
+  .news-card-title {
+    margin: var(--space-3) var(--space-3) var(--space-1);
+    font-size: var(--fs-sm);
+  }
+
+  .news-card-meta {
+    margin: 0 var(--space-3) var(--space-3);
   }
 }
 
@@ -1892,14 +2002,15 @@ a.stream-link-live {
 ========================================= */
 
 @media (max-width: 600px) {
-  /* Top bar: logo and the ☰ button; the views open in a drop-down */
+  /* Top bar: logo on the left, one icon per view on the right */
   .site-header {
-    padding: var(--space-3) var(--space-5);
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
   }
 
   .brand {
     gap: var(--space-3);
-    font-size: var(--fs-xl);
+    font-size: var(--fs-lg);
     letter-spacing: 0.5px;
   }
 
@@ -1908,70 +2019,37 @@ a.stream-link-live {
     height: 36px;
   }
 
-  .menu-toggle {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: var(--space-1);
-    width: 42px;
-    height: 42px;
-    padding: 0 var(--space-3);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: transparent;
-  }
-
-  .menu-toggle span {
-    display: block;
-    height: 2px;
-    border-radius: 2px;
-    background: var(--text);
-    transition: transform 0.25s ease, opacity 0.2s ease;
-  }
-
-  /* The three bars turn into an ✕ when the menu is open */
-  .menu-toggle[aria-expanded="true"] span:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-  }
-
-  .menu-toggle[aria-expanded="true"] span:nth-child(2) {
-    opacity: 0;
-  }
-
-  .menu-toggle[aria-expanded="true"] span:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-  }
-
-  /* Drop-down list of views, shown over the page */
   .site-header nav {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    display: none;
-    flex-direction: column;
-    align-items: stretch;
     gap: var(--space-1);
-    padding: var(--space-3) var(--space-5) var(--space-4);
-    border-bottom: 1px solid var(--border);
-    background: var(--sidebar);
-    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.45);
   }
 
-  .site-header.menu-open nav {
-    display: flex;
-    animation: menu-in 0.2s ease;
-  }
-
-  /* In the drop-down, the current view gets a soft background instead
-     of the line under it */
+  /* Each view is a 44px icon button (a comfortable size to tap) */
   .nav-link {
-    padding: var(--space-3) var(--space-4);
-    font-size: var(--fs-md);
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: var(--radius-md);
   }
 
+  .nav-icon {
+    display: block;
+  }
+
+  /* The words stay for screen readers, but are not shown */
+  .nav-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  /* Current view: light blue icon on the dark blue background */
   .nav-link.active {
     background: var(--accent-bg);
+    color: var(--accent-light);
   }
 
   .nav-link.active::after {
@@ -2061,25 +2139,9 @@ a.stream-link-live {
 
 
 
-/* Phone menu opening animation */
-@keyframes menu-in {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .site-header.menu-open nav {
-    animation: none;
-  }
-
-  .menu-toggle span {
-    transition: none;
+/* Narrow phones: only the logo icon, so the four view icons fit */
+@media (max-width: 430px) {
+  .brand > span {
+    display: none;
   }
 }
