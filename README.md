@@ -5,3 +5,5 @@ Just for fun and personal use.
 
 ## Image credits
 Rocket Guide photos: NASA (public domain) and SpaceX (CC0), via Wikimedia Commons.
+
+Globe Earth imagery: NASA Blue Marble and Black Marble (NASA Earth Observatory, public domain), via Wikimedia Commons.

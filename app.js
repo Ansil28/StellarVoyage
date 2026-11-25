@@ -1910,51 +1910,76 @@ function initializeSpaceIntelligence() {
   container.replaceChildren();
 
   try {
-    // Public token, limited in Cesium ion to the published site and the
-    // VS Code Live Server (127.0.0.1:5500 / localhost:5500), read-only
-    Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6Ilo2V2JraDUyaHRQN0dFU08iLCJqdGkiOiIyNDM4NzdmYy1hMTQ1LTQ5MDgtODczMi0xMDgzODdmODljNzMiLCJpZCI6NTI5NDQ5LCJzdWIiOiJhbnNpbDI4IiwiaXNzIjoiaHR0cHM6Ly9hcGkuY2VzaXVtLmNvbSIsImF1ZCI6IlN0ZWxsYXJWb3lhZ2UiLCJpYXQiOjE3OTU2MjExNTl9.S26jb-Gz0zMK2zR-x4zBUY2huFikEX3Z1zmeFQeQ-mU";
+    // The Earth is two NASA images (public domain) stored with the site,
+    // so the globe needs no Cesium ion account or map service: it loads
+    // once, does not download map pieces while moving, works offline and
+    // also when index.html is opened directly.
     cesiumViewer = new Cesium.Viewer("cesiumContainer", {
       animation: false,
       timeline: false,
       baseLayerPicker: false,
       geocoder: false,
-      homeButton: true,
       sceneModePicker: false,
-      navigationHelpButton: true,
       infoBox: false,
       selectionIndicator: false,
-      fullscreenButton: true,
+
+      // A clean globe: no Cesium buttons. Our own "Reset view" button
+      // replaces Home, and the caption explains how to move the globe.
+      homeButton: false,
+      navigationHelpButton: false,
+      fullscreenButton: false,
+
+      // Daytime Earth: NASA Blue Marble
+      baseLayer: Cesium.ImageryLayer.fromProviderAsync(
+        Cesium.SingleTileImageryProvider.fromUrl(GLOBE_DAY_IMAGE)
+      ),
+
+      // Cesium's own credit line (the Cesium ion logo) is only needed when
+      // using Cesium ion, which this globe does not. It goes to a hidden
+      // element; the footer credits NASA instead.
+      creditContainer: document.querySelector("#globe-credits"),
 
       // Performance: only draw a new frame when something changes
-      // (camera movement, tiles loading or satellite updates)
+      // (camera movement or satellite updates)
       requestRenderMode: true,
       maximumRenderTimeChange: Infinity,
 
-      // Quality: render at the screen's real resolution (see below)
-      useBrowserRecommendedResolution: false
+      // Performance: draw at normal resolution, not 1.5x on high-DPI
+      // screens (the biggest frame-rate cost on laptops and phones)
+      useBrowserRecommendedResolution: true
     });
 
-    // Sharp markers on high-DPI screens, capped at 1.5x so the globe
-    // does not get too heavy on 4K or Retina displays
-    const pixelRatio = window.devicePixelRatio || 1;
-    cesiumViewer.resolutionScale = Math.min(pixelRatio, 1.5) / pixelRatio;
+    // Night side: NASA Black Marble city lights, shown only where it is
+    // night (needs the sun lighting below)
+    const nightLayer = Cesium.ImageryLayer.fromProviderAsync(
+      Cesium.SingleTileImageryProvider.fromUrl(GLOBE_NIGHT_IMAGE)
+    );
+    nightLayer.dayAlpha = 0;
+    nightLayer.nightAlpha = 1;
+    cesiumViewer.imageryLayers.add(nightLayer);
 
-    
-    // Improve the Earth's visual appearance
+    // Sun lighting (day and night) and atmosphere; fog is off, as it
+    // costs a little every frame and is not visible from this far away
     cesiumViewer.scene.globe.enableLighting = true;
     cesiumViewer.scene.globe.showGroundAtmosphere = true;
     cesiumViewer.scene.skyAtmosphere.show = true;
-    cesiumViewer.scene.fog.enabled = true;
+    cesiumViewer.scene.fog.enabled = false;
+
+    // The Earth images are about 10 km per pixel, so stop zooming in
+    // before they look blurry
+    cesiumViewer.scene.screenSpaceCameraController.minimumZoomDistance =
+      GLOBE_MIN_ZOOM_METERS;
 
     // Set the initial camera position
-    cesiumViewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(
-        0,
-        20,
-        20000000
-      ),
-      duration: 2
-    });
+    flyToStartView(2);
+
+    // "Reset view" button in the corner of the globe
+    const resetButton = document.createElement("button");
+    resetButton.type = "button";
+    resetButton.className = "guide-button globe-reset-button";
+    resetButton.textContent = "Reset view";
+    resetButton.addEventListener("click", () => flyToStartView(1.5));
+    container.append(resetButton);
 
     setUpGlobeInteraction();
     updateLaunchSiteMarkers();
@@ -1972,6 +1997,24 @@ function initializeSpaceIntelligence() {
 
   container.append(errorMessage);
 }
+}
+
+// NASA Earth images (public domain), 3840 x 1920 pixels so every phone
+// can use them as a single texture
+const GLOBE_DAY_IMAGE = "assets/globe/earth-day.jpg";
+const GLOBE_NIGHT_IMAGE = "assets/globe/earth-night.jpg";
+
+// Closest the camera may get to the ground (300 km, a little below the
+// ISS), so the Earth images never look blurry
+const GLOBE_MIN_ZOOM_METERS = 300000;
+
+// The whole Earth seen from 20,000 km, used when the globe opens and by
+// the "Reset view" button
+function flyToStartView(durationSeconds) {
+  cesiumViewer.camera.flyTo({
+    destination: Cesium.Cartesian3.fromDegrees(0, 20, 20000000),
+    duration: durationSeconds
+  });
 }
 
 // Initialize the globe when opening Space Intelligence
@@ -2326,6 +2369,23 @@ function handleGlobeClick(entity) {
   }
 
   if (Array.isArray(entity)) {
+    // Already as close as the camera may go (see GLOBE_MIN_ZOOM_METERS):
+    // these launch sites are too close to separate, so open the
+    // soonest launch among them instead
+    const height = cesiumViewer.camera.positionCartographic.height;
+
+    if (height < GLOBE_MIN_ZOOM_METERS * 1.6) {
+      const groupedLaunches = entity
+        .flatMap(groupedEntity => launchSiteLaunches.get(groupedEntity.id) || [])
+        .sort((a, b) => new Date(a.net).getTime() - new Date(b.net).getTime());
+
+      if (groupedLaunches.length > 0) {
+        showLaunchDetails(groupedLaunches[0]);
+      }
+
+      return;
+    }
+
     const time = cesiumViewer.clock.currentTime;
     const positions = entity
       .map(groupedEntity => groupedEntity.position?.getValue(time))
@@ -2343,9 +2403,12 @@ function handleGlobeClick(entity) {
       }
     }
 
-    const range = Math.min(
-      Math.max(smallestGap * 18, 25000),
-      cesiumViewer.camera.positionCartographic.height / 2
+    const range = Math.max(
+      Math.min(
+        Math.max(smallestGap * 18, 25000),
+        cesiumViewer.camera.positionCartographic.height / 2
+      ),
+      GLOBE_MIN_ZOOM_METERS
     );
 
     cesiumViewer.camera.flyToBoundingSphere(
@@ -2737,8 +2800,9 @@ function createSatellitePanel() {
     .querySelector("#satellite-focus-button")
     .addEventListener("click", focusSelectedSatellite);
 
+  // Below the globe's caption and credits, so they stay next to the globe
   document
-    .querySelector("#cesiumContainer")
+    .querySelector("#globe-credits")
     .insertAdjacentElement("afterend", panel);
 }
 
