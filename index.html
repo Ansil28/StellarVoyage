@@ -78,9 +78,10 @@
 <body>
   <div class="app-layout">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <a href="#home" class="brand">
+    <!-- TOP BAR: logo and the four views (on phones, a ☰ menu) -->
+    <header class="site-header">
+      <a href="#home" class="brand" aria-label="StellarVoyage">
+
         <img
           class="brand-icon"
           src="assets/favicon.svg"
@@ -91,28 +92,6 @@
         <span>STELLAR<span class="brand-light">VOYAGE</span></span>
       </a>
 
-      <!-- Hide / show the sidebar (only shown on larger screens) -->
-      <button
-        id="sidebar-toggle"
-        class="sidebar-toggle"
-        type="button"
-        aria-label="Hide sidebar"
-        title="Hide sidebar"
-        aria-expanded="true"
-        aria-controls="sidebar-nav"
-      >
-        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-          <path
-            d="M15 6l-6 6 6 6"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </button>
-
       <!-- Menu button (only shown on phones) -->
       <button
         id="menu-toggle"
@@ -120,16 +99,14 @@
         type="button"
         aria-label="Open menu"
         aria-expanded="false"
-        aria-controls="sidebar-nav"
+        aria-controls="site-nav"
       >
         <span></span>
         <span></span>
         <span></span>
       </button>
 
-      <p class="sidebar-label">NAVIGATION</p>
-
-      <nav id="sidebar-nav" aria-label="Main">
+      <nav id="site-nav" aria-label="Main">
         <a
           id="nav-overview"
           class="nav-link active"
@@ -163,13 +140,7 @@
           <span>Rocket Guide</span>
         </a>
       </nav>
-
-      <div class="sidebar-footer">
-        <span class="status-dot"></span>
-        Space data dashboard
-        <span class="version">v1.0</span>
-      </div>
-    </aside>
+    </header>
 
     <!-- MAIN CONTENT -->
     <main class="main-content">

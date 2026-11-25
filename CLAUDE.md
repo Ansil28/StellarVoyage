@@ -2,7 +2,7 @@
 
 Dashboard de exploração espacial em HTML, CSS e JavaScript puro (sem build, sem frameworks). Abre-se diretamente o `index.html` no browser (o service worker e o "Add to calendar" do iPhone só funcionam num endereço `http(s)`, como o site publicado ou o Live Server do VS Code).
 
-Tem quatro vistas, escolhidas pelo endereço (`#home`, `#launches`, `#launches/<id>`, `#guide`, `#guide/<tópico>`, `#intelligence`). Os botões da sidebar mudam o `location.hash` e `handleRoute()` em `app.js` mostra a vista certa com `showView()`. Um endereço vazio ou desconhecido abre a Overview.
+Tem quatro vistas, escolhidas pelo endereço (`#home`, `#launches`, `#launches/<id>`, `#guide`, `#guide/<tópico>`, `#intelligence`). Os links da barra de cima (`.site-header`: logótipo à esquerda e as quatro vistas à direita, fixa no topo; no telemóvel os links passam para um menu ☰) mudam o `location.hash` e `handleRoute()` em `app.js` mostra a vista certa com `showView()`. Um endereço vazio ou desconhecido abre a Overview.
 
 - **Overview** (página inicial) — próximo lançamento em destaque com contagem decrescente, os 4 seguintes, a ISS ao vivo (só satellite.js, sem Cesium) e 3 tópicos do Rocket Guide (cópias dos cartões do guia).
 - **Launches** — lista os próximos lançamentos da API The Space Devs (`ll.thespacedevs.com/2.3.0`, guardados 15 min no `localStorage`), com pesquisa, filtro por agência, período ("Next 24 hours / 7 days / 30 days") e "Confirmed time only", contagem decrescente e uma página de detalhes para cada missão.
@@ -18,7 +18,7 @@ Tem quatro vistas, escolhidas pelo endereço (`#home`, `#launches`, `#launches/<
 ## Estrutura dos ficheiros
 
 ```
-index.html   Estrutura das quatro vistas (#view-overview, #view-launches, #view-guide, #view-intelligence), sidebar, página de detalhes dos lançamentos (#launch-content) e visualizador de imagens (#image-viewer)
+index.html   Estrutura das quatro vistas (#view-overview, #view-launches, #view-guide, #view-intelligence), barra de cima (.site-header, #site-nav), página de detalhes dos lançamentos (#launch-content) e visualizador de imagens (#image-viewer)
 style.css    Todos os estilos; media queries a 850px e 600px. Tudo vem das escalas em :root: cores (--bg … --live, transparências com color-mix(in srgb, var(--x) N%, transparent)), letra (--fs-2xs 11px … --fs-3xl 26px, --fs-title, --fs-display), espaçamento (--space-1 4px … --space-16 64px, de 4 em 4px) e cantos (--radius-xs/sm/md/lg/pill). Não usar valores soltos; só as sombras pretas (rgba(0, 0, 0, …)) ficam fora das escalas
 guide-topics.js  Só dados: o texto dos artigos do Rocket Guide (GUIDE_TOPICS), indexado pelo data-topic dos cartões
 app.js       Toda a lógica: navegação por endereço, fetch e render dos lançamentos, filtros, countdown, página de detalhes, calendário, artigos do guia, globo Cesium e tracking da ISS

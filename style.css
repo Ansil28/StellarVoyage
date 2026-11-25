@@ -5,7 +5,7 @@
   /* COLOURS
      Backgrounds and borders, darkest first */
   --bg: #080d19;
-  --sidebar: #0c1322;
+  --sidebar: #0c1322; /* top bar, drop-down menus (named after the old sidebar) */
   --surface: #111b2d;
   --surface-hover: #17243a;
   --accent-bg: #172c49;
@@ -95,38 +95,35 @@ button {
   min-height: 100vh;
 }
 
-/* Sidebar */
+/* Top bar: logo on the left, the four views on the right. It stays at
+   the top while scrolling. On phones the views move into a ☰ menu
+   (see the 600px section at the end). */
 
-.sidebar {
-  position: fixed;
-  inset: 0 auto 0 0;
-  width: 250px;
-  padding: var(--space-8) var(--space-5) var(--space-5);
-  background: var(--sidebar);
-  border-right: 1px solid var(--border);
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
   display: flex;
-  flex-direction: column;
-  z-index: 10;
-  transition: transform 0.25s ease, visibility 0.25s;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  padding: var(--space-3) var(--space-8);
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--sidebar) 92%, transparent);
+  backdrop-filter: blur(8px);
 }
 
 .brand {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: var(--space-3);
-  margin: 0 0 var(--space-12) var(--space-1);
   color: var(--text);
   font-family: 'Space Grotesk', sans-serif;
   font-size: var(--fs-lg);
   font-weight: 700;
   letter-spacing: 0.5px;
   text-decoration: none;
-  /* Same timing as the sidebar, see "Sidebar hidden" below */
-  transition: transform 0.25s ease;
-}
-
-.brand > span {
-  transition: opacity 0.2s ease;
 }
 
 /* Logo image (assets/favicon.svg) */
@@ -142,28 +139,43 @@ button {
   color: var(--accent);
 }
 
-.sidebar-label {
-  margin: 0 0 var(--space-3) var(--space-3);
-  color: var(--muted);
-  font-size: var(--fs-2xs);
-  font-weight: 700;
-  letter-spacing: 1.5px;
-}
-
-.nav-link {
+.site-header nav {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  width: 100%;
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid transparent;
+  gap: var(--space-1);
+}
+
+/* Plain text links; the current view is white with a thin blue line
+   along the bottom of the bar */
+.nav-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
-  background: transparent;
   color: var(--muted);
-  text-align: left;
   font-size: var(--fs-md);
+  font-weight: 500;
+  white-space: nowrap;
   text-decoration: none;
-  transition: background 0.2s, color 0.2s;
+  transition: color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--text);
+}
+
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  right: var(--space-3);
+  left: var(--space-3);
+  /* Down to the bar's bottom edge: its padding plus its 1px border */
+  bottom: calc(-1 * var(--space-3) - 1px);
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
 }
 
 .nav-link:focus-visible {
@@ -171,123 +183,20 @@ button {
   outline-offset: 2px;
 }
 
-.nav-link:hover,
-.nav-link.active {
-  background: var(--accent-bg);
-  color: var(--accent-pale);
-}
-
-.nav-link.active {
-  border-color: var(--border-strong);
-}
-
-.nav-icon {
-  font-size: var(--fs-xl);
-}
-
 /* Phone menu button (☰), hidden on larger screens */
 .menu-toggle {
   display: none;
 }
 
-/* Hide / show sidebar button, on the sidebar's right edge */
-.sidebar-toggle {
-  position: absolute;
-  /* Level with the "NAVIGATION" label, so the logo row stays free */
-  top: 106px;
-  right: -15px;
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  background: var(--sidebar);
-  color: var(--muted);
-  transition: transform 0.25s ease, background 0.2s, border-color 0.2s, color 0.2s;
-}
-
-.sidebar-toggle:hover,
-.sidebar-toggle:focus-visible {
-  border-color: var(--accent);
-  background: var(--accent-bg);
-  color: var(--accent-pale);
-  outline: none;
-}
-
-/* Sidebar hidden: it slides out, the arrow stays visible and flips */
-.app-layout.sidebar-collapsed .sidebar {
-  transform: translateX(-100%);
-  visibility: hidden;
-}
-
-.app-layout.sidebar-collapsed .sidebar-toggle {
-  visibility: visible;
-  transform: translateX(24px) rotate(180deg);
-}
-
-/* The logo icon stays top left: it moves right while the sidebar slides
-   left, ending 16px from the edge (250px sidebar - 25px logo position
-   + 16px = 241px). The name is hidden, as it does not fit the margin. */
-.app-layout.sidebar-collapsed .brand {
-  visibility: visible;
-  transform: translateX(241px);
-}
-
-.app-layout.sidebar-collapsed .brand > span {
-  visibility: hidden;
-  opacity: 0;
-}
-
-/* Room for the logo icon, with a clear gap before the content */
-.app-layout.sidebar-collapsed .main-content {
-  margin-left: 0;
-  padding-left: 100px;
-}
-
-/* Used when restoring the saved state, so it does not animate on load */
-.app-layout.sidebar-instant .sidebar,
-.app-layout.sidebar-instant .sidebar-toggle,
-.app-layout.sidebar-instant .brand,
-.app-layout.sidebar-instant .brand > span,
-.app-layout.sidebar-instant .main-content {
-  transition: none;
-}
-
-.sidebar-footer {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: auto;
-  padding: var(--space-4) var(--space-1) 0;
-  border-top: 1px solid var(--border);
-  color: var(--muted);
-  font-size: var(--fs-2xs);
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--success);
-}
-
-.version {
-  margin-left: auto;
-  color: var(--muted);
-}
-
-/* Main content */
+/* Main content: centred, so it does not stretch on wide screens */
 
 .main-content {
-  min-height: 100vh;
-  margin-left: 250px;
-  padding: var(--space-12) var(--space-14) var(--space-6);
   display: flex;
   flex-direction: column;
-  transition: margin-left 0.25s ease, padding-left 0.25s ease;
+  min-height: calc(100vh - 61px);
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: var(--space-12) var(--space-8) var(--space-6);
 }
 
 .page-header {
@@ -567,18 +476,17 @@ button {
 /* Responsive layout */
 
 @media (max-width: 850px) {
-  .sidebar {
-    width: 205px;
-    padding-right: var(--space-4);
-    padding-left: var(--space-4);
+  .site-header {
+    gap: var(--space-4);
+    padding-right: var(--space-6);
+    padding-left: var(--space-6);
   }
 
   .main-content {
-    margin-left: 205px;
     padding: var(--space-8) var(--space-6) var(--space-6);
   }
 
-  /* Smaller logo and name so "STELLARVOYAGE" fits the narrower sidebar */
+  /* Smaller logo and links so everything fits on one line */
   .brand {
     gap: var(--space-2);
     font-size: var(--fs-md);
@@ -590,10 +498,22 @@ button {
     height: 32px;
   }
 
-  /* Sidebar hidden: the same 16px from the edge with this narrower
-     sidebar (205px - 20px logo position + 16px = 201px) */
-  .app-layout.sidebar-collapsed .brand {
-    transform: translateX(201px);
+  .nav-link {
+    padding-right: var(--space-2);
+    padding-left: var(--space-2);
+    font-size: var(--fs-sm);
+  }
+
+  .nav-link.active::after {
+    right: var(--space-2);
+    left: var(--space-2);
+  }
+}
+
+/* Between phones and 720px: only the logo icon, so the four links fit */
+@media (min-width: 601px) and (max-width: 720px) {
+  .brand > span {
+    display: none;
   }
 }
 
@@ -1958,23 +1878,12 @@ button {
 ========================================= */
 
 @media (max-width: 600px) {
-  /* Sidebar becomes a top bar with a ☰ menu */
-  .sidebar {
-    position: sticky;
-    top: 0;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    height: auto;
+  /* Top bar: logo and the ☰ button; the views open in a drop-down */
+  .site-header {
     padding: var(--space-3) var(--space-5);
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    z-index: 30;
   }
 
   .brand {
-    margin: 0;
     gap: var(--space-3);
     font-size: var(--fs-xl);
     letter-spacing: 0.5px;
@@ -1983,34 +1892,6 @@ button {
   .brand-icon {
     width: 36px;
     height: 36px;
-  }
-
-  .sidebar-label,
-  .sidebar-footer {
-    display: none;
-  }
-
-  /* Phones use the ☰ menu, so ignore the hidden-sidebar setting */
-  .sidebar-toggle {
-    display: none;
-  }
-
-  .app-layout.sidebar-collapsed .sidebar {
-    transform: none;
-    visibility: visible;
-  }
-
-  .app-layout.sidebar-collapsed .brand {
-    transform: none;
-  }
-
-  .app-layout.sidebar-collapsed .brand > span {
-    visibility: visible;
-    opacity: 1;
-  }
-
-  .app-layout.sidebar-collapsed .main-content {
-    padding-left: var(--space-5);
   }
 
   .menu-toggle {
@@ -2048,13 +1929,14 @@ button {
   }
 
   /* Drop-down list of views, shown over the page */
-  .sidebar nav {
+  .site-header nav {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
     display: none;
     flex-direction: column;
+    align-items: stretch;
     gap: var(--space-1);
     padding: var(--space-3) var(--space-5) var(--space-4);
     border-bottom: 1px solid var(--border);
@@ -2062,18 +1944,28 @@ button {
     box-shadow: 0 16px 30px rgba(0, 0, 0, 0.45);
   }
 
-  .sidebar.menu-open nav {
+  .site-header.menu-open nav {
     display: flex;
     animation: menu-in 0.2s ease;
   }
 
+  /* In the drop-down, the current view gets a soft background instead
+     of the line under it */
   .nav-link {
     padding: var(--space-3) var(--space-4);
+    font-size: var(--fs-md);
+  }
+
+  .nav-link.active {
+    background: var(--accent-bg);
+  }
+
+  .nav-link.active::after {
+    content: none;
   }
 
   .main-content {
     min-height: calc(100vh - 67px);
-    margin-left: 0;
     padding: var(--space-8) var(--space-5) var(--space-5);
   }
 
@@ -2169,14 +2061,11 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sidebar.menu-open nav {
+  .site-header.menu-open nav {
     animation: none;
   }
 
-  .menu-toggle span,
-  .sidebar,
-  .sidebar-toggle,
-  .main-content {
+  .menu-toggle span {
     transition: none;
   }
 }

@@ -129,34 +129,35 @@ function updateCountdowns() {
 // NAVIGATION BETWEEN TABS
 
 // Each view has its own address (#home, #launches, #guide,
-// #guide/<topic>, #intelligence). The sidebar items are plain links to
+// #guide/<topic>, #intelligence). The links in the top bar point to
 // those addresses, and handleRoute() shows the matching view, so links
 // can be shared, opened in a new tab, and the back button works.
 
-// PHONE MENU (the ☰ button is only visible on small screens)
+// PHONE MENU (the ☰ button is only visible on small screens; on larger
+// screens the links are always shown in the top bar)
 
-const sidebar = document.querySelector(".sidebar");
+const siteHeader = document.querySelector(".site-header");
 const menuToggle = document.querySelector("#menu-toggle");
 
 function setMenuOpen(isOpen) {
-  sidebar.classList.toggle("menu-open", isOpen);
+  siteHeader.classList.toggle("menu-open", isOpen);
   menuToggle.setAttribute("aria-expanded", String(isOpen));
   menuToggle.setAttribute("aria-label", isOpen ? "Close menu" : "Open menu");
 }
 
 menuToggle.addEventListener("click", () => {
-  setMenuOpen(!sidebar.classList.contains("menu-open"));
+  setMenuOpen(!siteHeader.classList.contains("menu-open"));
 });
 
 // Close after choosing a view, tapping outside or pressing Escape
 window.addEventListener("hashchange", () => setMenuOpen(false));
 
-for (const link of document.querySelectorAll(".sidebar .nav-link")) {
+for (const link of document.querySelectorAll(".site-header .nav-link")) {
   link.addEventListener("click", () => setMenuOpen(false));
 }
 
 document.addEventListener("click", (event) => {
-  if (!sidebar.contains(event.target)) {
+  if (!siteHeader.contains(event.target)) {
     setMenuOpen(false);
   }
 });
@@ -167,92 +168,13 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-// HIDE / SHOW THE SIDEBAR (computer)
-
-const appLayout = document.querySelector(".app-layout");
-const sidebarToggle = document.querySelector("#sidebar-toggle");
-const mainContent = document.querySelector(".main-content");
-const SIDEBAR_STORAGE_KEY = "stellarvoyage-sidebar-collapsed";
-
-function setSidebarCollapsed(isCollapsed, save = true) {
-  appLayout.classList.toggle("sidebar-collapsed", isCollapsed);
-
-  const label = isCollapsed ? "Show sidebar" : "Hide sidebar";
-  sidebarToggle.setAttribute("aria-label", label);
-  sidebarToggle.title = label;
-  sidebarToggle.setAttribute("aria-expanded", String(!isCollapsed));
-
-  updateBrandLabel();
-
-  if (save) {
-    try {
-      localStorage.setItem(SIDEBAR_STORAGE_KEY, isCollapsed ? "1" : "0");
-    } catch {
-      // Storage may be blocked; the choice just won't be remembered
-    }
-  }
-}
-
-sidebarToggle.addEventListener("click", () => {
-  setSidebarCollapsed(!appLayout.classList.contains("sidebar-collapsed"));
-});
-
-// LOGO WHILE THE SIDEBAR IS HIDDEN
-// Only the logo icon stays visible, and clicking it opens the sidebar
-// instead of going to the Overview. Phones (600px or less) have no
-// hidden sidebar, so there the logo always goes to the Overview.
-
-const brandLink = document.querySelector(".brand");
-const phoneLayout = window.matchMedia("(max-width: 600px)");
-
-function isSidebarHidden() {
-  return appLayout.classList.contains("sidebar-collapsed") && !phoneLayout.matches;
-}
-
-// With the name hidden, the link needs its own label
-function updateBrandLabel() {
-  if (isSidebarHidden()) {
-    brandLink.setAttribute("aria-label", "Show sidebar");
-    brandLink.title = "Show sidebar";
-  } else {
-    brandLink.removeAttribute("aria-label");
-    brandLink.removeAttribute("title");
-  }
-}
-
-brandLink.addEventListener("click", (event) => {
-  if (isSidebarHidden()) {
-    event.preventDefault();
-    setSidebarCollapsed(false);
-  }
-});
-
-// Moving between phone and computer sizes changes what the logo does
-phoneLayout.addEventListener("change", updateBrandLabel);
-
-// Restore the last choice without animating it on page load
+// The old sidebar remembered whether it was hidden; that is no longer
+// needed, so clear the saved choice
 try {
-  if (localStorage.getItem(SIDEBAR_STORAGE_KEY) === "1") {
-    appLayout.classList.add("sidebar-instant");
-    setSidebarCollapsed(true, false);
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => appLayout.classList.remove("sidebar-instant"));
-    });
-  }
+  localStorage.removeItem("stellarvoyage-sidebar-collapsed");
 } catch {
-  // Storage may be blocked; start with the sidebar open
+  // Storage may be blocked; nothing to clear
 }
-
-// The globe needs to know its new size once the sidebar has moved
-mainContent.addEventListener("transitionend", (event) => {
-  if (event.target === mainContent && event.propertyName === "margin-left") {
-    if (cesiumViewer && !viewIntelligence.hidden) {
-      cesiumViewer.resize();
-      cesiumViewer.scene.requestRender();
-    }
-  }
-});
 
 function handleRoute() {
   const [view = "", topic = ""] = location.hash
@@ -289,6 +211,9 @@ function handleRoute() {
   document.title = "StellarVoyage";
 }
 
+// The view shown now, so changing to another one can start at the top
+let currentView = null;
+
 function showView(view) {
   const isOverview = view === "overview";
   const isLaunches = view === "launches";
@@ -299,6 +224,15 @@ function showView(view) {
   viewLaunches.hidden = !isLaunches;
   viewGuide.hidden = !isGuide;
   viewIntelligence.hidden = !isIntelligence;
+
+  // All views share one page, so the browser would keep the previous
+  // view's scroll position: start a different view at the top instead.
+  // (Within Launches, going back from a launch page still returns to
+  // the same place in the list, see showLaunchPage.)
+  if (view !== currentView) {
+    currentView = view;
+    window.scrollTo({ top: 0 });
+  }
 
   navOverview.classList.toggle("active", isOverview);
   navLaunches.classList.toggle("active", isLaunches);
