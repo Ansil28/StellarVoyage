@@ -33,7 +33,8 @@ const APP_FILES = [
   "./assets/guide/stages.jpg",
   "./assets/guide/filling-station.jpg",
   "./assets/guide/glossary.jpg",
-  "./assets/guide/rocket-forces.svg"
+  "./assets/guide/rocket-forces.svg",
+  "./assets/guide/rocket-types.svg"
 ];
 
 const LIBRARY_HOSTS = [

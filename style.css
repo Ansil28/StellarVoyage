@@ -1110,6 +1110,13 @@ button {
     font-size: 18px;
 }
 
+.guide-content h4 {
+    margin-top: 20px;
+    margin-bottom: 8px;
+    color: #cbd5e1;
+    font-size: 15px;
+}
+
 .guide-content p {
     color: #aebed1;
     font-size: 15px;
@@ -1144,6 +1151,57 @@ button {
     width: 100%;
     height: auto;
     border-radius: 14px;
+}
+
+/* Tables inside guide articles; the box scrolls sideways on phones */
+.guide-table-wrapper {
+    margin: 14px 0 6px;
+    overflow-x: auto;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 10px;
+}
+
+.guide-table-wrapper:focus-visible {
+    outline: 2px solid #93c5fd;
+    outline-offset: 2px;
+}
+
+.guide-table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.guide-table th,
+.guide-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+    text-align: left;
+    vertical-align: top;
+}
+
+.guide-table thead th {
+    background: rgba(59, 130, 246, 0.12);
+    color: #93c5fd;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.guide-table tbody th {
+    color: #f8fafc;
+    font-weight: 700;
+}
+
+.guide-table td {
+    color: #aebed1;
+}
+
+.guide-table tbody tr:last-child th,
+.guide-table tbody tr:last-child td {
+    border-bottom: none;
 }
 
 /* display: grid would otherwise override the hidden attribute */

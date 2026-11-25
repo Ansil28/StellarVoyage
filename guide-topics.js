@@ -3,7 +3,10 @@
 // Each section can have "paragraphs" (shown first), a "list" and
 // "after" (paragraphs shown after the list).
 // List items are plain strings, or { term, text } for definition-style items.
-// A section can also have an "image" ({ src, alt }), shown under its heading.
+// A section can also have an "image" ({ src, alt }), shown under its heading,
+// and a "table" ({ headers: [...], rows: [[...], ...] }), shown at the end.
+// "subheading: true" shows the heading smaller, as part of the section above.
+// A topic can have its own "image" ({ src, alt }), shown after the intro.
 
 const GUIDE_TOPICS = {
   fundamentals: {
@@ -82,6 +85,14 @@ const GUIDE_TOPICS = {
     intro:
       "Rockets are usually grouped by the kind of propellant they burn. " +
       "Each type trades simplicity, performance and control in a different way.",
+    image: {
+      src: "assets/guide/rocket-types.svg",
+      alt:
+        "Cutaway diagrams of a solid, a liquid and a hybrid rocket. " +
+        "Solid: fuel and oxidizer mixed in one grain with a burning core, about 250–270 s of specific impulse, no throttle or restart. " +
+        "Liquid: separate fuel and oxidizer tanks feeding a turbopump and combustion chamber, about 300–450 s, can throttle and restart. " +
+        "Hybrid: an oxidizer tank and valve above a solid fuel with a central port, about 250–300 s, can throttle and restart."
+    },
     sections: [
       {
         heading: "Solid rockets",
@@ -92,21 +103,54 @@ const GUIDE_TOPICS = {
         list: [
           "Simple, reliable and can be stored for years.",
           "Produce very high thrust, which makes them ideal as boosters.",
-          "Usually cannot be throttled, shut down or restarted.",
-          "Examples: the Space Shuttle boosters and the side boosters of Ariane 5."
+          "Usually cannot be throttled, shut down or restarted. " +
+          "Instead, the thrust profile is set before flight by the shape of the hole through the grain: " +
+          "a star-shaped core, for example, burns over a larger area and gives more thrust early on.",
+          "Lower efficiency, with a specific impulse of around 250–270 s.",
+          "Examples: the Space Shuttle and SLS boosters, and the P120C boosters of Ariane 6."
         ]
       },
       {
         heading: "Liquid rockets",
         paragraphs: [
-          "Fuel and oxidizer are stored in separate tanks and pumped into a combustion chamber. " +
+          "Fuel and oxidizer are stored in separate tanks and fed into a combustion chamber. " +
+          "Large engines use turbopumps to push the propellants in at high pressure, while smaller ones are often pressure-fed: " +
+          "the tanks are pressurized and the gas pushes the propellants into the engine. " +
           "This is the most common type for orbital launch vehicles."
         ],
         list: [
-          "Higher efficiency than solid motors.",
+          "Higher efficiency than solid motors, from about 300 s to 450 s.",
           "Engines can be throttled, shut down and often restarted.",
-          "More complex: they need pumps, valves and careful propellant handling.",
-          "Examples: Falcon 9 (kerosene and liquid oxygen) and Starship (methane and liquid oxygen)."
+          "More complex: they need pumps, valves and careful propellant handling."
+        ]
+      },
+      {
+        heading: "Common propellant combinations",
+        subheading: true,
+        list: [
+          {
+            term: "Kerosene and liquid oxygen (kerolox)",
+            text: "dense and easy to handle. Used by Falcon 9."
+          },
+          {
+            term: "Liquid hydrogen and liquid oxygen (hydrolox)",
+            text:
+              "the most efficient, but hydrogen is very cold and bulky. " +
+              "Used by the RS-25 engines of the Space Shuttle and SLS."
+          },
+          {
+            term: "Methane and liquid oxygen (methalox)",
+            text:
+              "a balance between the two, cleaner burning and well suited to reusable engines. " +
+              "Used by Starship."
+          },
+          {
+            term: "Hypergolic propellants",
+            text:
+              "ignite on contact, with no igniter needed, and can be stored at room temperature for long periods. " +
+              "They are toxic, so today they are mostly used in spacecraft thrusters, " +
+              "such as the Draco thrusters on SpaceX's Dragon."
+          }
         ]
       },
       {
@@ -118,9 +162,32 @@ const GUIDE_TOPICS = {
         list: [
           "Safer than solid motors, because fuel and oxidizer are kept apart until ignition.",
           "Can be throttled and shut down by controlling the oxidizer flow.",
+          "Lower thrust for their size, because the solid fuel burns away slowly. " +
+          "This is one reason they are rare on orbital rockets.",
           "Popular in student and amateur rocketry.",
-          "Example: SpaceShipOne, the first private crewed spacecraft."
+          "Example: SpaceShipOne, which in 2004 became the first privately funded crewed vehicle to reach space."
         ]
+      },
+      {
+        heading: "Beyond chemical rockets",
+        paragraphs: [
+          "Electric propulsion, such as ion and Hall-effect thrusters, uses electricity to accelerate a gas like xenon or krypton to very high speeds. " +
+          "It is extremely efficient, with a specific impulse of 1,000 to 5,000 s, but its thrust is tiny, about the weight of a sheet of paper. " +
+          "It cannot lift a rocket off the ground, but it is ideal in space for long missions and for keeping satellites in orbit, " +
+          "as on NASA's Dawn probe and Starlink satellites."
+        ]
+      },
+      {
+        heading: "Comparison",
+        table: {
+          headers: ["Type", "Specific impulse", "Throttle / restart", "Complexity", "Typical use"],
+          rows: [
+            ["Solid", "~250–270 s", "No", "Low", "Boosters, missiles"],
+            ["Liquid", "~300–450 s", "Yes", "High", "Main stages, upper stages"],
+            ["Hybrid", "~250–300 s", "Yes", "Medium", "Student and suborbital rockets"],
+            ["Electric", "~1,000–5,000 s", "Yes", "High", "In-space propulsion only"]
+          ]
+        }
       }
     ]
   },

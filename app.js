@@ -1333,23 +1333,34 @@ function showGuideTopic(topicKey) {
 
   const article = [backButton, title, intro];
 
+  // Image (diagram or photo) in a guide article
+  function createGuideFigure({ src, alt }) {
+    const figure = document.createElement("figure");
+    figure.className = "guide-figure";
+
+    const image = document.createElement("img");
+    image.src = src;
+    image.alt = alt || "";
+    image.loading = "lazy";
+
+    figure.append(image);
+    return figure;
+  }
+
+  // Optional image for the whole article, after the introduction
+  if (topic.image) {
+    article.push(createGuideFigure(topic.image));
+  }
+
   for (const section of topic.sections) {
-    const heading = document.createElement("h3");
+    // A subheading is smaller and belongs to the section above it
+    const heading = document.createElement(section.subheading ? "h4" : "h3");
     heading.textContent = section.heading;
     article.push(heading);
 
-    // Optional image (diagram or photo) under the section heading
+    // Optional image under the section heading
     if (section.image) {
-      const figure = document.createElement("figure");
-      figure.className = "guide-figure";
-
-      const image = document.createElement("img");
-      image.src = section.image.src;
-      image.alt = section.image.alt || "";
-      image.loading = "lazy";
-
-      figure.append(image);
-      article.push(figure);
+      article.push(createGuideFigure(section.image));
     }
 
     // Paragraphs come before the list; "after" paragraphs follow it
@@ -1383,6 +1394,54 @@ function showGuideTopic(topicKey) {
       const paragraph = document.createElement("p");
       paragraph.textContent = text;
       article.push(paragraph);
+    }
+
+    // Optional table, in a box that scrolls sideways on small screens
+    if (section.table) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "guide-table-wrapper";
+      wrapper.tabIndex = 0; // so it can be scrolled with the keyboard
+      wrapper.setAttribute("role", "region");
+      wrapper.setAttribute("aria-label", section.heading);
+
+      const table = document.createElement("table");
+      table.className = "guide-table";
+
+      const headRow = document.createElement("tr");
+
+      for (const text of section.table.headers) {
+        const cell = document.createElement("th");
+        cell.scope = "col";
+        cell.textContent = text;
+        headRow.append(cell);
+      }
+
+      const head = document.createElement("thead");
+      head.append(headRow);
+
+      const body = document.createElement("tbody");
+
+      for (const row of section.table.rows) {
+        const tableRow = document.createElement("tr");
+
+        row.forEach((text, index) => {
+          // The first cell names the row (for example "Solid")
+          const cell = document.createElement(index === 0 ? "th" : "td");
+
+          if (index === 0) {
+            cell.scope = "row";
+          }
+
+          cell.textContent = text;
+          tableRow.append(cell);
+        });
+
+        body.append(tableRow);
+      }
+
+      table.append(head, body);
+      wrapper.append(table);
+      article.push(wrapper);
     }
   }
 
