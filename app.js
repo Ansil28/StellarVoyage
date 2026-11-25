@@ -217,6 +217,12 @@ function handleRoute() {
     .replace(/^#\/?/, "")
     .split("/");
 
+  // Leaving Launches: forget where the list was, so coming back later
+  // does not jump to an old position
+  if (view !== "launches") {
+    launchListScroll = null;
+  }
+
   if (view === "guide") {
     showView("guide");
     showGuideTopic(topic);
@@ -320,7 +326,8 @@ function showLaunches(launches) {
 
   populateAgencyFilter(allLaunches);
 
-  renderLaunches(allLaunches);
+  // Keeps the current search and agency filter when launches reload
+  applyFilters();
   renderOverviewLaunches(allLaunches);
 
   // Keep the launch site markers on the globe in sync
@@ -332,10 +339,21 @@ function showLaunches(launches) {
   }
 }
 
+// When launches were last loaded (see "Refresh when coming back" below)
+let lastLaunchesLoad = 0;
+
+// Give up on the API after this long and use the saved data instead
+const API_TIMEOUT_MS = 10000;
+
 async function loadLaunches() {
+  lastLaunchesLoad = Date.now();
   status.textContent = "Loading launches...";
   retryButton.hidden = true;
-  launchesContainer.replaceChildren();
+
+  // On a refresh, keep showing the current list until the new one arrives
+  if (allLaunches.length === 0) {
+    launchesContainer.replaceChildren();
+  }
 
   const cache = readLaunchCache();
   const cacheIsFresh =
@@ -348,7 +366,12 @@ async function loadLaunches() {
   }
 
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(
+      API_URL,
+      typeof AbortSignal.timeout === "function"
+        ? { signal: AbortSignal.timeout(API_TIMEOUT_MS) }
+        : {}
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status}`);
@@ -387,7 +410,11 @@ async function loadLaunches() {
       showLaunches(cache.results);
     } else {
       status.textContent = reason;
-      renderOverviewLaunches([]);
+
+      // A failed refresh keeps the launches already on screen
+      if (allLaunches.length === 0) {
+        renderOverviewLaunches([]);
+      }
     }
 
     retryButton.hidden = false;
@@ -649,6 +676,8 @@ function populateAgencyFilter(launches) {
     ...new Set(launches.map(getAgencyName))
   ].sort();
 
+  const previousAgency = agencyFilter.value;
+
   agencyFilter.replaceChildren();
 
   const allOption = document.createElement("option");
@@ -663,6 +692,11 @@ function populateAgencyFilter(launches) {
     option.textContent = agency;
 
     agencyFilter.append(option);
+  }
+
+  // Keep the chosen agency after a reload, if it still has launches
+  if (agencies.includes(previousAgency)) {
+    agencyFilter.value = previousAgency;
   }
 }
 
@@ -2517,6 +2551,7 @@ function renderOverviewUpcoming(launches) {
 const ISS_NORAD_ID = 25544;
 
 let overviewIssSatrec = null;
+let overviewIssLoadedAt = 0;
 let overviewIssTimer = null;
 let overviewIssLoading = false;
 
@@ -2536,6 +2571,7 @@ async function startOverviewIss() {
       overviewIssSatrec = satellite.twoline2satrec(
         ...(await loadTle(ISS_NORAD_ID))
       );
+      overviewIssLoadedAt = Date.now();
     } catch (error) {
       console.error("Overview ISS error:", error);
       overviewIssStatus.textContent = "ISS data is unavailable right now.";
@@ -2642,6 +2678,33 @@ window.addEventListener("online", () => {
 });
 
 updateOnlineStatus();
+
+// REFRESH WHEN COMING BACK
+// The installed app can stay open in the background for days, so
+// reload the data when it is shown again (at most every 15 minutes,
+// like the launch cache, so the API's request limit is respected)
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "visible") {
+    return;
+  }
+
+  if (Date.now() - lastLaunchesLoad >= CACHE_DURATION_MS) {
+    loadLaunches();
+  }
+
+  // The Overview's ISS orbit data, refreshed like the saved TLE (2 h)
+  if (
+    overviewIssSatrec &&
+    Date.now() - overviewIssLoadedAt >= TLE_CACHE_DURATION_MS
+  ) {
+    overviewIssSatrec = null;
+    pauseOverviewIss();
+
+    if (!viewOverview.hidden) {
+      startOverviewIss();
+    }
+  }
+});
 
 
 // START THE APP
