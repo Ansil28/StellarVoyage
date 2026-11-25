@@ -1153,6 +1153,107 @@ button {
     border-radius: 14px;
 }
 
+/* The image is a button that opens the full-screen viewer */
+.guide-figure-button {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: none;
+    border-radius: 14px;
+    background: none;
+    cursor: zoom-in;
+}
+
+.guide-figure-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+/* "Tap to enlarge" only on phones, where diagrams are small */
+.guide-figure-hint {
+    display: none;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    .guide-figure-hint {
+        display: block;
+    }
+}
+
+/* FULL-SCREEN IMAGE VIEWER */
+.image-viewer {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: rgba(3, 7, 18, 0.96);
+    color: var(--text);
+}
+
+.image-viewer::backdrop {
+    background: rgba(3, 7, 18, 0.9);
+}
+
+/* Scrolls in both directions, so the image can be dragged around */
+.image-viewer-scroll {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    overscroll-behavior: contain;
+}
+
+/* Full size on phones (900px wide, as the diagrams were drawn);
+   "margin: auto" centres it when it fits and keeps every edge
+   reachable when it does not */
+.image-viewer-scroll img {
+    flex-shrink: 0;
+    width: 900px;
+    max-width: none;
+    height: auto;
+    margin: auto;
+    padding: 56px 12px 24px;
+    box-sizing: content-box;
+}
+
+/* Large screens: as big as fits on the screen */
+@media (min-width: 1000px) {
+    .image-viewer-scroll img {
+        width: min(92vw, calc(88vh * 1.35));
+        padding: 24px;
+    }
+}
+
+.image-viewer-close {
+    position: fixed;
+    top: calc(12px + env(safe-area-inset-top));
+    right: calc(12px + env(safe-area-inset-right));
+    z-index: 1;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface);
+    color: var(--text);
+    font-size: 26px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.image-viewer-close:hover,
+.image-viewer-close:focus-visible {
+    background: var(--accent-bg);
+    outline: none;
+}
+
 /* Tables inside guide articles; the box scrolls sideways on phones */
 .guide-table-wrapper {
     margin: 14px 0 6px;

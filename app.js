@@ -1333,17 +1333,29 @@ function showGuideTopic(topicKey) {
 
   const article = [backButton, title, intro];
 
-  // Image (diagram or photo) in a guide article
+  // Image (diagram or photo) in a guide article. Tapping it opens the
+  // full-size viewer, so small text in diagrams can be read on phones.
   function createGuideFigure({ src, alt }) {
     const figure = document.createElement("figure");
     figure.className = "guide-figure";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "guide-figure-button";
+    button.setAttribute("aria-label", "Enlarge image");
+    button.addEventListener("click", () => openImageViewer(src, alt));
 
     const image = document.createElement("img");
     image.src = src;
     image.alt = alt || "";
     image.loading = "lazy";
 
-    figure.append(image);
+    const hint = document.createElement("figcaption");
+    hint.className = "guide-figure-hint";
+    hint.textContent = "Tap to enlarge";
+
+    button.append(image);
+    figure.append(button, hint);
     return figure;
   }
 
@@ -1452,6 +1464,33 @@ function showGuideTopic(topicKey) {
 
   window.scrollTo({ top: 0 });
 }
+
+// FULL-SCREEN IMAGE VIEWER
+// Shows a guide image at full size; on phones it can be dragged around
+
+const imageViewer = document.querySelector("#image-viewer");
+const imageViewerImage = document.querySelector("#image-viewer-image");
+const imageViewerScroll = document.querySelector(".image-viewer-scroll");
+
+function openImageViewer(src, alt) {
+  imageViewerImage.src = src;
+  imageViewerImage.alt = alt || "";
+  imageViewer.showModal();
+
+  // Start at the top left of the image
+  imageViewerScroll.scrollTo(0, 0);
+}
+
+document
+  .querySelector("#close-image-viewer")
+  .addEventListener("click", () => imageViewer.close());
+
+// Tapping the dark area around the image also closes it
+imageViewer.addEventListener("click", (event) => {
+  if (event.target === imageViewer || event.target === imageViewerScroll) {
+    imageViewer.close();
+  }
+});
 
 
 // SPACE INTELLIGENCE — 3D GLOBE
