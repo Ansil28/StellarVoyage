@@ -58,7 +58,7 @@ const GUIDE_TOPICS = {
           "The Tsiolkovsky rocket equation explains how much a rocket can change its speed, known as delta-v (Δv):",
           "Δv = Isp × g₀ × ln(full mass / empty mass)",
           "Here Isp is the specific impulse, a measure of engine efficiency given in seconds (Isp × g₀ is the effective exhaust velocity). " +
-          "Typical values are around 250–270 s for solid motors, about 300 s for kerosene engines and around 450 s for hydrogen engines in vacuum. " +
+          "Typical values are around 250–290 s for solid motors, about 300–350 s for kerosene engines and around 450 s for hydrogen engines, both in vacuum. " +
           "g₀ is standard gravity (9.81 m/s²), the full mass includes the propellant and the empty mass is what is left once it is burned.",
           "Because of the logarithm, each extra bit of speed needs much more propellant. " +
           "Reaching low Earth orbit takes about 9.4 km/s of delta-v, which is why most of a rocket's mass at liftoff is propellant. " +
@@ -89,7 +89,7 @@ const GUIDE_TOPICS = {
       src: "assets/guide/rocket-types.svg",
       alt:
         "Cutaway diagrams of a solid, a liquid and a hybrid rocket. " +
-        "Solid: fuel and oxidizer mixed in one grain with a burning core, about 250–270 s of specific impulse, no throttle or restart. " +
+        "Solid: fuel and oxidizer mixed in one grain with a burning core, about 250–290 s of specific impulse, no throttle or restart. " +
         "Liquid: separate fuel and oxidizer tanks feeding a turbopump and combustion chamber, about 300–450 s, can throttle and restart. " +
         "Hybrid: an oxidizer tank and valve above a solid fuel with a central port, about 250–300 s, can throttle and restart."
     },
@@ -106,7 +106,7 @@ const GUIDE_TOPICS = {
           "Usually cannot be throttled, shut down or restarted. " +
           "Instead, the thrust profile is set before flight by the shape of the hole through the grain: " +
           "a star-shaped core, for example, burns over a larger area and gives more thrust early on.",
-          "Lower efficiency, with a specific impulse of around 250–270 s.",
+          "Lower efficiency, with a specific impulse of around 250–290 s.",
           "Examples: the Space Shuttle and SLS boosters, and the P120C boosters of Ariane 6."
         ]
       },
@@ -182,7 +182,7 @@ const GUIDE_TOPICS = {
         table: {
           headers: ["Type", "Specific impulse", "Throttle / restart", "Complexity", "Typical use"],
           rows: [
-            ["Solid", "~250–270 s", "No", "Low", "Boosters, missiles"],
+            ["Solid", "~250–290 s", "No", "Low", "Boosters, missiles"],
             ["Liquid", "~300–450 s", "Yes", "High", "Main stages, upper stages"],
             ["Hybrid", "~250–300 s", "Yes", "Medium", "Student and suborbital rockets"],
             ["Electric", "~1,000–5,000 s", "Yes", "High", "In-space propulsion only"]
@@ -208,18 +208,42 @@ const GUIDE_TOPICS = {
         ]
       },
       {
-        heading: "Common propellants",
-        list: [
-          { term: "RP-1 and liquid oxygen", text: "refined kerosene. Dense and easy to store. Used by Falcon 9." },
-          { term: "Liquid hydrogen and liquid oxygen", text: "the most efficient chemical combination, but hydrogen is very cold and takes up a lot of space." },
-          { term: "Methane and liquid oxygen", text: "a balance between the two, and cleaner burning, which helps reusable engines. Used by Starship." },
-          { term: "Hypergolic propellants", text: "ignite on contact without an igniter. Common in spacecraft thrusters." }
+        heading: "Keeping the engine cool",
+        paragraphs: [
+          "The gas in the chamber is hotter than the melting point of most metals, so the walls must be cooled. " +
+          "Most large engines use regenerative cooling: before it is burned, the fuel flows through thin channels in the chamber and nozzle walls and carries the heat away. " +
+          "Other methods include film cooling, where a thin layer of fuel protects the inner wall, " +
+          "and ablative materials that slowly char and erode, common in solid motors and small engines."
+        ]
+      },
+      {
+        heading: "Nozzles and altitude",
+        paragraphs: [
+          "A nozzle works best when the exhaust leaves at the same pressure as the surrounding air. " +
+          "At sea level that means a fairly short nozzle; in vacuum, a much larger one lets the gas expand further and gives more efficiency. " +
+          "Because air pressure drops during flight, first-stage nozzles are a compromise, while upper-stage engines use very large nozzles. " +
+          "This is why the Merlin Vacuum engine on Falcon 9's second stage has a much bigger nozzle than the nine Merlins on the first stage. " +
+          "A vacuum nozzle fired at sea level would be over-expanded, and the flow could separate from the walls and damage it."
+        ]
+      },
+      {
+        heading: "Propellants and mixture ratio",
+        paragraphs: [
+          "The choice of propellant sets much of an engine's performance (see Types of Rockets for a comparison). " +
+          "Engines also have to mix fuel and oxidizer in the right proportion, called the mixture ratio. " +
+          "Most engines run slightly fuel-rich, with a bit more fuel than the exact chemical balance, " +
+          "because lighter exhaust molecules leave the nozzle faster and the hot gas is less corrosive to the engine."
         ]
       },
       {
         heading: "Thrust and specific impulse",
         paragraphs: [
-          "Thrust is the force an engine produces, measured in newtons or kilonewtons. " +
+          "Thrust is the force an engine produces, measured in newtons or kilonewtons. It comes from two parts:",
+          "F = ṁ × vₑ + (pₑ − pₐ) × Aₑ",
+          "Here ṁ is the mass of propellant leaving the nozzle per second, vₑ is the exhaust velocity, " +
+          "pₑ is the gas pressure at the nozzle exit, pₐ is the outside air pressure and Aₑ is the nozzle exit area. " +
+          "The first part, the momentum of the exhaust, does most of the work. " +
+          "The second part explains why the same engine produces more thrust in vacuum, where pₐ is zero.",
           "Specific impulse (Isp) measures efficiency, in seconds: how long one kilogram of propellant can produce one kilogram-force of thrust.",
           "A higher Isp means more delta-v from the same amount of propellant. " +
           "Solid motors usually reach about 250 to 290 seconds, kerosene engines about 300 to 350 seconds in vacuum, " +
@@ -228,11 +252,42 @@ const GUIDE_TOPICS = {
       },
       {
         heading: "Engine cycles",
+        paragraphs: [
+          "Large liquid engines need pumps to push propellant into the chamber at high pressure. " +
+          "The engine cycle is the way those pumps are powered."
+        ],
         list: [
-          { term: "Pressure-fed", text: "tank pressure pushes the propellant into the chamber. Simple, but limited to low chamber pressure." },
-          { term: "Gas generator", text: "a small part of the propellant drives the turbopumps and is then dumped overboard. Used by the Merlin engine." },
-          { term: "Staged combustion", text: "the turbine exhaust is sent into the main chamber, so no propellant is wasted. Used by the RD-180 and Raptor." },
-          { term: "Expander", text: "heat from cooling the nozzle drives the pumps. Used by the RL10 upper-stage engine." }
+          {
+            term: "Pressure-fed",
+            text:
+              "tank pressure pushes the propellant into the chamber, with no pumps. " +
+              "Simple, but limited to low chamber pressure. Used by the Draco thrusters on SpaceX's Dragon."
+          },
+          {
+            term: "Electric pump-fed",
+            text:
+              "battery-powered electric motors drive the pumps. Simple to build, but the batteries are heavy, " +
+              "so it suits small launchers. Used by Rocket Lab's Rutherford engine."
+          },
+          {
+            term: "Gas generator",
+            text:
+              "a small part of the propellant is burned to drive the turbopumps and is then dumped overboard. " +
+              "Simpler than staged combustion, but slightly less efficient. Used by the Merlin engine."
+          },
+          {
+            term: "Staged combustion",
+            text:
+              "the gas that drives the turbine is sent into the main chamber, so no propellant is wasted and chamber pressure can be very high. " +
+              "Used by the RD-180 and by Raptor, which uses full-flow staged combustion, where both the fuel and the oxidizer pass through turbines."
+          },
+          {
+            term: "Expander",
+            text:
+              "the fuel is heated as it cools the chamber and nozzle walls, turns into gas and drives the turbine. " +
+              "No extra combustion is needed, but the amount of heat available limits engine size, " +
+              "so it suits upper-stage engines like the RL10."
+          }
         ]
       }
     ]

@@ -36,7 +36,7 @@
 <circle cx="132" cy="475" r="2.5" fill="#e6edf7"/><polyline points="132,475 166,475 174,475" fill="none" stroke="#8fa3bf" stroke-width="1"/>
 <text x="180" y="479" fill="#e6edf7" font-size="12.5">Nozzle</text>
 <line x1="50" y1="572" x2="280" y2="572" stroke="#22395c"/>
-<text x="50" y="594" fill="#8fa3bf" font-size="13">Specific impulse</text><text x="280" y="594" fill="#e6edf7" font-size="13" font-weight="600" text-anchor="end">~250–270 s</text>
+<text x="50" y="594" fill="#8fa3bf" font-size="13">Specific impulse</text><text x="280" y="594" fill="#e6edf7" font-size="13" font-weight="600" text-anchor="end">~250–290 s</text>
 <text x="50" y="614" fill="#8fa3bf" font-size="13">Throttle / restart</text><text x="280" y="614" fill="#e6edf7" font-size="13" font-weight="600" text-anchor="end">No</text>
 <rect x="315" y="105" width="270" height="525" rx="14" fill="#101f36" stroke="#22395c" stroke-width="1.5"/>
 <text x="335" y="138" fill="#e6edf7" font-size="20" font-weight="700">Liquid</text>
