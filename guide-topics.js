@@ -472,35 +472,142 @@ const GUIDE_TOPICS = {
   stages: {
     title: "Flight Stages",
     intro:
-      "A launch to orbit takes around ten minutes. " +
-      "These are the main events, in the order they usually happen.",
+      "A launch to low Earth orbit takes around eight to ten minutes. " +
+      "Missions to higher orbits add long coast phases and can take hours before the payload is released. " +
+      "These are the main events, in the order they usually happen; " +
+      "the times are from a typical Falcon 9 launch of Starlink satellites.",
+    image: {
+      src: "assets/guide/rocket-flight.svg",
+      caption:
+        "A typical launch to low Earth orbit, with the main events along the way, the first stage returning to a drone ship, " +
+        "and approximate times from a Falcon 9 Starlink launch.",
+      alt:
+        "Trajectory of a two-stage rocket, not to scale. From the launch pad: liftoff, pitch-over at the start of the gravity turn, " +
+        "Max-Q, stage separation with MECO and second-stage ignition, fairing separation above the thick air and about 100 km up, " +
+        "SECO and payload deployment in orbit. The first stage returns with an entry burn and a landing burn on a drone ship. " +
+        "Falcon 9 timeline: engine ignition T−0:03, liftoff T+0:00, Max-Q T+1:12, MECO T+2:27, stage separation T+2:31, " +
+        "second-stage ignition T+2:37, fairing separation T+2:42, entry burn T+6:46, landing burn T+8:23, SECO T+8:42, " +
+        "booster lands T+8:45, payload deployed T+29:03. A booster landing back on land first flips and fires a boostback burn."
+    },
     sections: [
       {
         heading: "From the pad to space",
         list: [
-          { term: "Ignition and liftoff", text: "the engines start and, once they reach full thrust, the hold-down clamps release the rocket." },
-          { term: "Pitch-over", text: "shortly after clearing the tower, the rocket starts to tilt and follows a curved gravity turn." },
-          { term: "Max-Q", text: "the moment of maximum aerodynamic pressure, about one minute into flight. Some rockets throttle down to reduce stress." },
-          { term: "MECO", text: "main engine cut-off: the first stage shuts down." },
-          { term: "Stage separation", text: "the first stage is released and the upper stage moves away." },
-          { term: "Second-stage ignition", text: "the upper-stage engine starts and continues the climb." },
-          { term: "Fairing separation", text: "once the rocket is above most of the atmosphere, the fairing halves are jettisoned." }
+          {
+            term: "Ignition and liftoff",
+            text:
+              "liquid engines start a few seconds before liftoff, about 3 seconds on Falcon 9. " +
+              "The flight computer checks that they are healthy and at full thrust, and only then do the hold-down clamps release the rocket. " +
+              "If something is wrong, the engines can still be shut down on the pad. " +
+              "Solid boosters are different: once lit, they cannot be stopped, so their ignition is the point of no return."
+          },
+          {
+            term: "Roll and pitch-over",
+            text:
+              "after clearing the tower, the rocket rolls to face its launch direction and starts to tilt. " +
+              "From then on it follows a gravity turn: gravity gradually bends its path from vertical to horizontal, " +
+              "while the rocket keeps its nose pointed into the airflow to avoid strong sideways loads."
+          },
+          {
+            term: "Max-Q",
+            text:
+              "the moment of maximum aerodynamic pressure, which depends on both speed and air density. " +
+              "It happens around 1 minute 10 seconds into flight, just after the rocket goes supersonic. " +
+              "Some rockets throttle down beforehand to reduce stress."
+          },
+          {
+            term: "Booster separation",
+            text: "on rockets with side boosters, they burn out and are released, usually about two minutes into flight."
+          },
+          {
+            term: "MECO (main engine cut-off)",
+            text:
+              "the first stage shuts down, about two and a half minutes into flight on Falcon 9. " +
+              "On reusable rockets it does not burn all of its propellant, because it keeps some for landing."
+          },
+          {
+            term: "Stage separation",
+            text: "a few seconds later, the separation system pushes the two stages apart."
+          },
+          {
+            term: "Second-stage ignition",
+            text:
+              "in free fall, the propellant floats inside the tanks, so it must first be settled at the bottom. " +
+              "Small thrusters or the push from separation give a brief acceleration before the upper-stage engine starts."
+          },
+          {
+            term: "Fairing separation",
+            text:
+              "about three minutes into flight, once the rocket is above most of the atmosphere, the fairing halves are jettisoned."
+          }
         ]
       },
       {
         heading: "Reaching orbit",
         list: [
-          { term: "SECO", text: "second-stage engine cut-off, once the target orbit is reached." },
-          { term: "Coast and restart", text: "for higher orbits, the upper stage may coast and then restart its engine." },
-          { term: "Payload deployment", text: "the satellite or spacecraft separates and begins its own mission." }
+          {
+            term: "SECO (second-stage engine cut-off)",
+            text:
+              "the upper stage shuts down once it reaches the planned orbit, " +
+              "around 8 to 9 minutes after liftoff for low Earth orbit."
+          },
+          {
+            term: "Coast and restart",
+            text:
+              "for higher orbits, the upper stage coasts, sometimes for half an orbit, and restarts its engine at the right point. " +
+              "For geostationary missions, this burn raises the high point of the orbit to about 36,000 km."
+          },
+          {
+            term: "Payload deployment",
+            text:
+              "the satellite or spacecraft separates and begins its own mission, " +
+              "anywhere from a few minutes to several hours after liftoff."
+          },
+          {
+            term: "Upper-stage disposal",
+            text:
+              "after deployment, the upper stage either fires a deorbit burn so that it burns up in the atmosphere, " +
+              "or moves to a disposal orbit. It also vents any leftover propellant, " +
+              "so it cannot later explode and create space debris."
+          }
         ]
       },
       {
         heading: "Booster recovery",
         paragraphs: [
-          "On reusable rockets, the first stage turns around after separation. " +
-          "It may perform a boostback burn to head back to land, an entry burn to slow down before re-entering the denser atmosphere, " +
-          "and a final landing burn to touch down on a landing pad or a drone ship."
+          "On reusable rockets, the first stage turns around after separation and makes up to three burns:"
+        ],
+        list: [
+          {
+            term: "Boostback burn",
+            text:
+              "only needed when landing back near the launch site. The booster flips and fires its engines to reverse direction. " +
+              "For drone ship landings it is usually skipped, because the ship is already waiting downrange."
+          },
+          {
+            term: "Entry burn",
+            text:
+              "a short burn, around six to seven minutes after liftoff, that slows the booster before it enters the denser atmosphere " +
+              "and reduces heating and stress. Grid fins then steer it towards the landing site."
+          },
+          {
+            term: "Landing burn",
+            text:
+              "the final burn before touchdown. Even with one engine at its lowest setting, " +
+              "Falcon 9's booster produces more thrust than its empty weight, so it cannot hover. " +
+              "The burn is timed so that the speed reaches zero exactly as the legs touch the landing pad or drone ship."
+          }
+        ],
+        after: [
+          "The fairing halves are also recovered: they glide down under parachutes and are picked up from the sea."
+        ]
+      },
+      {
+        heading: "If something goes wrong",
+        paragraphs: [
+          "Crewed spacecraft carry a launch escape system: powerful thrusters that can pull the capsule away from a failing rocket " +
+          "at any point from the pad to orbit, before it returns to Earth under parachutes. " +
+          "Crew Dragon, for example, uses its SuperDraco thrusters for this."
         ]
       }
     ]

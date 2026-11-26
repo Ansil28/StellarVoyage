@@ -3433,6 +3433,11 @@ document.addEventListener("visibilitychange", () => {
 // START THE APP
 // Runs last so every view's code and variables are ready
 
+// The year in the footers ("© 2026"), kept up to date
+for (const year of document.querySelectorAll(".current-year")) {
+  year.textContent = new Date().getFullYear();
+}
+
 renderOverviewGuide();
 loadLaunches();
 loadNews();

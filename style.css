@@ -467,6 +467,7 @@ button {
 
 .page-footer {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: var(--space-4);
   margin-top: auto;
@@ -477,14 +478,26 @@ button {
 }
 
 /* "Launch data by The Space Devs · Orbits by CelesTrak" */
-.footer-credit a {
+.footer-credit a,
+.footer-meta a {
   color: var(--muted);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
-.footer-credit a:hover {
+.footer-credit a:hover,
+.footer-meta a:hover {
   color: var(--text);
+}
+
+/* Second footer line ("Made by André Silva · © 2026 · …"): its own
+   full-width row under the first, separated by a thin line */
+.footer-meta {
+  flex-basis: 100%;
+  margin: 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  line-height: 1.6;
 }
 
 /* Responsive layout */

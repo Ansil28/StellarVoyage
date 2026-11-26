@@ -23,7 +23,7 @@ style.css    Todos os estilos; media queries a 850px e 600px. Tudo vem das escal
 guide-topics.js  Só dados: o texto dos artigos do Rocket Guide (GUIDE_TOPICS), indexado pelo data-topic dos cartões
 app.js       Toda a lógica: navegação por endereço, fetch e render dos lançamentos, filtros, countdown, página de detalhes, calendário, artigos do guia, globo Cesium e tracking da ISS
 README.md    Descrição curta do projeto
-assets/      favicon.svg (logótipo), apple-touch-icon.png (180x180), icon-192/512.png e icon-maskable-512.png (app instalável), og-image.png (1200x630, pré-visualização ao partilhar) e guide/ (fotos dos cartões do Rocket Guide, NASA e SpaceX, uma por tópico com o nome do data-topic, e diagramas SVG dos artigos: rocket-forces.svg, rocket-types.svg, rocket-engine.svg e rocket-anatomy.svg) e globe/ (imagens da Terra de dia e de noite, NASA, domínio público)
+assets/      favicon.svg (logótipo), apple-touch-icon.png (180x180), icon-192/512.png e icon-maskable-512.png (app instalável), og-image.png (1200x630, pré-visualização ao partilhar) e guide/ (fotos dos cartões do Rocket Guide, NASA e SpaceX, uma por tópico com o nome do data-topic, e diagramas SVG dos artigos: rocket-forces.svg, rocket-types.svg, rocket-engine.svg, rocket-anatomy.svg e rocket-flight.svg) e globe/ (imagens da Terra de dia e de noite, NASA, domínio público)
 manifest.webmanifest  Dados da app instalável (nome, cores, ícones, modo app "standalone", sem a barra do browser)
 sw.js        Service worker: guarda o site para abrir sem internet (ficheiros do site primeiro da rede, satellite.js e fontes primeiro da cópia guardada) e gera o `launch.ics` do "Add to calendar" no iPhone
 ```
@@ -42,7 +42,7 @@ O site está publicado em https://ansil28.github.io/StellarVoyage/ (GitHub Pages
 
 Dependências externas (via CDN, carregadas no `<head>` do `index.html`): CesiumJS 1.146, satellite.js 6.0.1, Google Fonts (Inter e Space Grotesk).
 
-Os rodapés das quatro vistas (`.page-footer`) dão crédito às fontes de dados ("Launch data by The Space Devs · Orbits by CelesTrak", na Overview também "News by Spaceflight News API" e na Space Intelligence "Earth imagery by NASA · Globe by CesiumJS"); manter esse crédito se o rodapé mudar.
+Os rodapés das quatro vistas (`.page-footer`) dão crédito às fontes de dados ("Launch data by The Space Devs · Orbits by CelesTrak", na Overview também "News by Spaceflight News API" e na Space Intelligence "Earth imagery by NASA · Globe by CesiumJS"); manter esse crédito se o rodapé mudar. Por baixo, cada rodapé tem uma segunda linha (`.footer-meta`): "Made by André Silva · © <ano atual, escrito pelo app.js em `.current-year`> · Source on GitHub" (link para github.com/Ansil28/StellarVoyage) e um aviso de que é um projeto não oficial e as horas dos lançamentos mudam muitas vezes.
 
 ## Regras
 
