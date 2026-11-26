@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 780" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">Anatomy of a two-stage rocket</title>
+<desc id="d">Cutaway of a two-stage rocket showing the payload fairing, payload, avionics, upper-stage tanks and vacuum engine, interstage, grid fins, first-stage tanks, helium tanks, feedline, landing legs and engines, with a bar showing how liftoff mass is split.</desc>
+<rect width="900" height="780" rx="18" fill="#0b1628"/>
+<text x="40" y="50" fill="#e6edf7" font-size="26" font-weight="700">Rocket Anatomy</text>
+<text x="40" y="76" fill="#8fa3bf" font-size="15">Cutaway of a typical two-stage, reusable rocket</text>
+
+<path d="M292,222 L292,165 C292,135 316,112 330,106 C344,112 368,135 368,165 L368,222 Z" fill="#1c3354" stroke="#c7d0dc" stroke-width="4"/>
+<line x1="330" y1="110" x2="330" y2="222" stroke="#c7d0dc" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.6"/>
+<rect x="316" y="160" width="28" height="34" rx="3" fill="#ffd43b"/>
+<rect x="300" y="168" width="14" height="18" fill="#3b5bdb" stroke="#91a7ff"/><rect x="346" y="168" width="14" height="18" fill="#3b5bdb" stroke="#91a7ff"/>
+<path d="M314,196 L346,196 L354,214 L306,214 Z" fill="#868e96"/>
+<path d="M292,222 L368,222 L362,230 L298,230 Z" fill="#c7d0dc"/>
+<rect x="298" y="230" width="64" height="118" fill="#c7d0dc"/>
+<rect x="302" y="232" width="56" height="10" fill="#343a40"/>
+<rect x="306" y="235" width="6" height="4" fill="#63e6be"/>
+<rect x="317" y="235" width="6" height="4" fill="#63e6be"/>
+<rect x="328" y="235" width="6" height="4" fill="#63e6be"/>
+<rect x="339" y="235" width="6" height="4" fill="#63e6be"/>
+<rect x="350" y="235" width="6" height="4" fill="#63e6be"/>
+<path d="M303,246 L357,246 L357,287 Q330,279 303,287 Z" fill="#ff922b"/>
+<path d="M303,290 Q330,282 357,290 L357,334 Q330,344 303,334 Z" fill="#4dabf7"/>
+<path d="M303,288.5 Q330,280.5 357,288.5" fill="none" stroke="#e6edf7" stroke-width="2"/>
+<rect x="298" y="348" width="64" height="74" fill="#16294a" stroke="#495057" stroke-width="3"/>
+<rect x="323" y="348" width="14" height="12" fill="#495057"/>
+<path d="M323,360 C321,385 308,405 303,418 L357,418 C352,405 339,385 337,360 Z" fill="#5c6b80"/>
+<rect x="282" y="352" width="16" height="16" fill="none" stroke="#adb5bd" stroke-width="2"/>
+<path d="M282,360 L298,360 M290,352 L290,368" stroke="#adb5bd" stroke-width="1.5"/>
+<rect x="362" y="352" width="16" height="16" fill="none" stroke="#adb5bd" stroke-width="2"/>
+<path d="M362,360 L378,360 M370,352 L370,368" stroke="#adb5bd" stroke-width="1.5"/>
+<rect x="298" y="422" width="64" height="248" fill="#c7d0dc"/>
+<rect x="303" y="428" width="54" height="104" rx="10" fill="#4dabf7"/>
+<circle cx="340" cy="455" r="8" fill="#868e96" stroke="#e6edf7" stroke-width="1.5"/>
+<circle cx="340" cy="500" r="8" fill="#868e96" stroke="#e6edf7" stroke-width="1.5"/>
+<rect x="303" y="540" width="54" height="122" rx="10" fill="#ff922b"/>
+<line x1="322" y1="532" x2="322" y2="676" stroke="#4dabf7" stroke-width="5"/>
+<path d="M298,600 L292,688" stroke="#343a40" stroke-width="7" stroke-linecap="round"/>
+<path d="M362,600 L368,688" stroke="#343a40" stroke-width="7" stroke-linecap="round"/>
+<rect x="298" y="670" width="64" height="12" fill="#495057"/>
+<path d="M305,682 L300,704 L320,704 L315,682 Z" fill="#5c6b80"/>
+<path d="M325,682 L320,704 L340,704 L335,682 Z" fill="#5c6b80"/>
+<path d="M345,682 L340,704 L360,704 L355,682 Z" fill="#5c6b80"/>
+<path d="M266,106 L258,106 L258,222 L266,222" fill="none" stroke="#8fa3bf" stroke-width="1.5"/>
+<text x="248" y="169.0" fill="#e6edf7" font-size="15" font-weight="700" text-anchor="end">Payload</text>
+<path d="M266,230 L258,230 L258,418 L266,418" fill="none" stroke="#8fa3bf" stroke-width="1.5"/>
+<text x="248" y="329.0" fill="#e6edf7" font-size="15" font-weight="700" text-anchor="end">Second stage</text>
+<path d="M252,348 L244,348 L244,704 L252,704" fill="none" stroke="#8fa3bf" stroke-width="1.5"/>
+<text x="234" y="531.0" fill="#e6edf7" font-size="15" font-weight="700" text-anchor="end">First stage</text>
+<circle cx="363" cy="140" r="2.5" fill="#e6edf7"/><polyline points="363,140 416,128 424,128" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="126" fill="#e6edf7" font-size="13">Payload fairing</text><text x="430" y="141" fill="#8fa3bf" font-size="11.5">jettisoned once above the atmosphere</text>
+<circle cx="340" cy="178" r="2.5" fill="#e6edf7"/><polyline points="340,178 416,172 424,172" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="170" fill="#e6edf7" font-size="13">Payload</text><text x="430" y="185" fill="#8fa3bf" font-size="11.5">satellite or spacecraft</text>
+<circle cx="346" cy="208" r="2.5" fill="#e6edf7"/><polyline points="346,208 416,216 424,216" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="214" fill="#e6edf7" font-size="13">Payload adapter</text><text x="430" y="229" fill="#8fa3bf" font-size="11.5">holds and releases the payload</text>
+<circle cx="356" cy="237" r="2.5" fill="#e6edf7"/><polyline points="356,237 416,260 424,260" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="258" fill="#e6edf7" font-size="13">Avionics</text><text x="430" y="273" fill="#8fa3bf" font-size="11.5">flight computer, IMU, GPS</text>
+<circle cx="356" cy="268" r="2.5" fill="#e6edf7"/><polyline points="356,268 416,304 424,304" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="302" fill="#e6edf7" font-size="13">Upper-stage tanks</text><text x="430" y="317" fill="#8fa3bf" font-size="11.5">fuel and oxidizer, common bulkhead</text>
+<circle cx="378" cy="360" r="2.5" fill="#e6edf7"/><polyline points="378,360 416,348 424,348" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="346" fill="#e6edf7" font-size="13">Grid fins</text><text x="430" y="361" fill="#8fa3bf" font-size="11.5">steer the booster on the way back</text>
+<circle cx="352" cy="404" r="2.5" fill="#e6edf7"/><polyline points="352,404 416,392 424,392" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="390" fill="#e6edf7" font-size="13">Vacuum engine</text><text x="430" y="405" fill="#8fa3bf" font-size="11.5">large nozzle for thin air</text>
+<circle cx="362" cy="416" r="2.5" fill="#e6edf7"/><polyline points="362,416 416,436 424,436" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="434" fill="#e6edf7" font-size="13">Interstage</text><text x="430" y="449" fill="#8fa3bf" font-size="11.5">joins stages, holds separation system</text>
+<circle cx="357" cy="470" r="2.5" fill="#e6edf7"/><polyline points="357,470 416,480 424,480" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="478" fill="#e6edf7" font-size="13">Oxidizer tank</text><text x="430" y="493" fill="#8fa3bf" font-size="11.5">liquid oxygen</text>
+<circle cx="348" cy="500" r="2.5" fill="#e6edf7"/><polyline points="348,500 416,524 424,524" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="522" fill="#e6edf7" font-size="13">Helium tanks</text><text x="430" y="537" fill="#8fa3bf" font-size="11.5">keep the tanks pressurised</text>
+<circle cx="322" cy="570" r="2.5" fill="#e6edf7"/><polyline points="322,570 416,568 424,568" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="566" fill="#e6edf7" font-size="13">Feedline</text><text x="430" y="581" fill="#8fa3bf" font-size="11.5">carries oxygen through the fuel tank</text>
+<circle cx="357" cy="610" r="2.5" fill="#e6edf7"/><polyline points="357,610 416,612 424,612" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="610" fill="#e6edf7" font-size="13">Fuel tank</text><text x="430" y="625" fill="#8fa3bf" font-size="11.5">e.g. kerosene</text>
+<circle cx="367" cy="665" r="2.5" fill="#e6edf7"/><polyline points="367,665 416,656 424,656" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="654" fill="#e6edf7" font-size="13">Landing legs</text><text x="430" y="669" fill="#8fa3bf" font-size="11.5">folded during ascent</text>
+<circle cx="350" cy="700" r="2.5" fill="#e6edf7"/><polyline points="350,700 416,700 424,700" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="430" y="698" fill="#e6edf7" font-size="13">Engines</text><text x="430" y="713" fill="#8fa3bf" font-size="11.5">gimbal to steer (thrust vector control)</text>
+<text x="735" y="132" fill="#e6edf7" font-size="15" font-weight="700">Liftoff mass</text>
+<rect x="735" y="150" width="34" height="486.0" fill="#4dabf7"/>
+<rect x="735" y="636.0" width="34" height="35.1" fill="#adb5bd"/>
+<rect x="735" y="671.1" width="34" height="18.900000000000002" fill="#ffd43b"/>
+<rect x="735" y="150" width="34" height="540" fill="none" stroke="#8fa3bf" stroke-width="1"/>
+<text x="779" y="393.0" fill="#e6edf7" font-size="13" font-weight="600">Propellant</text><text x="779" y="409.0" fill="#8fa3bf" font-size="12">about 90%</text>
+<text x="779" y="638.2" fill="#e6edf7" font-size="13" font-weight="600">Structure</text><text x="779" y="654.2" fill="#8fa3bf" font-size="12">about 6–8%</text>
+<text x="779" y="688" fill="#e6edf7" font-size="13" font-weight="600">Payload</text><text x="779" y="704" fill="#8fa3bf" font-size="12">about 2–4%</text>
+<text x="735" y="738" fill="#8fa3bf" font-size="11.5">Falcon 9: 549 t at liftoff,</text><text x="735" y="753" fill="#8fa3bf" font-size="11.5">up to 22.8 t to orbit</text>
+</svg>

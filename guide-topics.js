@@ -31,6 +31,9 @@ const GUIDE_TOPICS = {
         heading: "The four forces",
         image: {
           src: "assets/guide/rocket-forces.svg",
+          caption:
+            "The four forces on a rocket climbing at an angle. " +
+            "To lift off, its thrust has to be greater than its weight.",
           alt:
             "Diagram of a rocket climbing at an angle, with arrows for thrust, drag, lift and weight, " +
             "and the exhaust gas pushed out of the nozzle. Liftoff needs thrust greater than weight (TWR above 1)."
@@ -87,6 +90,9 @@ const GUIDE_TOPICS = {
       "Each type trades simplicity, performance and control in a different way.",
     image: {
       src: "assets/guide/rocket-types.svg",
+      caption:
+        "Where solid, liquid and hybrid rockets keep their fuel and oxidizer, " +
+        "and how efficient and controllable each type is.",
       alt:
         "Cutaway diagrams of a solid, a liquid and a hybrid rocket. " +
         "Solid: fuel and oxidizer mixed in one grain with a burning core, about 250–290 s of specific impulse, no throttle or restart. " +
@@ -200,6 +206,17 @@ const GUIDE_TOPICS = {
     sections: [
       {
         heading: "Combustion chamber and nozzle",
+        image: {
+          src: "assets/guide/rocket-engine.svg",
+          caption:
+            "Inside a liquid rocket engine: the gas speeds up as the nozzle narrows, reaches the speed of sound at the throat, " +
+            "then keeps accelerating to several kilometres per second as it expands in the bell.",
+          alt:
+            "Cross-section of a rocket engine. Fuel and oxidizer enter through the injector into the combustion chamber, " +
+            "at high pressure and above 3,000 °C. The gas flows through the converging section, reaches Mach 1 at the throat " +
+            "and expands in the diverging bell nozzle, leaving at about 2.5 to 4.5 km/s. Regenerative cooling runs fuel through " +
+            "channels in the walls. A graph below shows velocity rising and temperature and pressure falling along the engine."
+        },
         paragraphs: [
           "Fuel and oxidizer burn in the combustion chamber at high pressure and temperatures above 3,000 °C. " +
           "The hot gas then flows through a converging-diverging nozzle, also called a de Laval nozzle.",
@@ -297,40 +314,156 @@ const GUIDE_TOPICS = {
     title: "Rocket Anatomy",
     intro:
       "Most orbital rockets are built as a stack of stages. " +
-      "Each stage has its own tanks and engines and is dropped when its propellant runs out.",
+      "Each stage has its own tanks and engines and is dropped when its propellant runs out, " +
+      "so the rest of the rocket no longer has to carry its empty mass (see Rocket Fundamentals).",
+    image: {
+      src: "assets/guide/rocket-anatomy.svg",
+      caption:
+        "The main parts of a two-stage reusable rocket, from the fairing at the top to the engines, " +
+        "and how little of its liftoff mass is payload.",
+      alt:
+        "Cutaway of a two-stage reusable rocket. From top to bottom: the payload fairing, the payload on its adapter, " +
+        "avionics, the upper-stage fuel and oxidizer tanks with a common bulkhead, grid fins, the vacuum engine with its large nozzle, " +
+        "the interstage, the first-stage oxygen tank with helium tanks inside, a feedline running down through the fuel tank, " +
+        "folded landing legs and the engines. A bar shows the liftoff mass: about 90% propellant, 6–8% structure and 2–4% payload; " +
+        "Falcon 9 weighs 549 tonnes at liftoff and carries up to 22.8 tonnes to orbit."
+    },
     sections: [
       {
         heading: "Main parts, from top to bottom",
         list: [
-          { term: "Payload fairing", text: "the nose cone that protects the payload from air and heat during the climb." },
-          { term: "Payload", text: "the satellite, spacecraft or cargo the rocket is carrying." },
-          { term: "Upper stage", text: "a smaller stage that completes the journey to orbit, often with a restartable engine." },
-          { term: "Interstage", text: "the structure that connects two stages and holds the separation system." },
-          { term: "First stage", text: "the largest stage, which lifts the whole vehicle off the pad." },
-          { term: "Engines", text: "mounted at the base of each stage, usually with a nozzle optimised for the air pressure where they work." }
+          {
+            term: "Payload fairing",
+            text:
+              "the nose cone that protects the payload from air pressure and heating during the climb. " +
+              "It splits into two halves and is jettisoned once the rocket is above most of the atmosphere, " +
+              "usually a few minutes after liftoff, to save mass. SpaceX recovers and reuses Falcon 9 fairing halves."
+          },
+          {
+            term: "Payload",
+            text:
+              "the satellite, spacecraft or cargo the rocket is carrying. " +
+              "It sits on a payload adapter, which holds it firmly during flight and releases it at separation."
+          },
+          {
+            term: "Upper stage",
+            text:
+              "a smaller stage that completes the journey to orbit and places the payload in the right orbit. " +
+              "It often has a restartable engine so it can make several burns."
+          },
+          {
+            term: "Interstage",
+            text:
+              "the structure that connects two stages. It protects the upper-stage engine during the first part of the flight " +
+              "and holds the separation system, which uses springs, pneumatic pushers or explosive bolts to push the stages apart."
+          },
+          {
+            term: "First stage",
+            text: "the largest stage, which lifts the whole vehicle off the pad and through the thick lower atmosphere."
+          },
+          {
+            term: "Side boosters",
+            text:
+              "some rockets add strap-on boosters for extra thrust at liftoff, such as the solid boosters of Ariane 6 and SLS, " +
+              "or the two extra cores of Falcon Heavy."
+          },
+          {
+            term: "Engines",
+            text:
+              "mounted at the base of each stage, with nozzles sized for the air pressure where they work: " +
+              "shorter on the first stage and much larger on the upper stage (see Rocket Propulsion)."
+          }
         ]
       },
       {
         heading: "Propellant tanks",
         paragraphs: [
           "The tanks make up most of a rocket's volume. They are built as thin as possible to save mass, " +
-          "and they are pressurised, often with helium, to keep their shape and feed the engines."
+          "usually from aluminium-lithium alloys, carbon composites or, in Starship's case, stainless steel.",
+          "The tanks are pressurised to keep their shape, carry the loads of flight and push propellant into the engine pumps without forming bubbles. " +
+          "Falcon 9 uses helium stored in small high-pressure tanks placed inside the oxygen tank. " +
+          "Starship instead uses autogenous pressurisation: some of its own propellant is heated into gas and fed back into the tanks.",
+          "Other design tricks save mass and length:"
+        ],
+        list: [
+          {
+            term: "Common bulkhead",
+            text: "a single dome separates the fuel and oxidizer, instead of two separate tank ends."
+          },
+          {
+            term: "Feedline through the tank",
+            text: "the line from the upper tank runs straight down through the lower tank to the engines."
+          },
+          {
+            term: "Baffles",
+            text: "internal rings or plates that stop the propellant from sloshing around and upsetting the rocket's balance."
+          }
+        ]
+      },
+      {
+        heading: "Where the mass goes",
+        paragraphs: [
+          "At liftoff, a typical orbital rocket is about 90% propellant. " +
+          "The structure and engines make up around 6–8%, and the payload only 2–4%. " +
+          "Falcon 9, for example, weighs about 549 tonnes at liftoff but can carry at most 22.8 tonnes to low Earth orbit, " +
+          "and only when the booster is not recovered. This small fraction is a direct result of the rocket equation."
         ]
       },
       {
         heading: "Avionics and control",
         list: [
-          { term: "Flight computer", text: "runs the guidance software and sends commands to the engines and valves." },
-          { term: "Inertial measurement unit (IMU)", text: "measures acceleration and rotation to work out the rocket's position and attitude." },
-          { term: "Thrust vector control", text: "gimbals the engine nozzles to steer the rocket." },
-          { term: "Flight termination system", text: "destroys the vehicle safely if it flies off course." }
+          {
+            term: "Flight computer",
+            text:
+              "runs the guidance, navigation and control software and sends commands to the engines and valves. " +
+              "It is usually duplicated or tripled, so a single failure does not end the mission."
+          },
+          {
+            term: "Inertial measurement unit (IMU)",
+            text:
+              "measures acceleration and rotation. The flight computer uses these readings, corrected with GPS, " +
+              "to work out the rocket's position, speed and attitude."
+          },
+          {
+            term: "Thrust vector control",
+            text:
+              "actuators gimbal the engine nozzles to steer the rocket. A single gimballed engine cannot control roll, " +
+              "so stages with one engine add small thrusters for it. Solid motors steer with flexible nozzles."
+          },
+          {
+            term: "Reaction control system (RCS)",
+            text: "small thrusters that control the rocket's attitude in space, when the main engines are off."
+          },
+          {
+            term: "Telemetry",
+            text: "radio links that send live data about the rocket's systems to the ground."
+          },
+          {
+            term: "Flight termination system",
+            text:
+              "if the rocket flies off course, it shuts down the engines and breaks up the vehicle before it can reach populated areas. " +
+              "Many rockets now use an autonomous system that makes this decision on board, without waiting for a command from the ground."
+          }
         ]
       },
       {
         heading: "Recovery hardware",
         paragraphs: [
-          "Reusable boosters carry extra hardware: grid fins to steer through the atmosphere, " +
-          "landing legs, and spare propellant for the landing burns."
+          "Reusable boosters carry extra hardware:"
+        ],
+        list: [
+          { term: "Grid fins", text: "steer the booster through the atmosphere on the way back." },
+          { term: "Cold-gas thrusters", text: "flip and orient the booster after separation." },
+          { term: "Landing legs", text: "fold out just before touchdown." },
+          {
+            term: "Reserve propellant",
+            text: "kept for the boostback, entry and landing burns. This reduces the payload the rocket can carry."
+          }
+        ],
+        after: [
+          "Starship's Super Heavy booster has no legs at all: it is caught by mechanical arms on the launch tower. " +
+          "Smaller rockets, including most student rockets, use parachutes instead: " +
+          "a small drogue chute opens near the highest point of the flight and a larger main chute opens closer to the ground."
         ]
       }
     ]

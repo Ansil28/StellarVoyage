@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 640" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">Inside a rocket engine</title>
+<desc id="d">Cross-section of a rocket engine: injector, combustion chamber, converging section, throat at Mach 1 and diverging bell nozzle, with regenerative cooling and graphs of pressure, temperature and velocity along the engine.</desc>
+<defs>
+<marker id="aW" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffffff"/></marker><marker id="aF" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ff922b"/></marker><marker id="aO" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4dabf7"/></marker>
+<linearGradient id="gas" x1="110" y1="0" x2="760" y2="0" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#fff9db"/><stop offset="0.35" stop-color="#ffd43b"/><stop offset="0.5" stop-color="#ff922b"/><stop offset="1" stop-color="#e8590c" stop-opacity="0.75"/></linearGradient>
+<linearGradient id="plume" x1="760" y1="0" x2="890" y2="0" gradientUnits="userSpaceOnUse">
+<stop offset="0" stop-color="#e8590c" stop-opacity="0.7"/><stop offset="1" stop-color="#e8590c" stop-opacity="0"/></linearGradient>
+</defs>
+<rect width="900" height="640" rx="18" fill="#0b1628"/>
+<text x="40" y="50" fill="#e6edf7" font-size="26" font-weight="700">Inside a Rocket Engine</text>
+<text x="40" y="76" fill="#8fa3bf" font-size="15">The gas speeds up from subsonic to supersonic through a de Laval nozzle</text>
+
+<path d="M760,150 Q840,185 890,230 L890,350 Q840,395 760,430 Z" fill="url(#plume)"/>
+<path d="M110,210 L330,210 C380,210 395,260 420,260 C520,260 640,190 760,150 L760,430 C640,390 520,320 420,320 C395,320 380,370 330,370 L110,370 Z" fill="url(#gas)"/>
+<path d="M110,210 L330,210 C380,210 395,260 420,260 C520,260 640,190 760,150" fill="none" stroke="#7c8ba1" stroke-width="14" stroke-linejoin="round"/>
+<path d="M110,210 L330,210 C380,210 395,260 420,260 C520,260 640,190 760,150" fill="none" stroke="#ff922b" stroke-width="3" stroke-dasharray="7 6"/>
+<path d="M110,370 L330,370 C380,370 395,320 420,320 C520,320 640,390 760,430" fill="none" stroke="#7c8ba1" stroke-width="14" stroke-linejoin="round"/>
+<path d="M110,370 L330,370 C380,370 395,320 420,320 C520,320 640,390 760,430" fill="none" stroke="#ff922b" stroke-width="3" stroke-dasharray="7 6"/>
+<rect x="98" y="203" width="14" height="174" fill="#5c6b80"/>
+<circle cx="112" cy="222" r="2.5" fill="#e6edf7"/>
+<circle cx="112" cy="244" r="2.5" fill="#e6edf7"/>
+<circle cx="112" cy="266" r="2.5" fill="#e6edf7"/>
+<circle cx="112" cy="288" r="2.5" fill="#e6edf7"/>
+<circle cx="112" cy="310" r="2.5" fill="#e6edf7"/>
+<circle cx="112" cy="332" r="2.5" fill="#e6edf7"/>
+<circle cx="112" cy="354" r="2.5" fill="#e6edf7"/>
+<line x1="30" y1="255" x2="94" y2="255" stroke="#ff922b" stroke-width="5" marker-end="url(#aF)"/>
+<line x1="30" y1="325" x2="94" y2="325" stroke="#4dabf7" stroke-width="5" marker-end="url(#aO)"/>
+<text x="30" y="245" fill="#ff922b" font-size="13" font-weight="600">Fuel</text>
+<text x="30" y="345" fill="#4dabf7" font-size="13" font-weight="600">Oxidizer</text>
+<line x1="160" y1="290" x2="176" y2="290" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" marker-end="url(#aW)" opacity="0.95"/>
+<line x1="250" y1="290" x2="268" y2="290" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" marker-end="url(#aW)" opacity="0.95"/>
+<line x1="372" y1="290" x2="400" y2="290" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" marker-end="url(#aW)" opacity="0.95"/>
+<line x1="470" y1="290" x2="518" y2="290" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" marker-end="url(#aW)" opacity="0.95"/>
+<line x1="580" y1="290" x2="646" y2="290" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" marker-end="url(#aW)" opacity="0.95"/>
+<line x1="690" y1="290" x2="776" y2="290" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" marker-end="url(#aW)" opacity="0.95"/>
+<line x1="420" y1="335" x2="420" y2="600" stroke="#8fa3bf" stroke-width="1.2" stroke-dasharray="4 4"/>
+<text x="45" y="170" fill="#e6edf7" font-size="15" font-weight="600">Injector</text>
+<line x1="80" y1="176" x2="104" y2="203" stroke="#8fa3bf" stroke-width="1"/><circle cx="104" cy="203" r="2.5" fill="#e6edf7"/>
+<text x="220" y="180" fill="#e6edf7" font-size="15" font-weight="600" text-anchor="middle">Combustion chamber</text>
+<text x="220" y="198" fill="#8fa3bf" font-size="12.5" text-anchor="middle">high pressure, above 3,000 °C</text>
+<text x="378" y="160" fill="#e6edf7" font-size="15" font-weight="600" text-anchor="middle">Converging</text>
+<text x="378" y="177" fill="#8fa3bf" font-size="12.5" text-anchor="middle">subsonic</text>
+<line x1="378" y1="182" x2="378" y2="214" stroke="#8fa3bf" stroke-width="1"/><circle cx="378" cy="214" r="2.5" fill="#e6edf7"/>
+<text x="590" y="160" fill="#e6edf7" font-size="15" font-weight="600" text-anchor="middle">Diverging bell</text>
+<text x="590" y="177" fill="#8fa3bf" font-size="12.5" text-anchor="middle">supersonic, gas expands</text>
+<line x1="590" y1="182" x2="590" y2="212" stroke="#8fa3bf" stroke-width="1"/><circle cx="590" cy="212" r="2.5" fill="#e6edf7"/>
+<text x="880" y="122" fill="#e6edf7" font-size="15" font-weight="600" text-anchor="end">Exhaust</text>
+<text x="880" y="139" fill="#8fa3bf" font-size="12.5" text-anchor="end">about 2.5–4.5 km/s</text>
+<text x="430" y="352" fill="#e6edf7" font-size="15" font-weight="600">Throat</text>
+<text x="430" y="369" fill="#8fa3bf" font-size="12.5">gas reaches Mach 1</text>
+<line x1="220" y1="415" x2="220" y2="377" stroke="#8fa3bf" stroke-width="1"/><circle cx="220" cy="377" r="2.5" fill="#e6edf7"/>
+<text x="220" y="432" fill="#ff922b" font-size="14" font-weight="600" text-anchor="middle">Regenerative cooling</text>
+<text x="220" y="449" fill="#8fa3bf" font-size="12.5" text-anchor="middle">fuel flows through channels in the walls</text>
+<text x="40" y="490" fill="#e6edf7" font-size="14" font-weight="600">Along the engine</text>
+<line x1="110" y1="600" x2="760" y2="600" stroke="#22395c" stroke-width="1.5"/>
+<path d="M110,590 C300,588 380,562 420,546 C520,515 650,503 760,498" fill="none" stroke="#63e6be" stroke-width="3" stroke-linecap="round"/>
+<path d="M110,507 C300,508 380,522 420,533 C520,558 650,568 760,572" fill="none" stroke="#ffa94d" stroke-width="3" stroke-linecap="round"/>
+<path d="M110,502 C300,504 380,530 420,550 C520,580 650,590 760,594" fill="none" stroke="#91a7ff" stroke-width="3" stroke-linecap="round"/>
+<text x="772" y="506" fill="#63e6be" font-size="13" font-weight="600">Velocity</text>
+<text x="772" y="576" fill="#ffa94d" font-size="13" font-weight="600">Temperature</text>
+<text x="772" y="600" fill="#91a7ff" font-size="13" font-weight="600">Pressure</text>
+</svg>

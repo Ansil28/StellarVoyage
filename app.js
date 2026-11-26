@@ -1704,7 +1704,7 @@ function showGuideTopic(topicKey) {
 
   // Image (diagram or photo) in a guide article. Tapping it opens the
   // full-size viewer, so small text in diagrams can be read on phones.
-  function createGuideFigure({ src, alt }) {
+  function createGuideFigure({ src, alt, caption }) {
     const figure = document.createElement("figure");
     figure.className = "guide-figure";
 
@@ -1719,12 +1719,24 @@ function showGuideTopic(topicKey) {
     image.alt = alt || "";
     image.loading = "lazy";
 
-    const hint = document.createElement("figcaption");
+    // Below the image: the optional caption (what the diagram shows),
+    // then "Tap to enlarge", which only phones show
+    const figcaption = document.createElement("figcaption");
+
+    if (caption) {
+      const captionText = document.createElement("span");
+      captionText.className = "guide-figure-caption";
+      captionText.textContent = caption;
+      figcaption.append(captionText);
+    }
+
+    const hint = document.createElement("span");
     hint.className = "guide-figure-hint";
     hint.textContent = "Tap to enlarge";
+    figcaption.append(hint);
 
     button.append(image);
-    figure.append(button, hint);
+    figure.append(button, figcaption);
     return figure;
   }
 

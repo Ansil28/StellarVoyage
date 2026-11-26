@@ -1284,6 +1284,15 @@ button {
     outline-offset: 3px;
 }
 
+/* Caption under a diagram: one quiet sentence saying what it shows */
+.guide-figure-caption {
+    display: block;
+    margin-top: var(--space-3);
+    color: var(--muted);
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+}
+
 /* "Tap to enlarge" only on phones, where diagrams are small */
 .guide-figure-hint {
     display: none;
