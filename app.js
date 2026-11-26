@@ -1749,11 +1749,46 @@ function showGuideTopic(topicKey) {
     article.push(createGuideFigure(topic.image));
   }
 
+  // Optional index ("toc: true") for long articles: one link per main
+  // section. They scroll to the heading instead of using "#…" links,
+  // because the address after "#" already picks the page.
+  let tocList = null;
+
+  if (topic.toc) {
+    const toc = document.createElement("nav");
+    toc.className = "guide-toc";
+    toc.setAttribute("aria-label", "On this page");
+
+    const tocTitle = document.createElement("p");
+    tocTitle.className = "guide-toc-title";
+    tocTitle.textContent = "On this page";
+
+    tocList = document.createElement("ul");
+    toc.append(tocTitle, tocList);
+    article.push(toc);
+  }
+
   for (const section of topic.sections) {
     // A subheading is smaller and belongs to the section above it
     const heading = document.createElement(section.subheading ? "h4" : "h3");
     heading.textContent = section.heading;
     article.push(heading);
+
+    if (tocList && !section.subheading) {
+      const item = document.createElement("li");
+      const link = document.createElement("button");
+      link.type = "button";
+      link.className = "text-link";
+      link.textContent = section.heading;
+
+      link.addEventListener("click", () => {
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        heading.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      });
+
+      item.append(link);
+      tocList.append(item);
+    }
 
     // Optional image under the section heading
     if (section.image) {

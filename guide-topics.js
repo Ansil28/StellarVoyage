@@ -780,41 +780,139 @@ const GUIDE_TOPICS = {
 
   glossary: {
     title: "Space Glossary",
-    intro: "Common terms you will see in launch coverage and in mission details.",
+    intro: "Common terms you will see in launch coverage, mission details and across the Rocket Guide.",
+    // A long list: show an "On this page" index with a link to each section
+    toc: true,
     sections: [
       {
-        heading: "Orbits",
+        heading: "Orbits and trajectories",
         list: [
-          { term: "Apogee", text: "the highest point of an orbit around Earth." },
-          { term: "Perigee", text: "the lowest point of an orbit around Earth." },
-          { term: "LEO", text: "low Earth orbit, roughly 160 to 2,000 km above the surface. The ISS orbits at about 420 km." },
-          { term: "GTO", text: "geostationary transfer orbit, an elliptical orbit used to reach geostationary orbit." },
-          { term: "GEO", text: "geostationary orbit, about 35,786 km above the equator, where a satellite matches Earth's rotation." },
-          { term: "SSO", text: "Sun-synchronous orbit, a polar orbit that passes over each place at the same local time." }
+          { term: "Orbit", text: "the curved path of an object moving around a planet or star, falling towards it but moving sideways fast enough to keep missing it." },
+          { term: "Apogee", text: "the highest point of an orbit around Earth. The general term for any body is apoapsis." },
+          { term: "Perigee", text: "the lowest point of an orbit around Earth. The general term for any body is periapsis." },
+          { term: "Inclination", text: "the angle between an orbit and the equator. 0° is an equatorial orbit and 90° is a polar orbit. A rocket launched straight east reaches an inclination roughly equal to the latitude of its launch site." },
+          { term: "Orbital period", text: "the time it takes to complete one orbit. In low Earth orbit it is about 90 minutes." },
+          { term: "Orbital velocity", text: "the speed needed to stay in orbit, about 7.8 km/s in low Earth orbit." },
+          { term: "Escape velocity", text: "the speed needed to leave Earth's gravity completely, about 11.2 km/s from the surface." },
+          { term: "Kármán line", text: "the boundary commonly used as the edge of space, at 100 km altitude. The United States uses 80 km for some purposes." },
+          { term: "LEO", text: "low Earth orbit, roughly 160 to 2,000 km above the surface. The ISS orbits at around 400 to 420 km." },
+          { term: "MEO", text: "medium Earth orbit, between LEO and GEO. GPS satellites orbit at about 20,200 km." },
+          { term: "GEO", text: "geostationary orbit, about 35,786 km above the equator, where a satellite matches Earth's rotation and appears fixed in the sky." },
+          { term: "Geosynchronous orbit", text: "any orbit with a period of one day. A geostationary orbit is the special case that is circular and directly above the equator." },
+          { term: "GTO", text: "geostationary transfer orbit, an elliptical orbit with a low perigee and an apogee near GEO altitude, used to reach geostationary orbit." },
+          { term: "SSO", text: "Sun-synchronous orbit, a near-polar orbit that slowly rotates with Earth's path around the Sun, so the satellite passes over each place at the same local time. Popular for Earth observation." },
+          { term: "Molniya orbit", text: "a highly elliptical orbit with a 12-hour period, used to cover high-latitude regions for long periods." },
+          { term: "Parking orbit", text: "a temporary low orbit where the upper stage coasts before a later burn to its final orbit." },
+          { term: "Lagrange points", text: "five points where the gravity of two large bodies balances the motion of a small one. The James Webb Space Telescope operates near the Sun-Earth L2 point, about 1.5 million km from Earth." },
+          { term: "TLI", text: "trans-lunar injection, the burn that sends a spacecraft from Earth orbit towards the Moon." },
+          { term: "Deorbit burn", text: "a burn that lowers an orbit so that the object re-enters the atmosphere." }
         ]
       },
       {
-        heading: "Vehicles and engines",
+        heading: "Rockets and engines",
         list: [
-          { term: "Delta-v (Δv)", text: "the total change in speed a rocket or spacecraft can achieve." },
+          { term: "Stage", text: "a section of a rocket with its own tanks and engines, dropped when its propellant runs out." },
+          { term: "Booster", text: "the first stage, or an extra side rocket attached to help at liftoff." },
+          { term: "Upper stage", text: "the stage that completes the climb to orbit and places the payload." },
+          { term: "Delta-v (Δv)", text: "the total change in velocity a rocket or spacecraft can achieve with its propellant." },
           { term: "Specific impulse (Isp)", text: "a measure of engine efficiency, in seconds." },
+          { term: "Mass ratio", text: "the rocket's full mass divided by its empty mass. A higher ratio gives more delta-v." },
+          { term: "Thrust", text: "the force produced by an engine, measured in newtons or kilonewtons." },
           { term: "TWR", text: "thrust-to-weight ratio. It must be above 1 for a rocket to lift off." },
+          { term: "Throttle", text: "changing an engine's thrust during flight." },
+          { term: "Chamber pressure", text: "the pressure inside the combustion chamber. Higher pressure generally means a smaller, more efficient engine." },
+          { term: "De Laval nozzle", text: "the converging-diverging nozzle that accelerates the exhaust to supersonic speed." },
+          { term: "Expansion ratio", text: "the nozzle exit area divided by the throat area. Vacuum engines use much larger ratios." },
+          { term: "Turbopump", text: "a pump driven by a turbine that feeds propellant into the engine at high pressure." },
+          { term: "Engine cycle", text: "the way an engine powers its pumps, such as gas generator, staged combustion or expander." },
+          { term: "Regenerative cooling", text: "cooling the engine walls by passing propellant through channels in them before it is burned." },
           { term: "Gimbal", text: "a pivot that lets an engine tilt to steer the rocket." },
-          { term: "Fairing", text: "the protective nose cone around the payload." },
-          { term: "LOX", text: "liquid oxygen, the most common oxidizer." },
-          { term: "Hypergolic", text: "propellants that ignite on contact with each other." }
+          { term: "TVC", text: "thrust vector control, steering a rocket by changing the direction of its thrust." },
+          { term: "RCS", text: "reaction control system, small thrusters used to control attitude, mainly in space." },
+          { term: "Fairing", text: "the protective nose cone around the payload, jettisoned once the rocket is above most of the atmosphere." },
+          { term: "Interstage", text: "the structure that connects two stages and holds the separation system." },
+          { term: "Avionics", text: "the rocket's electronics, including the flight computer, sensors and radios." },
+          { term: "IMU", text: "inertial measurement unit, a sensor that measures acceleration and rotation." },
+          { term: "FTS", text: "flight termination system, which ends the flight safely if the rocket goes off course." }
+        ]
+      },
+      {
+        heading: "Propellants",
+        list: [
+          { term: "Propellant", text: "the fuel and oxidizer a rocket burns." },
+          { term: "Oxidizer", text: "the substance that provides oxygen for combustion, since there is no air in space." },
+          { term: "LOX", text: "liquid oxygen, the most common oxidizer, stored at about −183 °C." },
+          { term: "RP-1", text: "a highly refined kerosene used as rocket fuel." },
+          { term: "LH2", text: "liquid hydrogen, the most efficient chemical fuel, stored at about −253 °C." },
+          { term: "Kerolox, hydrolox, methalox", text: "short names for kerosene, hydrogen and methane burned with liquid oxygen." },
+          { term: "Cryogenic", text: "stored at very low temperatures, such as liquid oxygen and hydrogen." },
+          { term: "Boil-off", text: "cryogenic propellant slowly evaporating because of heat leaking into the tank." },
+          { term: "Hypergolic", text: "propellants that ignite on contact with each other." },
+          { term: "Nitrous oxide (N₂O)", text: "a self-pressurising oxidizer common in hybrid and student rockets." },
+          { term: "Ullage", text: "the gas-filled space above the liquid in a tank. Ullage thrusters settle the propellant at the bottom of the tank before an engine restarts." }
         ]
       },
       {
         heading: "Launch day",
         list: [
           { term: "NET", text: "no earlier than: the earliest possible launch date or time." },
-          { term: "T-0", text: "the planned moment of liftoff. Times before it are written as T-minus." },
-          { term: "Launch window", text: "the period during which the launch can take place." },
+          { term: "T-0", text: "the planned moment of liftoff. Times before it are written as T-minus and times after it as T-plus." },
+          { term: "Launch window", text: "the period during which the launch can take place. An instantaneous window allows only one exact moment." },
+          { term: "Hold", text: "a planned or unplanned pause in the countdown." },
+          { term: "Go/No-Go poll", text: "the final check where each team confirms it is ready to launch." },
+          { term: "Recycle", text: "resetting the countdown to an earlier point to try again on the same day." },
           { term: "Scrub", text: "a cancelled launch attempt, usually moved to a later date." },
+          { term: "Abort", text: "stopping a launch or a flight because of a problem, from the pad or during the climb." },
           { term: "Static fire", text: "a test where the engines are fired while the rocket is held on the pad." },
+          { term: "Wet dress rehearsal", text: "a full countdown practice with propellant loaded, stopping just before engine ignition." },
+          { term: "Hold-down clamps", text: "clamps that keep the rocket on the pad until the engines reach full thrust." },
+          { term: "Upper-level winds", text: "strong winds high in the atmosphere that can delay a launch even when the weather on the ground is good." },
+          { term: "Range", text: "the area and tracking systems that monitor a launch and keep the public safe." }
+        ]
+      },
+      {
+        heading: "Flight events",
+        list: [
+          { term: "Liftoff", text: "the moment the rocket leaves the pad." },
+          { term: "Gravity turn", text: "the gradual tilt of the rocket's path from vertical to horizontal, guided by gravity." },
           { term: "Max-Q", text: "the point of maximum aerodynamic pressure during the climb." },
-          { term: "MECO / SECO", text: "main engine cut-off and second-stage engine cut-off." }
+          { term: "MECO / SECO", text: "main engine cut-off and second-stage engine cut-off." },
+          { term: "Stage separation", text: "the moment the stages are pushed apart." },
+          { term: "Fairing separation", text: "the moment the fairing halves are jettisoned." },
+          { term: "Coast", text: "a phase where the engines are off and the rocket moves on momentum." },
+          { term: "Payload deployment", text: "the moment the satellite or spacecraft separates from the rocket." },
+          { term: "Nominal", text: "everything is going according to plan." },
+          { term: "Anomaly", text: "an unexpected problem or result." },
+          { term: "LOS / AOS", text: "loss of signal and acquisition of signal, when radio contact with a vehicle is lost or regained." }
+        ]
+      },
+      {
+        heading: "Recovery and reuse",
+        list: [
+          { term: "Boostback burn", text: "a burn that reverses the booster's direction so it can land near the launch site." },
+          { term: "Entry burn", text: "a burn that slows the booster before it enters the denser atmosphere." },
+          { term: "Landing burn", text: "the final burn that brings the booster to zero speed at touchdown." },
+          { term: "Grid fins", text: "lattice-shaped fins that steer a returning booster through the atmosphere." },
+          { term: "RTLS", text: "return to launch site, a booster landing on land near the pad." },
+          { term: "ASDS", text: "autonomous spaceport drone ship, the floating platform SpaceX boosters land on at sea." },
+          { term: "Re-entry", text: "returning from space into the atmosphere, which produces intense heating." },
+          { term: "Heat shield", text: "the layer that protects a vehicle from the heat of re-entry." },
+          { term: "Splashdown", text: "a spacecraft landing in the sea under parachutes." },
+          { term: "Refurbishment", text: "the inspection and repair work done before a vehicle flies again." },
+          { term: "RUD", text: "rapid unscheduled disassembly, an informal and humorous term for a vehicle breaking up or exploding." }
+        ]
+      },
+      {
+        heading: "Spacecraft and missions",
+        list: [
+          { term: "Payload", text: "whatever the rocket carries to space, such as a satellite, spacecraft or cargo." },
+          { term: "Rideshare", text: "a launch carrying payloads from many different customers." },
+          { term: "Constellation", text: "a large group of satellites working together, such as Starlink or GPS." },
+          { term: "CubeSat", text: "a small standardised satellite built from 10 cm cubes, each weighing about 1 to 2 kg." },
+          { term: "Rendezvous", text: "two spacecraft meeting in orbit." },
+          { term: "Docking", text: "a spacecraft connecting to another under its own control." },
+          { term: "Berthing", text: "a spacecraft being captured by a robotic arm and attached to a station." },
+          { term: "Space debris", text: "old satellites, rocket stages and fragments that remain in orbit." }
         ]
       }
     ]

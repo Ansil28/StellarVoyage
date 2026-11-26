@@ -1235,6 +1235,36 @@ button {
     margin-bottom: var(--space-3);
     color: var(--accent-light);
     font-size: var(--fs-xl);
+    /* When the index scrolls here, stop below the sticky top bar */
+    scroll-margin-top: 88px;
+}
+
+/* "On this page" index at the top of long articles (toc: true) */
+.guide-toc {
+    margin: var(--space-6) 0 var(--space-2);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+}
+
+/* ".guide-content" so it wins over the article's paragraph style */
+.guide-content .guide-toc-title {
+    margin: 0 0 var(--space-2);
+    color: var(--muted);
+    font-size: var(--fs-xs);
+}
+
+.guide-content .guide-toc ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.guide-content .guide-toc li {
+    margin: 0;
 }
 
 .guide-content h4 {
