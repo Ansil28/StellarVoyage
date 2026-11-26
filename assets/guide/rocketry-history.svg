@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 650" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">A brief history of rocketry</title>
+<desc id="d">Timeline of rocketry from Chinese fire arrows in 1232 to Artemis II in 2026, grouped into six eras.</desc>
+<rect width="1400" height="650" rx="18" fill="#0b1628"/>
+<text x="40" y="52" fill="#e6edf7" font-size="28" font-weight="700">A Brief History of Rocketry</text>
+<text x="40" y="80" fill="#8fa3bf" font-size="15">Eight centuries from fire arrows to reusable rockets (milestones evenly spaced, not to scale)</text>
+
+<circle cx="503" cy="405" r="0.8" fill="#ffffff" opacity="0.35"/>
+<circle cx="831" cy="585" r="0.8" fill="#ffffff" opacity="0.35"/>
+<circle cx="204" cy="163" r="0.8" fill="#ffffff" opacity="0.35"/>
+<circle cx="842" cy="391" r="0.8" fill="#ffffff" opacity="0.35"/>
+<circle cx="474" cy="627" r="1.3" fill="#ffffff" opacity="0.35"/>
+<circle cx="757" cy="378" r="0.8" fill="#ffffff" opacity="0.35"/>
+<circle cx="237" cy="363" r="0.8" fill="#ffffff" opacity="0.35"/>
+<circle cx="72" cy="361" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="416" cy="263" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="613" cy="476" r="0.8" fill="#ffffff" opacity="0.35"/>
+<circle cx="1260" cy="440" r="1.3" fill="#ffffff" opacity="0.35"/>
+<circle cx="814" cy="613" r="0.8" fill="#ffffff" opacity="0.35"/>
+<circle cx="384" cy="348" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="593" cy="186" r="1.3" fill="#ffffff" opacity="0.35"/>
+<circle cx="634" cy="102" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="1192" cy="414" r="1.3" fill="#ffffff" opacity="0.35"/>
+<circle cx="419" cy="518" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="1246" cy="390" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="944" cy="260" r="0.8" fill="#ffffff" opacity="0.35"/>
+<circle cx="644" cy="360" r="0.8" fill="#ffffff" opacity="0.35"/>
+<circle cx="186" cy="142" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="1302" cy="382" r="1.3" fill="#ffffff" opacity="0.35"/>
+<circle cx="1114" cy="577" r="1.3" fill="#ffffff" opacity="0.35"/>
+<circle cx="722" cy="243" r="1.3" fill="#ffffff" opacity="0.35"/>
+<circle cx="420" cy="163" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="435" cy="546" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="396" cy="459" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="1225" cy="423" r="1.3" fill="#ffffff" opacity="0.35"/>
+<circle cx="1163" cy="298" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="226" cy="158" r="1.3" fill="#ffffff" opacity="0.35"/>
+<circle cx="488" cy="379" r="1.3" fill="#ffffff" opacity="0.35"/>
+<circle cx="1280" cy="338" r="0.8" fill="#ffffff" opacity="0.35"/>
+<circle cx="698" cy="276" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="960" cy="121" r="0.8" fill="#ffffff" opacity="0.35"/>
+<circle cx="751" cy="179" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="689" cy="113" r="1" fill="#ffffff" opacity="0.35"/>
+<circle cx="611" cy="424" r="0.8" fill="#ffffff" opacity="0.35"/>
+<circle cx="1355" cy="515" r="1.3" fill="#ffffff" opacity="0.35"/>
+<circle cx="179" cy="395" r="1.3" fill="#ffffff" opacity="0.35"/>
+<circle cx="412" cy="549" r="1" fill="#ffffff" opacity="0.35"/>
+<line x1="43" y1="345" x2="266.0625" y2="345" stroke="#ff922b" stroke-width="6" stroke-linecap="round"/>
+<path d="M46,557 L46,565 L263.0625,565 L263.0625,557" fill="none" stroke="#ff922b" stroke-width="1.5"/>
+<text x="154.53125" y="587" fill="#ff922b" font-size="13" font-weight="700" text-anchor="middle">Gunpowder rockets</text>
+<line x1="272.0625" y1="345" x2="492.9375" y2="345" stroke="#ffd43b" stroke-width="6" stroke-linecap="round"/>
+<path d="M275.0625,557 L275.0625,565 L489.9375,565 L489.9375,557" fill="none" stroke="#ffd43b" stroke-width="1.5"/>
+<text x="382.5" y="587" fill="#ffd43b" font-size="13" font-weight="700" text-anchor="middle">The pioneers</text>
+<line x1="498.9375" y1="345" x2="795.4375" y2="345" stroke="#ff6b6b" stroke-width="6" stroke-linecap="round"/>
+<path d="M501.9375,557 L501.9375,565 L792.4375,565 L792.4375,557" fill="none" stroke="#ff6b6b" stroke-width="1.5"/>
+<text x="647.1875" y="587" fill="#ff6b6b" font-size="13" font-weight="700" text-anchor="middle">War and the Space Race</text>
+<line x1="801.4375" y1="345" x2="871.0625" y2="345" stroke="#b197fc" stroke-width="6" stroke-linecap="round"/>
+<path d="M804.4375,557 L804.4375,565 L868.0625,565 L868.0625,557" fill="none" stroke="#b197fc" stroke-width="1.5"/>
+<text x="836.25" y="587" fill="#b197fc" font-size="13" font-weight="700" text-anchor="middle">Shuttle era</text>
+<line x1="877.0625" y1="345" x2="1022.3125" y2="345" stroke="#4dabf7" stroke-width="6" stroke-linecap="round"/>
+<path d="M880.0625,557 L880.0625,565 L1019.3125,565 L1019.3125,557" fill="none" stroke="#4dabf7" stroke-width="1.5"/>
+<text x="949.6875" y="587" fill="#4dabf7" font-size="13" font-weight="700" text-anchor="middle">Commercial era</text>
+<line x1="1028.3125" y1="345" x2="1317" y2="345" stroke="#63e6be" stroke-width="6" stroke-linecap="round"/>
+<path d="M1031.3125,557 L1031.3125,565 L1314,565 L1314,557" fill="none" stroke="#63e6be" stroke-width="1.5"/>
+<text x="1172.65625" y="587" fill="#63e6be" font-size="13" font-weight="700" text-anchor="middle">A new generation</text>
+<path d="M1324,336 L1342,345 L1324,354 Z" fill="#63e6be"/>
+<line x1="80.0" y1="337" x2="80.0" y2="287" stroke="#ff922b" stroke-width="1.5" opacity="0.7"/>
+<circle cx="80.0" cy="345" r="8" fill="#0b1628" stroke="#ff922b" stroke-width="3.5"/>
+<text x="80.0" y="195" fill="#ff922b" font-size="20" font-weight="800" text-anchor="middle">1232</text>
+<text x="80.0" y="217" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Fire arrows</text>
+<text x="80.0" y="235" fill="#8fa3bf" font-size="11.5" text-anchor="middle">Gunpowder rockets used</text>
+<text x="80.0" y="250" fill="#8fa3bf" font-size="11.5" text-anchor="middle">at the siege of Kaifeng</text>
+<line x1="155.625" y1="353" x2="155.625" y2="403" stroke="#ff922b" stroke-width="1.5" opacity="0.7"/>
+<circle cx="155.625" cy="345" r="8" fill="#0b1628" stroke="#ff922b" stroke-width="3.5"/>
+<text x="155.625" y="431" fill="#ff922b" font-size="20" font-weight="800" text-anchor="middle">1780s</text>
+<text x="155.625" y="453" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Mysorean rockets</text>
+<text x="155.625" y="471" fill="#8fa3bf" font-size="11.5" text-anchor="middle">First iron-cased</text>
+<text x="155.625" y="486" fill="#8fa3bf" font-size="11.5" text-anchor="middle">war rockets, India</text>
+<line x1="231.25" y1="337" x2="231.25" y2="287" stroke="#ff922b" stroke-width="1.5" opacity="0.7"/>
+<circle cx="231.25" cy="345" r="8" fill="#0b1628" stroke="#ff922b" stroke-width="3.5"/>
+<text x="231.25" y="195" fill="#ff922b" font-size="20" font-weight="800" text-anchor="middle">1804</text>
+<text x="231.25" y="217" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Congreve rocket</text>
+<text x="231.25" y="235" fill="#8fa3bf" font-size="11.5" text-anchor="middle">Britain copies and</text>
+<text x="231.25" y="250" fill="#8fa3bf" font-size="11.5" text-anchor="middle">improves the design</text>
+<line x1="306.875" y1="353" x2="306.875" y2="403" stroke="#ffd43b" stroke-width="1.5" opacity="0.7"/>
+<circle cx="306.875" cy="345" r="8" fill="#0b1628" stroke="#ffd43b" stroke-width="3.5"/>
+<text x="306.875" y="431" fill="#ffd43b" font-size="20" font-weight="800" text-anchor="middle">1903</text>
+<text x="306.875" y="453" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Tsiolkovsky</text>
+<text x="306.875" y="471" fill="#8fa3bf" font-size="11.5" text-anchor="middle">Publishes the</text>
+<text x="306.875" y="486" fill="#8fa3bf" font-size="11.5" text-anchor="middle">rocket equation</text>
+<line x1="382.5" y1="337" x2="382.5" y2="287" stroke="#ffd43b" stroke-width="1.5" opacity="0.7"/>
+<circle cx="382.5" cy="345" r="8" fill="#0b1628" stroke="#ffd43b" stroke-width="3.5"/>
+<text x="382.5" y="195" fill="#ffd43b" font-size="20" font-weight="800" text-anchor="middle">1923</text>
+<text x="382.5" y="217" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Hermann Oberth</text>
+<text x="382.5" y="235" fill="#8fa3bf" font-size="11.5" text-anchor="middle">The Rocket into</text>
+<text x="382.5" y="250" fill="#8fa3bf" font-size="11.5" text-anchor="middle">Planetary Space</text>
+<line x1="458.125" y1="353" x2="458.125" y2="403" stroke="#ffd43b" stroke-width="1.5" opacity="0.7"/>
+<circle cx="458.125" cy="345" r="8" fill="#0b1628" stroke="#ffd43b" stroke-width="3.5"/>
+<text x="458.125" y="431" fill="#ffd43b" font-size="20" font-weight="800" text-anchor="middle">1926</text>
+<text x="458.125" y="453" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Robert Goddard</text>
+<text x="458.125" y="471" fill="#8fa3bf" font-size="11.5" text-anchor="middle">First liquid-fuel</text>
+<text x="458.125" y="486" fill="#8fa3bf" font-size="11.5" text-anchor="middle">rocket flies</text>
+<line x1="533.75" y1="337" x2="533.75" y2="287" stroke="#ff6b6b" stroke-width="1.5" opacity="0.7"/>
+<circle cx="533.75" cy="345" r="8" fill="#0b1628" stroke="#ff6b6b" stroke-width="3.5"/>
+<text x="533.75" y="195" fill="#ff6b6b" font-size="20" font-weight="800" text-anchor="middle">1944</text>
+<text x="533.75" y="217" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">V-2</text>
+<text x="533.75" y="235" fill="#8fa3bf" font-size="11.5" text-anchor="middle">First human-made</text>
+<text x="533.75" y="250" fill="#8fa3bf" font-size="11.5" text-anchor="middle">object in space</text>
+<line x1="609.375" y1="353" x2="609.375" y2="403" stroke="#ff6b6b" stroke-width="1.5" opacity="0.7"/>
+<circle cx="609.375" cy="345" r="8" fill="#0b1628" stroke="#ff6b6b" stroke-width="3.5"/>
+<text x="609.375" y="431" fill="#ff6b6b" font-size="20" font-weight="800" text-anchor="middle">1957</text>
+<text x="609.375" y="453" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Sputnik 1</text>
+<text x="609.375" y="471" fill="#8fa3bf" font-size="11.5" text-anchor="middle">First satellite,</text>
+<text x="609.375" y="486" fill="#8fa3bf" font-size="11.5" text-anchor="middle">launched by an R-7</text>
+<line x1="685.0" y1="337" x2="685.0" y2="287" stroke="#ff6b6b" stroke-width="1.5" opacity="0.7"/>
+<circle cx="685.0" cy="345" r="8" fill="#0b1628" stroke="#ff6b6b" stroke-width="3.5"/>
+<text x="685.0" y="195" fill="#ff6b6b" font-size="20" font-weight="800" text-anchor="middle">1961</text>
+<text x="685.0" y="217" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Yuri Gagarin</text>
+<text x="685.0" y="235" fill="#8fa3bf" font-size="11.5" text-anchor="middle">First human</text>
+<text x="685.0" y="250" fill="#8fa3bf" font-size="11.5" text-anchor="middle">in orbit</text>
+<line x1="760.625" y1="353" x2="760.625" y2="403" stroke="#ff6b6b" stroke-width="1.5" opacity="0.7"/>
+<circle cx="760.625" cy="345" r="8" fill="#0b1628" stroke="#ff6b6b" stroke-width="3.5"/>
+<text x="760.625" y="431" fill="#ff6b6b" font-size="20" font-weight="800" text-anchor="middle">1969</text>
+<text x="760.625" y="453" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Saturn V</text>
+<text x="760.625" y="471" fill="#8fa3bf" font-size="11.5" text-anchor="middle">Apollo 11 lands</text>
+<text x="760.625" y="486" fill="#8fa3bf" font-size="11.5" text-anchor="middle">on the Moon</text>
+<line x1="836.25" y1="337" x2="836.25" y2="287" stroke="#b197fc" stroke-width="1.5" opacity="0.7"/>
+<circle cx="836.25" cy="345" r="8" fill="#0b1628" stroke="#b197fc" stroke-width="3.5"/>
+<text x="836.25" y="195" fill="#b197fc" font-size="20" font-weight="800" text-anchor="middle">1981</text>
+<text x="836.25" y="217" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Space Shuttle</text>
+<text x="836.25" y="235" fill="#8fa3bf" font-size="11.5" text-anchor="middle">First partly reusable</text>
+<text x="836.25" y="250" fill="#8fa3bf" font-size="11.5" text-anchor="middle">crewed spacecraft</text>
+<line x1="911.875" y1="353" x2="911.875" y2="403" stroke="#4dabf7" stroke-width="1.5" opacity="0.7"/>
+<circle cx="911.875" cy="345" r="8" fill="#0b1628" stroke="#4dabf7" stroke-width="3.5"/>
+<text x="911.875" y="431" fill="#4dabf7" font-size="20" font-weight="800" text-anchor="middle">2008</text>
+<text x="911.875" y="453" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Falcon 1</text>
+<text x="911.875" y="471" fill="#8fa3bf" font-size="11.5" text-anchor="middle">First private liquid</text>
+<text x="911.875" y="486" fill="#8fa3bf" font-size="11.5" text-anchor="middle">rocket in orbit</text>
+<line x1="987.5" y1="337" x2="987.5" y2="287" stroke="#4dabf7" stroke-width="1.5" opacity="0.7"/>
+<circle cx="987.5" cy="345" r="8" fill="#0b1628" stroke="#4dabf7" stroke-width="3.5"/>
+<text x="987.5" y="195" fill="#4dabf7" font-size="20" font-weight="800" text-anchor="middle">2015</text>
+<text x="987.5" y="217" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Falcon 9</text>
+<text x="987.5" y="235" fill="#8fa3bf" font-size="11.5" text-anchor="middle">First orbital-class</text>
+<text x="987.5" y="250" fill="#8fa3bf" font-size="11.5" text-anchor="middle">booster landing</text>
+<line x1="1063.125" y1="353" x2="1063.125" y2="403" stroke="#63e6be" stroke-width="1.5" opacity="0.7"/>
+<circle cx="1063.125" cy="345" r="8" fill="#0b1628" stroke="#63e6be" stroke-width="3.5"/>
+<text x="1063.125" y="431" fill="#63e6be" font-size="20" font-weight="800" text-anchor="middle">2019</text>
+<text x="1063.125" y="453" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Traveler IV</text>
+<text x="1063.125" y="471" fill="#8fa3bf" font-size="11.5" text-anchor="middle">First student-built</text>
+<text x="1063.125" y="486" fill="#8fa3bf" font-size="11.5" text-anchor="middle">rocket in space</text>
+<line x1="1138.75" y1="337" x2="1138.75" y2="287" stroke="#63e6be" stroke-width="1.5" opacity="0.7"/>
+<circle cx="1138.75" cy="345" r="8" fill="#0b1628" stroke="#63e6be" stroke-width="3.5"/>
+<text x="1138.75" y="195" fill="#63e6be" font-size="20" font-weight="800" text-anchor="middle">2020</text>
+<text x="1138.75" y="217" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">EuRoC</text>
+<text x="1138.75" y="235" fill="#8fa3bf" font-size="11.5" text-anchor="middle">Student rocketry</text>
+<text x="1138.75" y="250" fill="#8fa3bf" font-size="11.5" text-anchor="middle">challenge in Portugal</text>
+<line x1="1214.375" y1="353" x2="1214.375" y2="403" stroke="#63e6be" stroke-width="1.5" opacity="0.7"/>
+<circle cx="1214.375" cy="345" r="8" fill="#0b1628" stroke="#63e6be" stroke-width="3.5"/>
+<text x="1214.375" y="431" fill="#63e6be" font-size="20" font-weight="800" text-anchor="middle">2024</text>
+<text x="1214.375" y="453" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Starship</text>
+<text x="1214.375" y="471" fill="#8fa3bf" font-size="11.5" text-anchor="middle">Booster caught</text>
+<text x="1214.375" y="486" fill="#8fa3bf" font-size="11.5" text-anchor="middle">by its launch tower</text>
+<line x1="1290.0" y1="337" x2="1290.0" y2="287" stroke="#63e6be" stroke-width="1.5" opacity="0.7"/>
+<circle cx="1290.0" cy="345" r="8" fill="#0b1628" stroke="#63e6be" stroke-width="3.5"/>
+<text x="1290.0" y="195" fill="#63e6be" font-size="20" font-weight="800" text-anchor="middle">2026</text>
+<text x="1290.0" y="217" fill="#e6edf7" font-size="13.5" font-weight="700" text-anchor="middle">Artemis II</text>
+<text x="1290.0" y="235" fill="#8fa3bf" font-size="11.5" text-anchor="middle">Crew flies around</text>
+<text x="1290.0" y="250" fill="#8fa3bf" font-size="11.5" text-anchor="middle">the Moon</text>
+</svg>

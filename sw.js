@@ -26,6 +26,7 @@ const APP_FILES = [
   "./assets/icon-192.png",
   "./assets/icon-512.png",
   "./assets/icon-maskable-512.png",
+  "./assets/guide/history.jpg",
   "./assets/guide/fundamentals.jpg",
   "./assets/guide/types.jpg",
   "./assets/guide/propulsion.jpg",
@@ -38,7 +39,8 @@ const APP_FILES = [
   "./assets/guide/rocket-engine.svg",
   "./assets/guide/rocket-anatomy.svg",
   "./assets/guide/rocket-flight.svg",
-  "./assets/guide/filling-station.svg"
+  "./assets/guide/filling-station.svg",
+  "./assets/guide/rocketry-history.svg"
 ];
 
 const LIBRARY_HOSTS = [

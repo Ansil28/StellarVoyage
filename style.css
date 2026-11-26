@@ -1520,6 +1520,11 @@ button {
     transition: transform 0.4s ease;
 }
 
+/* The history photo is tall: frame the launch stand and Goddard's face */
+.guide-card-image-history {
+    object-position: center 45%;
+}
+
 .guide-card:hover .guide-card-image {
     transform: scale(1.04);
 }

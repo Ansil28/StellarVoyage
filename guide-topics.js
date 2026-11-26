@@ -9,6 +9,115 @@
 // A topic can have its own "image" ({ src, alt }), shown after the intro.
 
 const GUIDE_TOPICS = {
+  history: {
+    title: "A Brief History of Rocketry",
+    // A long article: show an "On this page" index with a link to each section
+    toc: true,
+    intro: "The principle behind every rocket, that pushing something backwards pushes you forwards, has been understood for more than two thousand years. Turning it into a machine that can leave the Earth took eight centuries of fireworks, weapons, ridiculed scientists, a world war, a superpower race and, more recently, a handful of companies and student teams willing to fail until they succeeded. This is that story.",
+    image: {
+      src: "assets/guide/rocketry-history.svg",
+      caption:
+        "Eight centuries of rocketry in sixteen milestones, from fire arrows at Kaifeng to Artemis II. " +
+        "The milestones are evenly spaced, not to scale.",
+      alt:
+        "Timeline of rocketry in six eras. Gunpowder rockets: 1232, fire arrows at the siege of Kaifeng; 1780s, Mysorean iron-cased war rockets in India; " +
+        "1804, the Congreve rocket in Britain. The pioneers: 1903, Tsiolkovsky publishes the rocket equation; 1923, Hermann Oberth's The Rocket into Planetary Space; " +
+        "1926, Robert Goddard's first liquid-fuel rocket flies. War and the Space Race: 1944, the V-2 is the first human-made object in space; " +
+        "1957, Sputnik 1, the first satellite, launched by an R-7; 1961, Yuri Gagarin, the first human in orbit; 1969, the Saturn V and Apollo 11 Moon landing. " +
+        "Shuttle era: 1981, the Space Shuttle, the first partly reusable crewed spacecraft. Commercial era: 2008, Falcon 1, the first private liquid rocket in orbit; " +
+        "2015, Falcon 9, the first orbital-class booster landing. A new generation: 2019, Traveler IV, the first student-built rocket in space; " +
+        "2020, EuRoC, a student rocketry challenge in Portugal; 2024, Starship's booster caught by its launch tower; 2026, Artemis II's crew flies around the Moon."
+    },
+    sections: [
+      {
+        heading: "1. Fire and gunpowder (c. 1000–1850)",
+        paragraphs: [
+          "The first rockets were Chinese. Gunpowder was invented in China around the 9th century, and by the 13th century it was being packed into bamboo or paper tubes tied to arrows. When lit, the burning powder pushed the arrow forward on its own: a simple solid rocket motor.",
+          "The first well-documented use came in 1232, when the defenders of Kaifeng fired barrages of \"arrows of flying fire\" at Mongol armies besieging the city. Their military effect was probably more psychological than deadly, but the Mongols quickly adopted the idea and helped spread it west. By the late 14th century, rockets were being used in battles from China to Italy.",
+          "For centuries, rockets remained inaccurate and short-ranged, because their cases were weak and could not hold much pressure (see Rocket Propulsion). That changed in the Kingdom of Mysore, in southern India. In the 1780s and 1790s, the armies of Hyder Ali and his son Tipu Sultan used rockets with iron casings. The stronger casing allowed a higher chamber pressure and a much longer range, and these rockets caused serious problems for British troops.",
+          "After Tipu Sultan's defeat in 1799, captured Mysorean rockets were sent to Britain. Starting in 1804, William Congreve studied and improved them, creating the Congreve rocket, which was used by British forces in the Napoleonic Wars and the War of 1812. During the 1814 bombardment of Fort McHenry in Baltimore, they failed to take the fort, but they inspired the line \"the rockets' red glare\" in what became the United States national anthem.",
+          "As artillery became more accurate and powerful during the 19th century, war rockets fell out of use. Rockets might have stayed a curiosity, but a few people had started to imagine using them for something very different."
+        ]
+      },
+      {
+        heading: "2. The pioneers (1890s–1930s)",
+        paragraphs: [
+          "At the turn of the 20th century, three people working separately laid the scientific foundations of spaceflight, inspired in part by the novels of Jules Verne and H. G. Wells.",
+          "Konstantin Tsiolkovsky, a self-taught Russian schoolteacher, wrote \"Exploration of Outer Space by Means of Reaction Devices\" in 1898, and it was published in 1903. In it, he showed mathematically that a rocket could reach space, derived the rocket equation that still bears his name (see Rocket Fundamentals), and proposed liquid oxygen and liquid hydrogen as propellants. He also described multi-stage rockets. Because he wrote in Russian and worked in isolation, his ideas were almost unknown abroad for decades.",
+          "In the United States, physicist Robert Goddard turned theory into hardware. In 1914 he patented a multi-stage rocket and a liquid-fuelled rocket, and in 1919 he published \"A Method of Reaching Extreme Altitudes\", which suggested that a rocket could one day reach the Moon. The New York Times mocked the idea in an editorial, claiming that a rocket could not work in a vacuum because it would have nothing to push against. Goddard was right: a rocket pushes against its own exhaust. The newspaper printed a correction in July 1969, while Apollo 11 was on its way to the Moon.",
+          "On 16 March 1926, on a snowy farm in Auburn, Massachusetts, Goddard launched the world's first liquid-fuelled rocket, burning gasoline and liquid oxygen. The flight lasted 2.5 seconds, reached a height of 12.5 metres and ended in a cabbage patch 56 metres away. It looked unimpressive, but it proved that a liquid rocket could be controlled. Goddard went on to launch more than two dozen rockets, adding gyroscopic stabilisation and many other ideas still used today.",
+          "In Europe, the Transylvanian-born German physicist Hermann Oberth reached similar conclusions independently. His doctoral thesis on rocket flight was rejected as too speculative, so in 1923 he published it as a book, \"Die Rakete zu den Planetenräumen\" (The Rocket into Planetary Space). It became hugely influential in Germany, led to the founding of amateur rocket societies and made Oberth an adviser on Fritz Lang's 1929 film \"Frau im Mond\" (Woman in the Moon), which is often credited with popularising the launch countdown. One of the young members of those rocket societies was Wernher von Braun."
+        ]
+      },
+      {
+        heading: "3. The V-2 (1930s–1945)",
+        paragraphs: [
+          "In the 1930s, the German army began funding rocket research as a long-range weapon, and von Braun became the technical leader of a large programme at Peenemünde, on the Baltic coast. Its main product was the A-4, later called the V-2: the world's first large liquid-fuelled rocket and first long-range ballistic missile.",
+          "The V-2 brought together the key technologies of modern rockets for the first time: a powerful engine burning alcohol and liquid oxygen, supersonic aerodynamics, gyroscopic guidance and graphite vanes in the exhaust to steer it. On 20 June 1944, a V-2 test flight known as MW 18014 was launched vertically and reached an altitude of about 176 km. It was the first human-made object to reach space.",
+          "The V-2's history is also deeply dark. From September 1944, more than 3,000 were launched against cities such as London and Antwerp, killing an estimated 9,000 people. Many more died building it: the rockets were assembled in the underground Mittelwerk factory by prisoners from the Mittelbau-Dora concentration camp, where conditions were brutal. More than twice as many prisoners died producing the V-2 than were killed by it in attacks.",
+          "When the war ended, the United States and the Soviet Union raced to capture V-2 hardware and engineers. Von Braun and more than a hundred of his team surrendered to the Americans and were brought to the United States, while the Soviets took over the production facilities and many German specialists. Captured V-2s carried the first scientific instruments, cameras and animals to the edge of space, and the V-2 became the direct ancestor of both countries' rockets."
+        ]
+      },
+      {
+        heading: "4. The Space Race (1957–1975)",
+        paragraphs: [
+          "In the Soviet Union, the design bureau led by Sergei Korolev built the R-7, the world's first intercontinental ballistic missile, first flown successfully in August 1957. Designed to carry a heavy nuclear warhead, it was powerful enough to reach orbit. On 4 October 1957, an R-7 launched Sputnik 1, an 83.6 kg sphere that transmitted a simple radio beep. It was the first artificial satellite, and it started the Space Race. A month later, Sputnik 2 carried the dog Laika into orbit.",
+          "The United States responded with Explorer 1 in January 1958, launched by von Braun's team, and created NASA that same year. But the Soviet Union kept the lead: on 12 April 1961, Yuri Gagarin became the first human in space, orbiting the Earth once in his Vostok capsule, launched by a version of the R-7. Weeks later, President John F. Kennedy committed the United States to landing a person on the Moon before the end of the decade.",
+          "Reaching that goal required the Saturn V, still one of the most powerful rockets ever flown. Its first stage used five F-1 engines burning kerosene and liquid oxygen, producing about 34 meganewtons of thrust at liftoff, while its upper stages burned liquid hydrogen. It first flew on 9 November 1967, and on 16 July 1969 it launched Apollo 11. Four days later, Neil Armstrong and Buzz Aldrin walked on the Moon. The Saturn V flew 13 times, carried 24 astronauts to the Moon and never lost a crew or a payload. Its Soviet rival, the N1, failed on all four of its launch attempts, and the Soviet crewed Moon programme was cancelled.",
+          "The race ended in cooperation: in 1975, an American Apollo and a Soviet Soyuz spacecraft docked in orbit."
+        ]
+      },
+      {
+        heading: "5. Workhorses and the Space Shuttle (1975–2011)",
+        paragraphs: [
+          "After the Moon landings, rockets became tools rather than symbols. The R-7 evolved into the Soyuz family, which is still flying today and has been launched more than 2,000 times, more than any other rocket family. Europe, determined to have its own access to space, created the Ariane programme: Ariane 1 first flew from French Guiana on 24 December 1979, and its successors made Europe a leader in commercial satellite launches. China, Japan and India also developed their own launchers.",
+          "In the United States, NASA bet on reusability. The Space Shuttle first flew on 12 April 1981. Its winged orbiter returned to land on a runway, and its two solid rocket boosters were recovered from the sea, refurbished and flown again. Between 1981 and 2011, the Shuttle flew 135 missions, launched the Hubble Space Telescope and helped build the International Space Station.",
+          "But it never delivered the cheap, frequent flights it promised. Refurbishing the orbiter between flights was slow and expensive, and its design had dangerous weaknesses. In 1986, Challenger broke apart shortly after launch when a seal in one of its solid boosters failed in cold weather. In 2003, Columbia was destroyed during re-entry after foam from the external tank damaged its wing during launch. Fourteen astronauts died. The Shuttle was retired in July 2011, and the lesson was clear: reusability only pays off if reusing a vehicle is cheaper than building a new one."
+        ]
+      },
+      {
+        heading: "6. The commercial era (2002–2020)",
+        paragraphs: [
+          "In 2002, Elon Musk founded SpaceX with the goal of drastically reducing the cost of reaching space. Its first rocket, the small Falcon 1, failed on its first three launches between 2006 and 2008, leaving the company close to bankruptcy. On 28 September 2008, the fourth Falcon 1 reached orbit, becoming the first privately developed liquid-fuelled rocket to do so.",
+          "That success led to NASA contracts to deliver cargo to the International Space Station and to the much larger Falcon 9, which first flew in 2010. SpaceX then attempted something many considered impractical: landing the first stage so it could be flown again. After several failed attempts, on 21 December 2015, a Falcon 9 first stage flew back and landed upright at Cape Canaveral after launching satellites into orbit, the first time a rocket stage that helped place a payload in orbit had landed. A month earlier, Blue Origin's smaller New Shepard had landed after a suborbital flight.",
+          "In March 2017, a previously flown Falcon 9 booster launched again and landed again. Within a few years, booster landings became routine, with hundreds completed, and some boosters flying more than twenty times. In 2020, a Falcon 9 launched astronauts to the International Space Station aboard a Crew Dragon capsule, the first crewed orbital flight by a private spacecraft. Smaller companies, such as Rocket Lab with its Electron rocket, opened orbit to small satellites."
+        ]
+      },
+      {
+        heading: "7. A new generation (2020s)",
+        paragraphs: [
+          "The 2020s brought a new generation of large rockets.",
+          "SpaceX's Starship, a stainless steel rocket powered by methane engines and designed to be fully reusable, is the largest and most powerful rocket ever flown. Its test campaign has been dramatic, with several flights ending in explosions, but on 13 October 2024, its Super Heavy booster returned to the launch site and was caught in mid-air by the mechanical arms of its launch tower. In 2026, an upgraded Starship V3 flew for the first time, and on its next flight in July, it deployed satellites and splashed down intact in the ocean.",
+          "NASA returned to the Moon with the Space Launch System (SLS) and the Orion capsule. Artemis I flew around the Moon without a crew in 2022, and on 1 April 2026, Artemis II launched four astronauts on a ten-day flight around the Moon, the first crewed lunar mission since 1972. On their flyby, the crew travelled farther from Earth than any humans before them.",
+          "Other players have joined the race. Europe's Ariane 6 first flew on 9 July 2024. Blue Origin's New Glenn reached orbit in January 2025, landed its booster for the first time in November 2025 and reflew a landed booster in 2026. Reusable rockets are no longer an experiment but the direction the whole industry is moving in."
+        ]
+      },
+      {
+        heading: "8. Rocketry goes to university",
+        paragraphs: [
+          "Rocketry is no longer only for governments and large companies. Around the world, university teams design, build and launch their own rockets, often developing their own engines, electronics and recovery systems. Many of today's aerospace engineers started this way.",
+          "On 21 April 2019, the University of Southern California's Rocket Propulsion Laboratory launched Traveler IV from Spaceport America in New Mexico. The solid-fuelled rocket accelerated at more than 17 g, reached about five times the speed of sound and, according to the team's analysis, crossed the 100 km Kármán line, making it the first rocket designed and built entirely by students to reach space. It was then recovered.",
+          "Student competitions have grown alongside these teams. In the United States, the Spaceport America Cup brings together teams from around the world. In Europe, the European Rocketry Challenge (EuRoC) was created in 2020 by the Portuguese Space Agency. Its first edition, in Ponte de Sor, had six teams; by 2026, its seventh edition in Constância brought together around 690 students from 13 countries, with the European Space Agency as a partner. Portuguese teams, including the Porto Space Team, compete alongside some of the best student teams in Europe."
+        ]
+      },
+      {
+        heading: "What history teaches us",
+        paragraphs: [
+          "Looking back over eight centuries, a few patterns stand out:"
+        ],
+        list: [
+          "Rocketry was born in war. From Chinese fire arrows to the V-2 and the first ICBMs, the same technology that opened the way to space was first built to destroy, sometimes at a terrible human cost.",
+          "Failure is part of the process. Goddard was mocked, Falcon 1 failed three times, and Starship has exploded several times. Progress has come from testing, failing and learning faster.",
+          "Reusability is an old dream. The Shuttle proved that partial reuse was possible; Falcon 9 proved it could make launches cheaper; Starship and New Glenn are now trying to go further.",
+          "Access to space keeps widening. What started with superpowers is now open to companies, smaller countries and even university students."
+        ],
+        after: [
+          "The next chapters, from returning to the Moon to sending people to Mars, are being written now, and some of them may be written by the students launching rockets today."
+        ]
+      }
+    ]
+  },
+
   fundamentals: {
     title: "Rocket Fundamentals",
     intro:
