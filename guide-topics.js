@@ -615,47 +615,164 @@ const GUIDE_TOPICS = {
 
   "filling-station": {
     title: "Filling Station",
-    intro:
+    intro: [
       "A filling station is the ground support equipment (GSE) that loads propellant into a rocket before launch. " +
       "It lets the team fill, monitor and, if needed, empty the tanks safely from a distance.",
+      "On large launch vehicles, this is a complex, automated system that loads tonnes of cryogenic propellant " +
+      "in the final half hour or so before liftoff. In student rocketry, it is usually a smaller setup that fills " +
+      "the oxidizer tank of a hybrid rocket with nitrous oxide, and it is often designed and built by the team itself."
+    ],
+    image: {
+      src: "assets/guide/filling-station.svg",
+      caption:
+        "A simplified nitrous oxide filling station for a student hybrid rocket: the lines, valves and sensors on the pad, " +
+        "and the control station at a safe distance.",
+      alt:
+        "Schematic of a nitrous oxide filling station. In the pad area, a nitrous oxide bottle on a load cell feeds a line through " +
+        "a manual valve, a check valve, a relief valve and a solenoid fill valve that is closed when unpowered, then through a quick " +
+        "disconnect into the rocket's oxidizer tank, which holds liquid with vapour above it and sits above the motor. A nitrogen bottle " +
+        "with a regulator and a check valve joins the line for purging and leak tests. A dump valve, open when unpowered, can empty the line, " +
+        "and a solenoid vent valve releases gas from the top of the tank. Pressure and temperature sensors on the tank and the valves are " +
+        "wired to a pad box with relays and a battery, which is linked by a long cable or radio to a control station at a safe distance, " +
+        "with live data, an arming key and an emergency stop. If the link or power is lost, the fill valve closes and the dump valve opens."
+    },
     sections: [
+      {
+        heading: "Why nitrous oxide needs care",
+        paragraphs: [
+          "Nitrous oxide (N₂O) is popular because it is self-pressurising: at room temperature it is stored as a liquid with gas above it, " +
+          "at around 50 bar at 20 °C. This means it can push itself into the engine without pumps, " +
+          "but it also has some important consequences:"
+        ],
+        list: [
+          "Its pressure depends almost only on temperature, not on how much is in the tank. A bottle left in the sun can reach dangerous pressures.",
+          "Because of this, pressure alone cannot tell you how full the tank is.",
+          "If it is contaminated or overheated, nitrous oxide can decompose violently, releasing heat. " +
+          "Cleanliness and compatible materials are essential."
+        ]
+      },
       {
         heading: "Propellant system",
         list: [
-          { term: "Storage tanks or bottles", text: "hold the propellant or oxidizer, such as liquid oxygen or nitrous oxide." },
-          { term: "Fill lines", text: "pipes and hoses rated for the pressure and temperature of the propellant." },
-          { term: "Quick disconnect", text: "a coupling that separates cleanly from the rocket at liftoff or before it." },
-          { term: "Vent line", text: "releases gas from the rocket's tank so it can be filled and to avoid over-pressure." },
-          { term: "Purge system", text: "usually nitrogen, used to clear lines of propellant, air and moisture." }
+          {
+            term: "Storage tanks or bottles",
+            text: "hold the propellant or oxidizer, such as liquid oxygen or nitrous oxide."
+          },
+          {
+            term: "Fill lines",
+            text: "pipes and hoses rated for the pressure and temperature of the propellant."
+          },
+          {
+            term: "Quick disconnect",
+            text:
+              "a coupling that separates cleanly from the rocket at liftoff or just before it, " +
+              "often pulled by a cable or an actuator."
+          },
+          {
+            term: "Vent line",
+            text: "releases gas from the rocket's tank so that liquid can flow in, and prevents over-pressure."
+          },
+          {
+            term: "Dump line",
+            text: "lets the team empty the tank remotely if the launch is cancelled or something goes wrong."
+          },
+          {
+            term: "Purge system",
+            text:
+              "usually nitrogen, used to clear the lines of propellant, air and moisture, " +
+              "and to leak-test the system before any propellant is loaded."
+          }
         ]
       },
       {
         heading: "Valves",
         list: [
-          { term: "Ball valves", text: "open or close the main flow, often with a motor or pneumatic actuator for remote control." },
-          { term: "Solenoid valves", text: "electrically controlled valves for fast, remote switching." },
-          { term: "Check valves", text: "only allow flow in one direction." },
-          { term: "Relief valves", text: "open automatically if the pressure goes above a safe limit." },
-          { term: "Pressure regulators", text: "keep a constant pressure downstream." }
+          {
+            term: "Ball valves",
+            text:
+              "open or close the main flow with very little restriction, " +
+              "often moved by a motor or pneumatic actuator for remote control."
+          },
+          {
+            term: "Solenoid valves",
+            text:
+              "electrically controlled valves for fast, remote switching. " +
+              "They are simple to drive, but many only allow a small flow."
+          },
+          {
+            term: "Check valves",
+            text:
+              "only allow flow in one direction, " +
+              "for example to stop propellant flowing back into the nitrogen line."
+          },
+          {
+            term: "Relief valves and burst discs",
+            text:
+              "a relief valve opens automatically above a set pressure; " +
+              "a burst disc is a thin membrane that ruptures as a last line of defence."
+          },
+          {
+            term: "Pressure regulators",
+            text: "keep a constant pressure downstream, for example on the nitrogen line."
+          }
+        ],
+        after: [
+          "Remotely operated valves are chosen to be fail-safe. A normally closed (NC) valve shuts when it loses power, " +
+          "and a normally open (NO) valve opens. A common choice is an NC fill valve and an NO dump valve: " +
+          "if power or communication is lost, filling stops and the tank empties itself."
         ]
       },
       {
         heading: "Sensors and control electronics",
         paragraphs: [
           "Pressure transducers, thermocouples and load cells tell the team how much propellant is in the tank and whether conditions are safe. " +
-          "A load cell under the rocket or the supply bottle is a simple way to measure the mass transferred.",
-          "A control box, often based on a microcontroller, drives the valves and reads the sensors. " +
-          "It is operated from a safe distance, through a long cable or a radio link, and must fail safe: " +
-          "if the connection is lost, the valves should move to a safe position."
+          "With nitrous oxide, a load cell under the rocket or the supply bottle is the most reliable way to measure the mass transferred, " +
+          "since the pressure does not change as the tank fills. " +
+          "Many teams also watch the vent: when liquid instead of gas starts to come out, the tank is full.",
+          "The electronics are usually split in two:"
+        ],
+        list: [
+          {
+            term: "Pad box",
+            text:
+              "sits near the rocket and switches the valves through relays or transistor drivers, " +
+              "reads the sensors and has its own battery."
+          },
+          {
+            term: "Control station",
+            text:
+              "sits at a safe distance, shows live data, logs everything and sends commands. " +
+              "It usually includes an arming key and an emergency stop button."
+          }
+        ],
+        after: [
+          "The two are connected by a long cable or a radio link and send each other a regular heartbeat signal. " +
+          "The system must fail safe: if the heartbeat is lost, the pad box moves the valves to a safe position on its own."
+        ]
+      },
+      {
+        heading: "A typical filling sequence",
+        ordered: true,
+        list: [
+          "Check the system with nitrogen: pressurise it, look for leaks and confirm that every valve and sensor responds.",
+          "Purge the lines with nitrogen to remove air and moisture.",
+          "Clear the pad area and arm the system from the control station.",
+          "Open the fill valve and the vent, and watch the mass, pressure and temperature as the tank fills.",
+          "Close the fill valve once the target mass is reached or liquid appears at the vent.",
+          "Close the vent, disconnect the fill line and prepare for launch, or dump the tank if the launch is cancelled."
         ]
       },
       {
         heading: "Safety",
         list: [
-          "Keep people away from the pad while the rocket is pressurised.",
+          "Keep people away from the pad while the rocket is pressurised, and only approach after the system has been made safe.",
           "Always have a way to vent and empty the tank remotely.",
-          "Use a checklist for every fill, and test the system with an inert gas first.",
-          "Only use materials that are compatible with the propellant, especially with oxygen and nitrous oxide."
+          "Use a checklist for every fill, with one person in charge of safety, and test the system with an inert gas first.",
+          "Pressure-test the rocket's tank and lines above their working pressure before using real propellant.",
+          "Only use materials that are compatible with the propellant. With oxygen and nitrous oxide, parts must be cleaned of oil and grease, " +
+          "and only oxygen-compatible lubricants and seals may be used.",
+          "Ground all metal parts to prevent static sparks.",
+          "Wear protective equipment, such as a face shield and gloves, when handling the system."
         ]
       }
     ]

@@ -37,7 +37,8 @@ const APP_FILES = [
   "./assets/guide/rocket-types.svg",
   "./assets/guide/rocket-engine.svg",
   "./assets/guide/rocket-anatomy.svg",
-  "./assets/guide/rocket-flight.svg"
+  "./assets/guide/rocket-flight.svg",
+  "./assets/guide/filling-station.svg"
 ];
 
 const LIBRARY_HOSTS = [

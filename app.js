@@ -1697,10 +1697,14 @@ function showGuideTopic(topicKey) {
   const title = document.createElement("h2");
   title.textContent = topic.title;
 
-  const intro = document.createElement("p");
-  intro.textContent = topic.intro;
+  const article = [backButton, title];
 
-  const article = [backButton, title, intro];
+  // The introduction: one paragraph, or several as a list of strings
+  for (const text of [].concat(topic.intro)) {
+    const intro = document.createElement("p");
+    intro.textContent = text;
+    article.push(intro);
+  }
 
   // Image (diagram or photo) in a guide article. Tapping it opens the
   // full-size viewer, so small text in diagrams can be read on phones.
@@ -1764,7 +1768,8 @@ function showGuideTopic(topicKey) {
     }
 
     if (section.list) {
-      const list = document.createElement("ul");
+      // "ordered: true" numbers the items (for steps done in order)
+      const list = document.createElement(section.ordered ? "ol" : "ul");
 
       for (const item of section.list) {
         const listItem = document.createElement("li");

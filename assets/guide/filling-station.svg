@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" font-family="Inter, Segoe UI, Arial, sans-serif" role="img" aria-labelledby="t d">
+<title id="t">Filling station schematic</title>
+<desc id="d">Schematic of a nitrous oxide filling station for a student hybrid rocket: supply bottle on a load cell, nitrogen purge line, manual, check, fill, dump and relief valves, pressure sensors, quick disconnect, rocket tank with vent, a pad box and a remote control station.</desc>
+<defs><marker id="aO" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#4dabf7"/></marker><marker id="aN" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#69db7c"/></marker><marker id="aG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#adb5bd"/></marker><marker id="aS" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#ffd43b"/></marker></defs>
+<rect width="1200" height="720" rx="18" fill="#0b1628"/>
+<text x="40" y="50" fill="#e6edf7" font-size="26" font-weight="700">Filling Station</text>
+<text x="40" y="76" fill="#8fa3bf" font-size="15">Simplified schematic of a nitrous oxide filling station for a student hybrid rocket</text>
+<rect x="30" y="100" width="895" height="590" rx="14" fill="none" stroke="#2b4a7a" stroke-width="1.5" stroke-dasharray="8 6"/>
+<text x="48" y="126" fill="#8fa3bf" font-size="13" font-weight="600">PAD AREA</text>
+
+<rect x="50" y="430" width="60" height="180" rx="22" fill="#69db7c" opacity="0.85"/><text x="80" y="530" fill="#0b1628" font-size="15" font-weight="800" text-anchor="middle">N₂</text>
+<rect x="195" y="430" width="70" height="180" rx="24" fill="#4dabf7"/><text x="230" y="530" fill="#0b1628" font-size="15" font-weight="800" text-anchor="middle">N₂O</text>
+<rect x="180" y="612" width="100" height="14" rx="3" fill="#868e96"/>
+<text x="80" y="650" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="middle">Nitrogen bottle</text>
+<text x="80" y="665" fill="#8fa3bf" font-size="11" text-anchor="middle">purge and leak tests</text>
+<text x="230" y="650" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="middle">Nitrous oxide bottle</text>
+<text x="230" y="665" fill="#8fa3bf" font-size="11" text-anchor="middle">on a load cell</text>
+<polyline points="80,430 80,290 420,290 420,360" fill="none" stroke="#69db7c" stroke-width="3" stroke-linejoin="round"/>
+<circle cx="80" cy="405" r="11" fill="#5c6b80" stroke="#e6edf7" stroke-width="1.5"/><path d="M73,412 L87,398" stroke="#e6edf7" stroke-width="1.5"/>
+<text x="98" y="404" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="start">Regulator</text>
+<path d="M411,312 L429,312 L420,330 Z" fill="#5c6b80" stroke="#e6edf7" stroke-width="1.5"/><line x1="411" y1="332" x2="429" y2="332" stroke="#e6edf7" stroke-width="2"/>
+<text x="408" y="326" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="end">Check valve</text>
+<polyline points="230,430 230,360 766,360" fill="none" stroke="#4dabf7" stroke-width="4" stroke-linejoin="round"/>
+<path d="M278,351 L278,369 L302,351 L302,369 Z" fill="#5c6b80" stroke="#e6edf7" stroke-width="1.5"/>
+<text x="282" y="392" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="middle">Manual valve</text>
+<path d="M360,351 L360,369 L378,360 Z" fill="#5c6b80" stroke="#e6edf7" stroke-width="1.5"/><line x1="380" y1="351" x2="380" y2="369" stroke="#e6edf7" stroke-width="2"/>
+<text x="378" y="392" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="middle">Check valve</text>
+<polyline points="455,360 455,320" fill="none" stroke="#4dabf7" stroke-width="3" stroke-linejoin="round"/>
+<path d="M446,320 L464,320 L455,304 Z" fill="#e03131" stroke="#e6edf7" stroke-width="1.5"/>
+<polyline points="455,304 455,284" fill="none" stroke="#adb5bd" stroke-width="2" stroke-linejoin="round" marker-end="url(#aG)"/>
+<text x="455" y="274" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="middle">Relief valve</text>
+<path d="M488,351 L488,369 L512,351 L512,369 Z" fill="#1971c2" stroke="#e6edf7" stroke-width="1.5"/>
+<line x1="500" y1="360" x2="500" y2="340" stroke="#e6edf7" stroke-width="1.5"/><rect x="491" y="326" width="18" height="14" rx="2" fill="#343a40" stroke="#e6edf7" stroke-width="1.5"/><text x="500" y="337" fill="#e6edf7" font-size="9" font-weight="700" text-anchor="middle">S</text>
+<text x="500" y="392" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="middle">Fill valve</text>
+<text x="500" y="407" fill="#8fa3bf" font-size="11" text-anchor="middle">closed when unpowered</text>
+<polyline points="680,360 680,390" fill="none" stroke="#4dabf7" stroke-width="3" stroke-linejoin="round"/>
+<path d="M671,390 L689,390 L671,414 L689,414 Z" fill="#e8590c" stroke="#e6edf7" stroke-width="1.5"/>
+<polyline points="680,414 680,440" fill="none" stroke="#adb5bd" stroke-width="2" stroke-linejoin="round" marker-end="url(#aG)"/>
+<text x="668" y="426" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="end">Dump valve</text>
+<text x="668" y="441" fill="#8fa3bf" font-size="11" text-anchor="end">open when unpowered</text>
+<rect x="712" y="348" width="14" height="24" rx="3" fill="#868e96"/><rect x="729" y="351" width="12" height="18" rx="3" fill="#ced4da"/>
+<text x="706" y="342" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="end">Quick disconnect</text>
+<path d="M760,200 C760,175 780,152 790,145 C800,152 820,175 820,200 Z" fill="#c92a2a"/>
+<rect x="760" y="200" width="60" height="330" fill="#c7d0dc"/>
+<rect x="766" y="236" width="48" height="170" rx="8" fill="#a5d8ff"/>
+<rect x="766" y="290" width="48" height="116" rx="8" fill="#4dabf7"/>
+<rect x="766" y="430" width="48" height="96" fill="#ff922b"/><rect x="784" y="430" width="12" height="96" fill="#0b1628"/>
+<path d="M776,530 L768,556 L812,556 L804,530 Z" fill="#5c6b80"/>
+<path d="M760,480 L738,540 L760,530 Z" fill="#c92a2a"/>
+<path d="M820,480 L842,540 L820,530 Z" fill="#c92a2a"/>
+<polyline points="741,360 766,360" fill="none" stroke="#4dabf7" stroke-width="4" stroke-linejoin="round"/>
+<text x="790" y="270" fill="#0b1628" font-size="10.5" font-weight="700" text-anchor="middle">vapour</text><text x="790" y="352" fill="#0b1628" font-size="10.5" font-weight="700" text-anchor="middle">liquid</text>
+<text x="790" y="482" fill="#0b1628" font-size="10" font-weight="700" text-anchor="middle" transform="rotate(-90 775 482)"></text>
+<text x="790" y="672" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="middle">Rocket</text>
+<text x="790" y="687" fill="#8fa3bf" font-size="11" text-anchor="middle">oxidizer tank above the motor</text>
+<line x1="690" y1="652" x2="890" y2="652" stroke="#495057" stroke-width="3"/>
+<polyline points="790,236 790,215 870,215 870,192" fill="none" stroke="#adb5bd" stroke-width="3" stroke-linejoin="round" marker-end="url(#aG)"/>
+<path d="M833,206 L833,224 L857,206 L857,224 Z" fill="#5c6b80" stroke="#e6edf7" stroke-width="1.5"/>
+<line x1="845" y1="215" x2="845" y2="195" stroke="#e6edf7" stroke-width="1.5"/><rect x="836" y="181" width="18" height="14" rx="2" fill="#343a40" stroke="#e6edf7" stroke-width="1.5"/><text x="845" y="192" fill="#e6edf7" font-size="9" font-weight="700" text-anchor="middle">S</text>
+<text x="850" y="160" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="middle">Vent valve</text>
+<circle cx="880" cy="290" r="12" fill="#12233d" stroke="#ffd43b" stroke-width="2"/><text x="880" y="294" fill="#ffd43b" font-size="10" font-weight="700" text-anchor="middle">PT</text>
+<circle cx="880" cy="385" r="12" fill="#12233d" stroke="#ffd43b" stroke-width="2"/><text x="880" y="389" fill="#ffd43b" font-size="10" font-weight="700" text-anchor="middle">TC</text>
+<polyline points="820,290 868,290" fill="none" stroke="#adb5bd" stroke-width="2" stroke-linejoin="round"/>
+<polyline points="820,385 868,385" fill="none" stroke="#adb5bd" stroke-width="2" stroke-linejoin="round"/>
+<text x="880" y="318" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="middle">Tank</text>
+<text x="880" y="331" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="middle">pressure</text>
+<text x="880" y="413" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="middle">Temp.</text>
+<rect x="380" y="520" width="230" height="74" rx="10" fill="#12233d" stroke="#ffd43b" stroke-width="1.5"/>
+<text x="495" y="548" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="middle">Pad box</text>
+<text x="495" y="563" fill="#8fa3bf" font-size="11" text-anchor="middle">relays, sensor readings, battery</text>
+<polyline points="428,520 428,376 500,376 500,369" fill="none" stroke="#ffd43b" stroke-width="1.6" stroke-linejoin="round" stroke-dasharray="5 5"/>
+<polyline points="610,560 700,560 700,402 689,402" fill="none" stroke="#ffd43b" stroke-width="1.6" stroke-linejoin="round" stroke-dasharray="5 5"/>
+<polyline points="380,580 300,580 300,619 282,619" fill="none" stroke="#ffd43b" stroke-width="1.6" stroke-linejoin="round" stroke-dasharray="5 5"/>
+<polyline points="610,540 912,540 912,188 856,188" fill="none" stroke="#ffd43b" stroke-width="1.6" stroke-linejoin="round" stroke-dasharray="5 5"/>
+<polyline points="912,290 892,290" fill="none" stroke="#ffd43b" stroke-width="1.6" stroke-linejoin="round" stroke-dasharray="5 5"/>
+<polyline points="912,385 892,385" fill="none" stroke="#ffd43b" stroke-width="1.6" stroke-linejoin="round" stroke-dasharray="5 5"/>
+<line x1="610" y1="586" x2="960" y2="586" stroke="#ffd43b" stroke-width="2.5" stroke-dasharray="10 6"/>
+<rect x="960" y="490" width="215" height="200" rx="14" fill="#12233d" stroke="#24406a" stroke-width="1.5"/>
+<text x="1067" y="516" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="middle">Control station</text>
+<text x="1067" y="531" fill="#8fa3bf" font-size="11" text-anchor="middle">at a safe distance</text>
+<rect x="985" y="542" width="90" height="56" rx="4" fill="#343a40" stroke="#adb5bd"/><rect x="991" y="548" width="78" height="44" fill="#1c3b66"/><path d="M975,601 L1085,601 L1077,611 L983,611 Z" fill="#adb5bd"/>
+<polyline points="997,582 1015,569 1031,575 1049,559 1063,563" fill="none" stroke="#63e6be" stroke-width="2"/>
+<circle cx="1135" cy="556" r="17" fill="#e03131" stroke="#ffd43b" stroke-width="3"/><text x="1135" y="588" fill="#8fa3bf" font-size="11" text-anchor="middle">E-stop</text>
+<rect x="1123" y="598" width="24" height="16" rx="3" fill="#868e96"/><circle cx="1135" cy="606" r="4" fill="#0b1628"/><text x="1135" y="628" fill="#8fa3bf" font-size="11" text-anchor="middle">Arm key</text>
+<text x="1030" y="628" fill="#8fa3bf" font-size="11" text-anchor="middle">Live data, valve control</text>
+<text x="976" y="656" fill="#e6edf7" font-size="11.5" font-weight="600">Link: long cable or radio</text><text x="976" y="672" fill="#8fa3bf" font-size="11">Link lost → valves go to safe state</text>
+<rect x="960" y="100" width="215" height="375" rx="14" fill="#12233d" stroke="#24406a" stroke-width="1.5"/>
+<text x="976" y="128" fill="#e6edf7" font-size="12.5" font-weight="600" text-anchor="start">Legend</text>
+<line x1="976" y1="152" x2="1004" y2="152" stroke="#4dabf7" stroke-width="4"/><text x="1014" y="156" fill="#8fa3bf" font-size="12">Nitrous oxide line</text>
+<line x1="976" y1="174" x2="1004" y2="174" stroke="#69db7c" stroke-width="3"/><text x="1014" y="178" fill="#8fa3bf" font-size="12">Nitrogen purge line</text>
+<line x1="976" y1="196" x2="1004" y2="196" stroke="#adb5bd" stroke-width="2"/><text x="1014" y="200" fill="#8fa3bf" font-size="12">Vent / exhaust</text>
+<line x1="976" y1="218" x2="1004" y2="218" stroke="#ffd43b" stroke-width="1.6" stroke-dasharray="5 5"/><text x="1014" y="222" fill="#8fa3bf" font-size="12">Electrical signal</text>
+<path d="M978,243 L978,261 L1002,243 L1002,261 Z" fill="#5c6b80" stroke="#e6edf7" stroke-width="1.5"/>
+<text x="1014" y="256" fill="#8fa3bf" font-size="12">Manual valve</text>
+<path d="M978,293 L978,311 L1002,293 L1002,311 Z" fill="#1971c2" stroke="#e6edf7" stroke-width="1.5"/>
+<line x1="990" y1="302" x2="990" y2="282" stroke="#e6edf7" stroke-width="1.5"/><rect x="981" y="268" width="18" height="14" rx="2" fill="#343a40" stroke="#e6edf7" stroke-width="1.5"/><text x="990" y="279" fill="#e6edf7" font-size="9" font-weight="700" text-anchor="middle">S</text>
+<text x="1014" y="306" fill="#8fa3bf" font-size="12">Solenoid valve</text>
+<path d="M980,327 L980,345 L998,336 Z" fill="#5c6b80" stroke="#e6edf7" stroke-width="1.5"/><line x1="1000" y1="327" x2="1000" y2="345" stroke="#e6edf7" stroke-width="2"/>
+<text x="1014" y="340" fill="#8fa3bf" font-size="12">Check valve</text>
+<circle cx="990" cy="370" r="12" fill="#12233d" stroke="#ffd43b" stroke-width="2"/><text x="990" y="374" fill="#ffd43b" font-size="10" font-weight="700" text-anchor="middle">PT</text>
+<text x="1014" y="368" fill="#8fa3bf" font-size="12">Sensor: PT pressure,</text><text x="1014" y="382" fill="#8fa3bf" font-size="12">TC temperature</text>
+<text x="976" y="418" fill="#e6edf7" font-size="12" font-weight="600">Fail-safe: if power is lost,</text><text x="976" y="434" fill="#8fa3bf" font-size="12">the fill valve closes and the</text><text x="976" y="450" fill="#8fa3bf" font-size="12">dump valve opens.</text>
+</svg>

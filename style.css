@@ -1250,9 +1250,16 @@ button {
     line-height: 1.8;
 }
 
-.guide-content ul {
+.guide-content ul,
+.guide-content ol {
     padding-left: var(--space-6);
     color: var(--text-soft);
+}
+
+/* Numbered steps: the numbers in the accent colour */
+.guide-content ol li::marker {
+    color: var(--accent-light);
+    font-weight: 600;
 }
 
 .guide-content li {
