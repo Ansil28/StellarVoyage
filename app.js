@@ -13,6 +13,11 @@ const retryButton = document.querySelector("#retry-launches");
 const launchListSection = document.querySelector("#view-launches .launch-section");
 const launchContent = document.querySelector("#launch-content");
 
+// The title and introduction at the top of Launches and the Rocket Guide:
+// shown with the list, hidden while a launch or an article is open
+const launchesHeader = document.querySelector("#view-launches .page-header");
+const guideHeader = document.querySelector("#view-guide .page-header");
+
 // Navigation elements
 const navOverview = document.querySelector("#nav-overview");
 const navLaunches = document.querySelector("#nav-launches");
@@ -28,8 +33,10 @@ const viewIntelligence = document.querySelector("#view-intelligence");
 let allLaunches = [];
 let countdownInterval = null;
 
+// The next 100 launches: the most the API returns in one request
+// (more would need several requests per refresh, against its limit)
 const API_URL =
-  "https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=50";
+  "https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=100";
 
 // The site used to be called SpaceHub: move anything saved under the
 // old names to the new ones, so visitors keep their saved data
@@ -930,6 +937,197 @@ function createLiveBadge(launch) {
   return badge;
 }
 
+// CUSTOM DROPDOWNS
+// The filter <select>s open the system's own list (grey on Windows, a
+// wheel on iPhone), which cannot be styled. createCustomSelect() puts a
+// button and a list in the site's look in their place. The real <select>
+// stays on the page, hidden, and holds the value: picking an option sets
+// it and fires its "change" event, so the filter code works unchanged.
+
+const customSelects = [];
+
+function createCustomSelect(select) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "custom-select";
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "custom-select-button";
+  button.setAttribute("aria-haspopup", "listbox");
+  button.setAttribute("aria-expanded", "false");
+
+  const buttonText = document.createElement("span");
+  button.append(buttonText);
+
+  const list = document.createElement("ul");
+  list.className = "custom-select-list";
+  list.id = `${select.id}-list`;
+  list.setAttribute("role", "listbox");
+  list.setAttribute("aria-label", select.getAttribute("aria-label") || "");
+  list.tabIndex = -1;
+  list.hidden = true;
+
+  button.setAttribute("aria-controls", list.id);
+  wrapper.append(button, list);
+  select.after(wrapper);
+  select.hidden = true;
+
+  let activeIndex = 0;
+  let typed = "";
+  let typedTimer = null;
+
+  // The button shows the chosen option, and says what it filters
+  function syncButton() {
+    const chosen = select.options[select.selectedIndex];
+    buttonText.textContent = chosen ? chosen.textContent : "";
+    button.setAttribute(
+      "aria-label",
+      `${select.getAttribute("aria-label")}: ${buttonText.textContent}`
+    );
+  }
+
+  // The options are read from the <select> each time the list opens, so a
+  // rebuilt agency list is always up to date
+  function renderOptions() {
+    list.replaceChildren(
+      ...[...select.options].map((option, index) => {
+        const item = document.createElement("li");
+        item.id = `${select.id}-option-${index}`;
+        item.className = "custom-select-option";
+        item.setAttribute("role", "option");
+        item.setAttribute("aria-selected", String(index === select.selectedIndex));
+        item.textContent = option.textContent;
+
+        item.addEventListener("mousemove", () => setActive(index));
+        item.addEventListener("click", () => choose(index));
+        return item;
+      })
+    );
+  }
+
+  function setActive(index) {
+    const items = list.children;
+
+    if (items.length === 0) {
+      return;
+    }
+
+    activeIndex = Math.max(0, Math.min(index, items.length - 1));
+
+    for (const [i, item] of [...items].entries()) {
+      item.classList.toggle("active", i === activeIndex);
+    }
+
+    list.setAttribute("aria-activedescendant", items[activeIndex].id);
+    items[activeIndex].scrollIntoView({ block: "nearest" });
+  }
+
+  function open() {
+    renderOptions();
+    list.hidden = false;
+    button.setAttribute("aria-expanded", "true");
+    setActive(Math.max(select.selectedIndex, 0));
+    list.focus();
+    document.addEventListener("pointerdown", closeOnOutside);
+  }
+
+  function close(returnFocus = true) {
+    list.hidden = true;
+    button.setAttribute("aria-expanded", "false");
+    document.removeEventListener("pointerdown", closeOnOutside);
+
+    if (returnFocus) {
+      button.focus();
+    }
+  }
+
+  function closeOnOutside(event) {
+    if (!wrapper.contains(event.target)) {
+      close(false);
+    }
+  }
+
+  function choose(index) {
+    if (index !== select.selectedIndex) {
+      select.selectedIndex = index;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    syncButton();
+    close();
+  }
+
+  button.addEventListener("click", () => {
+    if (list.hidden) {
+      open();
+    } else {
+      close();
+    }
+  });
+
+  button.addEventListener("keydown", (event) => {
+    if (["ArrowDown", "ArrowUp", "Enter", " "].includes(event.key)) {
+      event.preventDefault();
+      open();
+    }
+  });
+
+  list.addEventListener("keydown", (event) => {
+    const last = list.children.length - 1;
+
+    switch (event.key) {
+      case "ArrowDown":
+        setActive(activeIndex + 1);
+        break;
+      case "ArrowUp":
+        setActive(activeIndex - 1);
+        break;
+      case "Home":
+        setActive(0);
+        break;
+      case "End":
+        setActive(last);
+        break;
+      case "Enter":
+      case " ":
+        choose(activeIndex);
+        break;
+      case "Escape":
+        close();
+        break;
+      case "Tab":
+        close(false);
+        return;
+      default:
+        // Typing jumps to the first option that starts with the letters
+        if (event.key.length === 1) {
+          clearTimeout(typedTimer);
+          typed += event.key.toLowerCase();
+          typedTimer = setTimeout(() => {
+            typed = "";
+          }, 600);
+
+          const match = [...select.options].findIndex((option) =>
+            option.textContent.toLowerCase().startsWith(typed)
+          );
+
+          if (match >= 0) {
+            setActive(match);
+          }
+        }
+        return;
+    }
+
+    event.preventDefault();
+  });
+
+  syncButton();
+  customSelects.push(syncButton);
+}
+
+createCustomSelect(agencyFilter);
+createCustomSelect(periodFilter);
+
 // SEARCH AND FILTERS
 
 searchInput.addEventListener("input", applyFilters);
@@ -972,6 +1170,12 @@ function populateAgencyFilter(launches) {
 }
 
 function applyFilters() {
+  // The dropdown buttons show the current choice, also after "Clear
+  // filters" or a reload changed the <select>s without a click
+  for (const syncButton of customSelects) {
+    syncButton();
+  }
+
   const query = searchInput.value.toLowerCase().trim();
   const selectedAgency = agencyFilter.value;
 
@@ -1052,6 +1256,7 @@ function showLaunchPage(launchId) {
     launchContent.replaceChildren();
     launchContent.hidden = true;
     launchListSection.hidden = false;
+    launchesHeader.hidden = false;
     document.title = "Launches · StellarVoyage";
 
     if (launchListScroll !== null) {
@@ -1074,6 +1279,7 @@ function showLaunchPage(launchId) {
   });
 
   launchListSection.hidden = true;
+  launchesHeader.hidden = true;
   launchContent.hidden = false;
   window.scrollTo({ top: 0 });
 
@@ -1729,6 +1935,7 @@ function showGuideTopic(topicKey) {
     guideContent.replaceChildren();
     guideContent.hidden = true;
     guideGrid.hidden = false;
+    guideHeader.hidden = false;
     document.title = "Rocket Guide · StellarVoyage";
     return;
   }
@@ -1927,6 +2134,7 @@ function showGuideTopic(topicKey) {
 
   guideContent.replaceChildren(...article);
   guideGrid.hidden = true;
+  guideHeader.hidden = true;
   guideContent.hidden = false;
   document.title = `${topic.title} · StellarVoyage`;
 

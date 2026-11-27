@@ -378,6 +378,144 @@ button {
   width: auto;
 }
 
+/* CUSTOM DROPDOWNS (createCustomSelect in app.js)
+   A button that looks like the other filter fields, and a list in the
+   site's own look instead of the system's (the real <select> is hidden) */
+.custom-select {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.filter-options .custom-select {
+  flex: 0 0 auto;
+  min-width: 170px;
+}
+
+.custom-select-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--fs-xs);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.custom-select-button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The small chevron on the right, turning up while the list is open */
+.custom-select-button::after {
+  content: "";
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  margin-top: -3px;
+  border-right: 1.5px solid var(--muted);
+  border-bottom: 1.5px solid var(--muted);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+.custom-select-button[aria-expanded="true"]::after {
+  margin-top: 3px;
+  transform: rotate(-135deg);
+}
+
+.custom-select-button:hover,
+.custom-select-button[aria-expanded="true"] {
+  border-color: var(--border-strong);
+}
+
+.custom-select-button:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 13%, transparent);
+}
+
+.custom-select-list {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  left: 0;
+  z-index: 40;
+  min-width: 100%;
+  /* Never wider than the screen: long agency names wrap instead */
+  max-width: min(420px, calc(100vw - 2 * var(--space-5)));
+  max-height: 320px;
+  margin: 0;
+  padding: var(--space-1);
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  outline: none;
+  background: var(--sidebar);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+  list-style: none;
+  overscroll-behavior: contain;
+}
+
+.custom-select-list[hidden] {
+  display: none;
+}
+
+.custom-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--text-soft);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+/* Under the pointer or chosen with the arrow keys */
+.custom-select-option.active {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+/* The chosen option: brighter, with a tick on the right */
+.custom-select-option[aria-selected="true"] {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.custom-select-option[aria-selected="true"]::after {
+  content: "";
+  flex-shrink: 0;
+  width: 5px;
+  height: 10px;
+  margin-right: 2px;
+  border-right: 2px solid var(--accent-light);
+  border-bottom: 2px solid var(--accent-light);
+  transform: rotate(45deg) translate(-2px, -1px);
+}
+
+@media (max-width: 600px) {
+  /* Comfortable to tap on a phone */
+  .custom-select-option {
+    padding: var(--space-3);
+  }
+
+  .filter-options .custom-select {
+    flex: 1 1 auto;
+  }
+}
+
 .filter-toggle {
   display: inline-flex;
   align-items: center;
