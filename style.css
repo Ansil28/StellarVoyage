@@ -640,41 +640,96 @@ button {
   line-clamp: 2;
 }
 
-/* Footer */
+/* FOOTER (one for every view, at the bottom of the page)
+   Four columns: about, Explore (the views), Data sources (credits for
+   every source) and Project; then a bottom line with © and the note */
 
-.page-footer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--space-4);
+.site-footer {
   margin-top: auto;
-  padding-top: var(--space-10);
+  padding-top: var(--space-16);
   color: var(--muted);
-  font-size: var(--fs-2xs);
+  font-size: var(--fs-sm);
+}
+
+.footer-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
+  gap: var(--space-8);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--border);
+}
+
+.footer-brand {
+  color: var(--text);
+  font-size: var(--fs-md);
+  font-weight: 700;
   letter-spacing: 0.5px;
+  text-decoration: none;
 }
 
-/* "Launch data by The Space Devs · Orbits by CelesTrak" */
-.footer-credit a,
-.footer-meta a {
+.footer-about p {
+  max-width: 260px;
+  margin: var(--space-3) 0 0;
+  line-height: 1.6;
+}
+
+.footer-column h2 {
+  margin: 0 0 var(--space-3);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+.footer-column ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer a:not(.footer-brand) {
   color: var(--muted);
-  text-decoration: underline;
-  text-underline-offset: 2px;
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
-.footer-credit a:hover,
-.footer-meta a:hover {
+.site-footer a:hover {
   color: var(--text);
 }
 
-/* Second footer line ("Made by André Silva · © 2026 · …"): its own
-   full-width row under the first, separated by a thin line */
-.footer-meta {
-  flex-basis: 100%;
-  margin: 0;
-  padding-top: var(--space-3);
+.site-footer a:focus-visible {
+  border-radius: var(--radius-xs);
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* "© 2026 André Silva · Unofficial project…" */
+.footer-bottom {
+  margin: var(--space-8) 0 0;
+  padding-top: var(--space-4);
   border-top: 1px solid var(--border);
+  font-size: var(--fs-xs);
   line-height: 1.6;
+}
+
+/* Two columns on tablets, one on small phones */
+@media (max-width: 850px) {
+  .footer-columns {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .footer-about {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 430px) {
+  .footer-columns {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
 }
 
 /* Responsive layout */
@@ -2350,11 +2405,6 @@ a.stream-link-live {
   .section-heading {
     align-items: flex-start;
     flex-direction: column;
-  }
-
-  .page-footer {
-    flex-direction: column;
-    gap: var(--space-2);
   }
 
   /* Search, filters and results */
