@@ -1250,6 +1250,138 @@ function showLaunchDetails(launch) {
   location.hash = `launches/${encodeURIComponent(launch.id)}`;
 }
 
+// =========================================
+// WEATHER AT THE PAD
+// Forecast from Open-Meteo (free, no key) for the hour of the launch.
+// Only for confirmed times within the next 16 days, the forecast range.
+// =========================================
+
+const WEATHER_FORECAST_DAYS = 16;
+const WEATHER_CACHE_MS = 30 * 60 * 1000;
+const weatherCache = new Map();
+
+async function fetchPadWeather(latitude, longitude, hour) {
+  const key = `${latitude},${longitude},${hour}`;
+  const cached = weatherCache.get(key);
+
+  if (cached && Date.now() - cached.time < WEATHER_CACHE_MS) {
+    return cached.data;
+  }
+
+  const params = new URLSearchParams({
+    latitude: latitude.toFixed(3),
+    longitude: longitude.toFixed(3),
+    hourly:
+      "temperature_2m,precipitation_probability,cloud_cover,wind_speed_10m,wind_gusts_10m",
+    wind_speed_unit: "kmh",
+    timezone: "GMT",
+    start_hour: hour,
+    end_hour: hour
+  });
+
+  const response = await fetch(
+    `https://api.open-meteo.com/v1/forecast?${params}`,
+    typeof AbortSignal.timeout === "function"
+      ? { signal: AbortSignal.timeout(API_TIMEOUT_MS) }
+      : {}
+  );
+
+  if (!response.ok) {
+    throw new Error(`Weather request failed: ${response.status}`);
+  }
+
+  const json = await response.json();
+  const hourly = json.hourly || {};
+  const data = {
+    temperature: hourly.temperature_2m?.[0],
+    rain: hourly.precipitation_probability?.[0],
+    clouds: hourly.cloud_cover?.[0],
+    wind: hourly.wind_speed_10m?.[0],
+    gusts: hourly.wind_gusts_10m?.[0]
+  };
+
+  weatherCache.set(key, { time: Date.now(), data });
+  return data;
+}
+
+function createPadWeather(launch) {
+  const latitude = Number(launch.pad?.latitude);
+  const longitude = Number(launch.pad?.longitude);
+  const launchTime = new Date(launch.net).getTime();
+  const timeLeft = launchTime - Date.now();
+
+  if (
+    !Number.isFinite(latitude) ||
+    !Number.isFinite(longitude) ||
+    !hasConfirmedLaunchTime(launch) ||
+    hasLaunched(launch) ||
+    timeLeft < 0 ||
+    timeLeft > (WEATHER_FORECAST_DAYS - 1) * 24 * 60 * 60 * 1000
+  ) {
+    return null;
+  }
+
+  // Nearest whole hour in UTC, written as Open-Meteo expects (2026-11-27T21:00)
+  const rounded = new Date(Math.round(launchTime / 3600000) * 3600000);
+  const hour = rounded.toISOString().slice(0, 13) + ":00";
+
+  const section = document.createElement("div");
+  section.className = "launch-weather-section";
+
+  const heading = document.createElement("p");
+  const headingText = document.createElement("strong");
+  headingText.textContent = "Weather at the pad";
+  heading.append(headingText);
+
+  const status = document.createElement("p");
+  status.className = "calendar-note";
+  status.textContent = "Loading forecast...";
+
+  section.append(heading, status);
+
+  fetchPadWeather(latitude, longitude, hour)
+    .then((data) => {
+      const items = [
+        { label: "Temperature", value: data.temperature, unit: "°C" },
+        { label: "Wind", value: data.wind, unit: "km/h" },
+        { label: "Gusts", value: data.gusts, unit: "km/h" },
+        { label: "Cloud cover", value: data.clouds, unit: "%" },
+        { label: "Chance of rain", value: data.rain, unit: "%" }
+      ].filter((item) => Number.isFinite(item.value));
+
+      if (items.length === 0) {
+        section.remove();
+        return;
+      }
+
+      const grid = document.createElement("div");
+      grid.className = "launch-weather";
+
+      for (const item of items) {
+        const card = document.createElement("div");
+        card.className = "iss-data-card";
+
+        const label = document.createElement("span");
+        label.textContent = item.label;
+
+        const value = document.createElement("strong");
+        value.textContent = `${Math.round(item.value)} ${item.unit}`;
+
+        card.append(label, value);
+        grid.append(card);
+      }
+
+      status.textContent =
+        "Forecast for the launch hour. Each launch has its own weather limits, so check the provider for a go or no-go.";
+      section.replaceChildren(heading, grid, status);
+    })
+    .catch(() => {
+      section.remove();
+    });
+
+  return section;
+}
+
 function showLaunchPage(launchId) {
   // No launch in the address: show the list of launches
   if (!launchId) {
@@ -1439,6 +1571,13 @@ function showLaunchPage(launchId) {
     }
   }
 
+  // WEATHER AT THE PAD (Open-Meteo forecast for the launch hour)
+  const weather = createPadWeather(launch);
+
+  if (weather) {
+    launchContent.append(weather);
+  }
+
   // USEFUL LINKS (only to the sites we expect, over https)
   const links = [
     {
@@ -1478,16 +1617,11 @@ function showLaunchPage(launchId) {
   }
 
   if (anchors.length > 0) {
-    const heading = document.createElement("p");
-    const headingText = document.createElement("strong");
-    headingText.textContent = "Useful links";
-    heading.append(headingText);
-
     const paragraph = document.createElement("p");
     paragraph.className = "mission-links";
     paragraph.append(...anchors);
 
-    launchContent.append(heading, paragraph);
+    launchContent.append(paragraph);
   }
 
 

@@ -1134,6 +1134,14 @@ button {
     margin-bottom: var(--space-1);
 }
 
+/* "Weather at the pad" on the launch page: small data columns like the ISS */
+.launch-weather {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: var(--space-4) var(--space-6);
+    margin-bottom: var(--space-3);
+}
+
 /* Red "LIVE" badge while the webcast is on (same red as the countdown) */
 .live-badge {
     display: inline-flex;
