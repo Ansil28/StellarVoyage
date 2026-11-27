@@ -1,6 +1,6 @@
 # StellarVoyage
 
-Dashboard de exploração espacial em HTML, CSS e JavaScript puro (sem build, sem frameworks). Abre-se diretamente o `index.html` no browser (o service worker e o "Add to calendar" do iPhone só funcionam num endereço `http(s)`, como o site publicado ou o Live Server do VS Code).
+Dashboard de exploração espacial em HTML, CSS e JavaScript puro (sem build, sem frameworks). Abre-se diretamente o `index.html` no browser, mas para testar a sério usar um endereço `http(s)` (o site publicado ou o Live Server do VS Code): aberto como ficheiro, a Terra do globo não aparece (o browser não deixa o WebGL usar imagens locais), e o service worker e o "Add to calendar" do iPhone também não funcionam.
 
 Tem quatro vistas, escolhidas pelo endereço (`#home`, `#launches`, `#launches/<id>`, `#guide`, `#guide/<tópico>`, `#intelligence`). Os links da barra de cima (`.site-header`: logótipo à esquerda e as quatro vistas à direita, fixa no topo; no telemóvel cada vista é um ícone SVG desenhado no `index.html`, `.nav-icon`, com o texto `.nav-label` escondido só visualmente para leitores de ecrã; abaixo de 430px o nome do site esconde-se e fica só o logótipo) mudam o `location.hash` e `handleRoute()` em `app.js` mostra a vista certa com `showView()`. Um endereço vazio ou desconhecido abre a Overview.
 
@@ -35,12 +35,16 @@ sw.js        Service worker: guarda o site para abrir sem internet (ficheiros do
 - **Links em vez de botões em pastilha** para ações secundárias: classe `.text-link` ("View details", "Back to …"; "Read article" nos cartões do guia, que mantêm `.guide-button` porque o JS os procura por essa classe). Sem setas (→ ↗ ←) nos textos.
 - **Contagem decrescente só tipográfica** (`.launch-countdown`): números de largura fixa, o "T−" vem do CSS (`::before`) e não do texto. Vermelho (`--live`) só para o selo "Live".
 - **Sem emojis** na interface: quando falta imagem, `createImagePlaceholder()` mostra o nome do foguetão.
+- **Letra:** IBM Plex Sans para texto e títulos, IBM Plex Mono para números e dados (contagens, altitudes, coordenadas, dias das datas), sempre por `--font-sans` e `--font-mono`.
+- **Estado de um lançamento** (`.launch-status`): um ponto colorido e o texto, sem pastilha nem fundo; a cor diz o estado (azul go, âmbar por confirmar, verde sucesso, vermelho falha).
+- **Uma só família de cartões** (lançamentos, notícias, guia): imagem a toda a largura em cima, mesma altura na linha, título com 2 linhas no máximo, o cartão inteiro clicável. Ao passar o rato o fundo clareia; com rato e sem movimento reduzido, o cartão sobe 2px e a foto aproxima 3% dentro da moldura (secção "Card hover" no fim do `style.css`).
+- **Overview:** começa pelo próximo lançamento (título "Next launch", compacto); a contagem grande tem a unidade por baixo de cada número (`.countdown-blocks`, montada por `updateCountdownBlocks()`); "Coming up" e "ISS right now" são secções abertas com uma linha fina por cima, não caixas, e a ISS mostra números grandes em mono.
 
 **App instalável (PWA):** ao acrescentar um ficheiro novo ao site, juntá-lo à lista `APP_FILES` em `sw.js`, senão não fica disponível offline. Exceção: as imagens do globo (`assets/globe/`, cerca de 1,8 MB) ficam fora da lista para não as descarregar a quem nunca abre o globo; o service worker guarda-as na primeira vez que o globo abre. O service worker só funciona num endereço `http(s)`, não ao abrir o `index.html` diretamente.
 
 O site está publicado em https://ansil28.github.io/StellarVoyage/ (GitHub Pages). As etiquetas `og:` e `twitter:` no `<head>` usam este endereço completo.
 
-Dependências externas (via CDN, carregadas no `<head>` do `index.html`): CesiumJS 1.146, satellite.js 6.0.1, Google Fonts (Inter e Space Grotesk).
+Dependências externas (via CDN, carregadas no `<head>` do `index.html`): CesiumJS 1.146, satellite.js 6.0.1, Google Fonts (IBM Plex Sans e IBM Plex Mono, nas variáveis `--font-sans` e `--font-mono` do `:root`).
 
 Os rodapés das quatro vistas (`.page-footer`) dão crédito às fontes de dados ("Launch data by The Space Devs · Orbits by CelesTrak", na Overview também "News by Spaceflight News API" e na Space Intelligence "Earth imagery by NASA · Globe by CesiumJS"); manter esse crédito se o rodapé mudar. Por baixo, cada rodapé tem uma segunda linha (`.footer-meta`): "Made by André Silva · © <ano atual, escrito pelo app.js em `.current-year`> · Source on GitHub" (link para github.com/Ansil28/StellarVoyage) e um aviso de que é um projeto não oficial e as horas dos lançamentos mudam muitas vezes.
 

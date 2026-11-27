@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
 
 :root {
   /* COLOURS
@@ -34,6 +34,10 @@
   --live: #ff1f1f;
 
   /* TYPE SCALE */
+  /* IBM Plex: Sans for text and headings, Mono for numbers and data
+     (countdowns, altitudes, coordinates), like a mission-control display */
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
   --fs-2xs: 11px;
   --fs-xs: 12px;
   --fs-sm: 13px;
@@ -76,7 +80,7 @@ body {
   min-height: 100vh;
   background: var(--bg);
   color: var(--text);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
 }
 
 button,
@@ -119,7 +123,7 @@ button {
   align-items: center;
   gap: var(--space-3);
   color: var(--text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--fs-lg);
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -219,9 +223,25 @@ button {
 
 .page-header h1 {
   margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--fs-display);
-  letter-spacing: -1.5px;
+  font-weight: 600;
+  letter-spacing: -1px;
+}
+
+/* Overview: a compact heading, so the next launch is the first thing
+   on the page */
+.overview-header {
+  margin-bottom: var(--space-6);
+}
+
+.overview-header h1 {
+  font-size: var(--fs-title);
+  letter-spacing: -0.5px;
+}
+
+.overview-header .subtitle {
+  font-size: var(--fs-sm);
 }
 
 .subtitle {
@@ -250,7 +270,7 @@ button {
 
 .section-heading h2 {
   margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--fs-2xl);
 }
 
@@ -398,35 +418,41 @@ button {
 
 /* Launch cards */
 
+/* Cards in a row share the same height ("View details" sits at the bottom) */
 #launches {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: var(--space-6);
-  align-items: start;
   margin-top: var(--space-5);
 }
 
-/* Cards have no border: the slightly lighter background is enough */
+/* The same card family as the news and guide cards: the image across
+   the full width at the top, no border, and the whole card clickable */
 .launch-card {
   display: flex;
   flex-direction: column;
   min-width: 0;
   overflow: hidden;
-  padding: var(--space-4);
+  padding: 0 0 var(--space-4);
   border-radius: var(--radius-md);
   background: var(--surface);
   overflow-wrap: anywhere;
-  transition: background 0.2s;
+  cursor: pointer;
 }
 
-.launch-card:hover {
-  background: var(--surface-hover);
+.launch-card > :not(.launch-image) {
+  margin-right: var(--space-4);
+  margin-left: var(--space-4);
+}
+
+.launch-card .launch-image {
+  border-radius: 0;
 }
 
 .launch-card-badges {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: var(--space-3);
   margin-top: var(--space-4);
 }
 
@@ -439,15 +465,22 @@ button {
 .launch-card h2 {
   margin: var(--space-3) 0 var(--space-1);
   color: var(--text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--fs-lg);
   font-weight: 600;
   line-height: 1.4;
   overflow-wrap: anywhere;
+  /* At most two lines, so the cards in a row line up */
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .launch-card p {
-  margin: 0;
+  margin-top: 0;
+  margin-bottom: 0;
   line-height: 1.5;
 }
 
@@ -457,10 +490,16 @@ button {
   font-weight: 500;
 }
 
-.launch-card-meta {
+/* Agency and place: two lines at most (some names are very long) */
+.launch-card .launch-card-meta {
+  display: -webkit-box;
+  overflow: hidden;
   margin-top: var(--space-2);
   color: var(--muted);
   font-size: var(--fs-xs);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 /* Footer */
@@ -572,7 +611,7 @@ button {
 .empty-state h3 {
   margin: 0 0 var(--space-2);
   color: var(--text);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--fs-xl);
 }
 
@@ -668,55 +707,55 @@ button {
 
 /* LAUNCH STATUS BADGES */
 
+/* The status is a coloured dot and a short label, not a pill: the colour
+   carries the meaning (blue go, amber to be confirmed, green success,
+   red failure) without filling every card with badges */
 .launch-status {
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
+  gap: var(--space-2);
   width: fit-content;
   max-width: 100%;
   margin: var(--space-2) 0;
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid transparent;
-  border-radius: var(--radius-pill);
   font-size: var(--fs-xs);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.4;
   overflow-wrap: anywhere;
+}
+
+.launch-status::before {
+  content: "";
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 /* Successful launches */
 .status-success {
   color: var(--success);
-  background: color-mix(in srgb, var(--success) 12%, transparent);
-  border-color: color-mix(in srgb, var(--success) 30%, transparent);
 }
 
 /* Failed, scrubbed or cancelled launches */
 .status-failure {
   color: var(--danger);
-  background: color-mix(in srgb, var(--danger) 12%, transparent);
-  border-color: color-mix(in srgb, var(--danger) 30%, transparent);
 }
 
 /* Go for launch or in-flight */
 .status-active {
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  color: var(--accent-light);
 }
 
 /* Planned launches */
 .status-planned {
   color: var(--warning);
-  background: color-mix(in srgb, var(--warning) 12%, transparent);
-  border-color: color-mix(in srgb, var(--warning) 30%, transparent);
 }
 
 /* Unknown status */
 .status-unknown {
-  color: var(--text-soft);
-  background: color-mix(in srgb, var(--muted) 12%, transparent);
-  border-color: color-mix(in srgb, var(--muted) 30%, transparent);
+  color: var(--muted);
 }
 
 /* LAUNCH COUNTDOWN
@@ -725,7 +764,7 @@ button {
 .launch-countdown {
     margin: var(--space-3) 0 0;
     color: var(--text);
-    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-family: var(--font-mono);
     font-size: var(--fs-md);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
@@ -750,10 +789,11 @@ button {
     content: none;
 }
 
-/* "View details" on launch cards */
+/* "View details" on launch cards: always at the bottom of the card */
 .launch-card .text-link {
     align-self: flex-start;
-    margin-top: var(--space-4);
+    margin-top: auto;
+    padding-top: var(--space-4);
 }
 
 /* LAUNCH DETAILS PAGE (uses the guide article look from .guide-content:
@@ -1104,7 +1144,7 @@ button {
   display: block;
   overflow-wrap: anywhere;
   color: var(--text);
-  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: var(--fs-lg);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -1517,7 +1557,9 @@ button {
     height: 190px;
     object-fit: cover;
     object-position: center;
-    transition: transform 0.4s ease;
+    /* The hover zoom grows from the bottom edge, so it never covers the
+       text below; the card clips the top and sides */
+    transform-origin: center bottom;
 }
 
 /* The history photo is tall: frame the launch stand and Goddard's face */
@@ -1525,9 +1567,6 @@ button {
     object-position: center 45%;
 }
 
-.guide-card:hover .guide-card-image {
-    transform: scale(1.04);
-}
 
 .guide-card-body {
     display: flex;
@@ -1663,10 +1702,12 @@ button {
   min-height: 280px;
 }
 
+/* Centred next to the photo, so there is no gap above the buttons */
 .overview-hero-body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
   min-width: 0;
 }
 
@@ -1676,7 +1717,7 @@ button {
 
 .overview-hero-title {
   margin: 0 0 var(--space-3);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--fs-title);
   line-height: 1.25;
   letter-spacing: -0.5px;
@@ -1696,11 +1737,42 @@ button {
   font-weight: 500;
 }
 
-/* The big countdown: large type, no box */
+/* The big countdown: large numbers, each with its unit below
+   (built by updateCountdownBlocks in app.js), no box */
 .overview-countdown {
-  margin: var(--space-5) 0 0;
+  margin: var(--space-6) 0 0;
   font-size: var(--fs-3xl);
-  line-height: 1.2;
+  line-height: 1.1;
+}
+
+.countdown-blocks {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.countdown-blocks::before {
+  margin-right: 0;
+  padding-top: 0.05em;
+}
+
+.countdown-part {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 2ch;
+}
+
+.countdown-part strong {
+  font-weight: 600;
+}
+
+.countdown-part span {
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: 0;
 }
 
 .overview-note {
@@ -1713,8 +1785,7 @@ button {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
-  margin-top: auto;
-  padding-top: var(--space-5);
+  padding-top: var(--space-8);
 }
 
 .overview-secondary-button {
@@ -1752,15 +1823,16 @@ a.stream-link-live {
 .overview-columns {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  gap: var(--space-5);
-  margin-bottom: var(--space-10);
+  gap: var(--space-10);
+  margin-top: var(--space-10);
+  margin-bottom: var(--space-12);
 }
 
+/* Open sections, not boxes: a thin line above, then the content */
 .overview-panel {
   min-width: 0;
-  padding: var(--space-5);
-  border-radius: var(--radius-md);
-  background: var(--surface);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
 }
 
 .overview-panel-heading {
@@ -1773,7 +1845,7 @@ a.stream-link-live {
 
 .overview-panel-heading h2 {
   margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-sans);
   font-size: var(--fs-xl);
 }
 
@@ -1797,10 +1869,10 @@ a.stream-link-live {
   text-decoration-color: currentColor;
 }
 
+/* A list with thin lines between the launches, not separate boxes */
 .overview-upcoming {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
 }
 
 .overview-launch-row {
@@ -1809,40 +1881,44 @@ a.stream-link-live {
   align-items: center;
   gap: var(--space-4);
   width: 100%;
-  padding: var(--space-3) var(--space-3);
+  padding: var(--space-3) var(--space-2);
   border: none;
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--bg) 45%, transparent);
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
   color: var(--text);
   text-align: left;
   transition: background 0.2s;
 }
 
-.overview-launch-row:hover {
-  background: var(--surface-hover);
+.overview-launch-row:last-child {
+  border-bottom: none;
 }
 
+.overview-launch-row:hover {
+  background: var(--surface);
+}
+
+/* The date as plain type: the day in mono, the month in blue below */
 .overview-launch-date {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: var(--space-2) 0;
-  border-radius: var(--radius-sm);
-  background: var(--accent-bg);
-  color: var(--accent-pale);
+  color: var(--text);
   line-height: 1.15;
 }
 
 .overview-launch-date strong {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-mono);
   font-size: var(--fs-xl);
+  font-weight: 600;
 }
 
 .overview-launch-date span {
-  color: var(--accent);
+  color: var(--accent-light);
   font-size: var(--fs-2xs);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 1px;
 }
 
@@ -1872,26 +1948,29 @@ a.stream-link-live {
 
 .overview-launch-row .launch-status {
   margin: 0;
-  padding: var(--space-1) var(--space-2);
   font-size: var(--fs-2xs);
 }
 
 /* "Just launched" in Launches: the same rows as the Overview's
-   upcoming list, in a panel like the Overview's */
+   upcoming list, open like it, with a thin line above */
 .just-launched {
   margin-bottom: var(--space-10);
 }
 
 .just-launched-list {
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
-  background: var(--surface);
+  border-top: 1px solid var(--border);
 }
 
+/* ISS readings as a telemetry display: large mono numbers */
 .overview-iss-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-3);
+  gap: var(--space-6) var(--space-6);
+  margin-top: var(--space-2);
+}
+
+.overview-iss-grid .iss-data-card strong {
+  font-size: var(--fs-2xl);
 }
 
 /* Space news: three columns of small cards (image, title, source and
@@ -1931,6 +2010,7 @@ a.stream-link-live {
 
 .news-card-image {
   height: 140px;
+  overflow: hidden; /* keeps the hover zoom inside the frame */
   background: var(--surface-hover);
 }
 
@@ -2207,5 +2287,49 @@ a.stream-link-live {
 @media (max-width: 430px) {
   .brand > span {
     display: none;
+  }
+}
+
+/* CARD HOVER (launch, news and guide cards)
+   The background lightens on every device. With a mouse, and when the
+   viewer has not asked for reduced motion, the card also lifts 2px and
+   its photo zooms in slightly inside its frame. */
+.launch-card {
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.launch-card:hover {
+  background: var(--surface-hover);
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .launch-card,
+  .news-card,
+  .guide-card {
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .launch-card:hover,
+  .news-card:hover,
+  .guide-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .launch-card .launch-image img,
+  .news-card-image img,
+  .guide-card-image {
+    transition: transform 0.4s ease;
+  }
+
+  .launch-card:hover .launch-image img,
+  .news-card:hover .news-card-image img,
+  .guide-card:hover .guide-card-image {
+    transform: scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guide-card-image {
+    transition: none;
   }
 }

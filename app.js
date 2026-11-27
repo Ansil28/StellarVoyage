@@ -116,14 +116,53 @@ function updateCountdowns() {
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
 
-    // The "T−" in front is added by the CSS (.launch-countdown::before)
-    countdown.textContent =
-      `${days}d ${String(hours).padStart(2, "0")}h ` +
-      `${String(minutes).padStart(2, "0")}m ` +
-      `${String(seconds).padStart(2, "0")}s`;
+    const pad = (value) => String(value).padStart(2, "0");
 
     countdown.classList.remove("countdown-finished");
+
+    // The big countdown (Overview): each number with its unit below
+    if (countdown.classList.contains("countdown-blocks")) {
+      updateCountdownBlocks(countdown, [
+        [String(days), "days"],
+        [pad(hours), "hours"],
+        [pad(minutes), "min"],
+        [pad(seconds), "sec"]
+      ]);
+      continue;
+    }
+
+    // The "T−" in front is added by the CSS (.launch-countdown::before)
+    countdown.textContent =
+      `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
   }
+}
+
+// Builds the four number + unit blocks once, then only changes the
+// numbers every second
+function updateCountdownBlocks(countdown, parts) {
+  if (countdown.children.length !== parts.length) {
+    countdown.replaceChildren(
+      ...parts.map(([, unit]) => {
+        const part = document.createElement("span");
+        part.className = "countdown-part";
+
+        const number = document.createElement("strong");
+        const label = document.createElement("span");
+        label.textContent = unit;
+
+        part.append(number, label);
+        return part;
+      })
+    );
+  }
+
+  parts.forEach(([value], index) => {
+    const number = countdown.children[index].firstChild;
+
+    if (number.textContent !== value) {
+      number.textContent = value;
+    }
+  });
 }
 
 // NAVIGATION BETWEEN TABS
@@ -490,6 +529,14 @@ function renderLaunches(launches) {
 
     detailsButton.addEventListener("click", () => {
       showLaunchDetails(launch);
+    });
+
+    // Clicking anywhere on the card opens it too ("View details" stays
+    // as the button that keyboards and screen readers use)
+    card.addEventListener("click", (event) => {
+      if (!event.target.closest("button, a")) {
+        showLaunchDetails(launch);
+      }
     });
 
     // Add information to the card
@@ -1936,8 +1983,9 @@ function initializeSpaceIntelligence() {
   try {
     // The Earth is two NASA images (public domain) stored with the site,
     // so the globe needs no Cesium ion account or map service: it loads
-    // once, does not download map pieces while moving, works offline and
-    // also when index.html is opened directly.
+    // once, does not download map pieces while moving and works offline.
+    // It needs an http(s) address (the published site or Live Server):
+    // opened as a file, the browser will not let WebGL use the images.
     cesiumViewer = new Cesium.Viewer("cesiumContainer", {
       animation: false,
       timeline: false,
@@ -3057,7 +3105,7 @@ function renderOverviewHero(launch) {
 
   if (isConfirmed) {
     const countdown = document.createElement("p");
-    countdown.className = "launch-countdown overview-countdown";
+    countdown.className = "launch-countdown overview-countdown countdown-blocks";
     countdown.dataset.target = new Date(launch.net).getTime();
     body.append(countdown);
   } else {
