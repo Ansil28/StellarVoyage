@@ -33,10 +33,10 @@ const viewIntelligence = document.querySelector("#view-intelligence");
 let allLaunches = [];
 let countdownInterval = null;
 
-// The next 100 launches: the most the API returns in one request
-// (more would need several requests per refresh, against its limit)
+// The next 70 launches (the API returns at most 100 in one request;
+// more would need several requests per refresh, against its limit)
 const API_URL =
-  "https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=100";
+  "https://ll.thespacedevs.com/2.3.0/launches/upcoming/?limit=70";
 
 // The site used to be called SpaceHub: move anything saved under the
 // old names to the new ones, so visitors keep their saved data
