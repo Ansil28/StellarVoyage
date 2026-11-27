@@ -1027,3 +1027,73 @@ const GUIDE_TOPICS = {
     ]
   }
 };
+
+// GLOSSARY TERMS IN THE ARTICLES
+// The first time one of these phrases appears in an article (not in the
+// glossary itself), it is underlined and tapping it shows the definition
+// from the Space Glossary above. Key: the glossary term, exactly as written
+// there. Value: the phrases to look for in the text (a plural "s" also
+// matches). Leave out everyday words such as "rocket" or "stage".
+const GLOSSARY_LINKS = {
+  "Max-Q": ["Max-Q", "Max Q"],
+  "Delta-v (Δv)": ["delta-v"],
+  "Specific impulse (Isp)": ["specific impulse"],
+  "Mass ratio": ["mass ratio"],
+  "TWR": ["thrust-to-weight ratio"],
+  "Apogee": ["apogee"],
+  "Perigee": ["perigee"],
+  "Inclination": ["inclination"],
+  "Orbital velocity": ["orbital velocity", "orbital speed"],
+  "Escape velocity": ["escape velocity"],
+  "Kármán line": ["Kármán line", "Karman line"],
+  "LEO": ["low Earth orbit"],
+  "GEO": ["geostationary orbit"],
+  "GTO": ["geostationary transfer orbit"],
+  "SSO": ["Sun-synchronous orbit"],
+  "Parking orbit": ["parking orbit"],
+  "Lagrange points": ["Lagrange point"],
+  "TLI": ["trans-lunar injection"],
+  "Gravity turn": ["gravity turn"],
+  "Turbopump": ["turbopump"],
+  "Engine cycle": ["engine cycle"],
+  "Chamber pressure": ["chamber pressure"],
+  "De Laval nozzle": ["de Laval nozzle"],
+  "Expansion ratio": ["expansion ratio"],
+  "Regenerative cooling": ["regenerative cooling"],
+  "Gimbal": ["gimbal"],
+  "Throttle": ["throttle"],
+  "TVC": ["thrust vector control"],
+  "RCS": ["reaction control system"],
+  "IMU": ["inertial measurement unit"],
+  "FTS": ["flight termination system"],
+  "Avionics": ["avionics"],
+  "Fairing": ["fairing"],
+  "Interstage": ["interstage"],
+  "Oxidizer": ["oxidizer"],
+  "LOX": ["liquid oxygen"],
+  "LH2": ["liquid hydrogen"],
+  "RP-1": ["RP-1"],
+  "Cryogenic": ["cryogenic"],
+  "Boil-off": ["boil-off"],
+  "Hypergolic": ["hypergolic"],
+  "Ullage": ["ullage"],
+  "Launch window": ["launch window"],
+  "Static fire": ["static fire"],
+  "Wet dress rehearsal": ["wet dress rehearsal"],
+  "Hold-down clamps": ["hold-down clamp"],
+  "Scrub": ["scrub"],
+  "Boostback burn": ["boostback burn"],
+  "Entry burn": ["entry burn"],
+  "Landing burn": ["landing burn"],
+  "Grid fins": ["grid fin"],
+  "RTLS": ["return to launch site"],
+  "ASDS": ["drone ship"],
+  "Re-entry": ["re-entry"],
+  "Heat shield": ["heat shield"],
+  "Splashdown": ["splashdown"],
+  "Rideshare": ["rideshare"],
+  "Constellation": ["constellation"],
+  "CubeSat": ["CubeSat"],
+  "Rendezvous": ["rendezvous"],
+  "Space debris": ["space debris"]
+};

@@ -2266,6 +2266,12 @@ function showGuideTopic(topicKey) {
     }
   }
 
+  // Glossary terms in the text show their definition when tapped
+  if (topicKey !== "glossary") {
+    addGlossaryTerms(article);
+  }
+
+  closeGlossaryPopover();
   guideContent.replaceChildren(...article);
   guideGrid.hidden = true;
   guideHeader.hidden = true;
@@ -2274,6 +2280,212 @@ function showGuideTopic(topicKey) {
 
   window.scrollTo({ top: 0 });
 }
+
+// GLOSSARY TERMS IN THE ARTICLES
+// The first time a phrase from GLOSSARY_LINKS (guide-topics.js) appears in
+// an article, it becomes a button; tapping it shows the definition from
+// the Space Glossary in a small box under the word.
+
+const glossaryDefinitions = new Map();
+
+for (const section of GUIDE_TOPICS.glossary?.sections || []) {
+  for (const item of section.list || []) {
+    if (item.term) {
+      glossaryDefinitions.set(item.term, item.text);
+    }
+  }
+}
+
+// One pattern per glossary term; a plural "s" also matches, but not a
+// match inside a longer word ("gimbal" in "gimbaled" is skipped)
+const glossaryPatterns = Object.entries(
+  typeof GLOSSARY_LINKS === "object" ? GLOSSARY_LINKS : {}
+)
+  .filter(([term]) => glossaryDefinitions.has(term))
+  .map(([term, phrases]) => {
+    const escaped = phrases.map((phrase) =>
+      phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    );
+
+    return {
+      term,
+      pattern: new RegExp(
+        `(?<![\\p{L}\\p{N}-])(?:${escaped.join("|")})s?(?![\\p{L}\\p{N}-])`,
+        "iu"
+      )
+    };
+  });
+
+function addGlossaryTerms(elements) {
+  const usedTerms = new Set();
+
+  for (const element of elements) {
+    // Only reading text: paragraphs and list items (lists are inside
+    // ul/ol), never headings, labels, captions or the index
+    const blocks = element.matches?.("p:not([class]), ul, ol")
+      ? element.matches("p") ? [element] : element.querySelectorAll("li")
+      : [];
+
+    for (const block of blocks) {
+      // The plain text nodes directly in the block ("Thrust:" labels in
+      // <strong> are skipped)
+      const textNodes = [...block.childNodes].filter(
+        (node) => node.nodeType === Node.TEXT_NODE
+      );
+
+      for (const node of textNodes) {
+        linkGlossaryTermsInText(node, usedTerms);
+      }
+    }
+  }
+}
+
+function linkGlossaryTermsInText(textNode, usedTerms) {
+  let node = textNode;
+
+  while (node) {
+    const text = node.textContent;
+    let first = null;
+
+    // The earliest match in this text among the terms not used yet
+    for (const { term, pattern } of glossaryPatterns) {
+      if (usedTerms.has(term)) {
+        continue;
+      }
+
+      const match = pattern.exec(text);
+
+      if (match && (!first || match.index < first.index)) {
+        first = { term, index: match.index, length: match[0].length };
+      }
+    }
+
+    if (!first) {
+      return;
+    }
+
+    usedTerms.add(first.term);
+
+    // Split the text: before | term | after, and keep looking in "after"
+    const termNode = node.splitText(first.index);
+    const rest = termNode.splitText(first.length);
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "glossary-term";
+    button.dataset.term = first.term;
+    button.setAttribute("aria-expanded", "false");
+    button.textContent = termNode.textContent;
+
+    termNode.replaceWith(button);
+    node = rest;
+  }
+}
+
+const glossaryPopover = document.createElement("div");
+glossaryPopover.className = "glossary-popover";
+glossaryPopover.id = "glossary-popover";
+glossaryPopover.setAttribute("role", "note");
+glossaryPopover.hidden = true;
+document.body.append(glossaryPopover);
+
+let glossaryOpenButton = null;
+
+function closeGlossaryPopover() {
+  if (!glossaryOpenButton) {
+    return;
+  }
+
+  glossaryOpenButton.setAttribute("aria-expanded", "false");
+  glossaryOpenButton.removeAttribute("aria-controls");
+  glossaryOpenButton = null;
+  glossaryPopover.hidden = true;
+}
+
+function openGlossaryPopover(button) {
+  const term = button.dataset.term;
+  const definition = glossaryDefinitions.get(term) || "";
+
+  const title = document.createElement("strong");
+  title.textContent = term;
+
+  const text = document.createElement("p");
+  text.textContent = definition.charAt(0).toUpperCase() + definition.slice(1);
+
+  const link = document.createElement("button");
+  link.type = "button";
+  link.className = "text-link";
+  link.textContent = "Open the glossary";
+  link.addEventListener("click", () => {
+    closeGlossaryPopover();
+    location.hash = "guide/glossary";
+  });
+
+  glossaryPopover.replaceChildren(title, text, link);
+  glossaryPopover.hidden = false;
+
+  glossaryOpenButton = button;
+  button.setAttribute("aria-expanded", "true");
+  button.setAttribute("aria-controls", glossaryPopover.id);
+
+  // Under the word, kept inside the screen with a 16px margin; above
+  // the word when there is no room below
+  const margin = 16;
+  const wordBox = button.getBoundingClientRect();
+  const width = glossaryPopover.offsetWidth;
+  const height = glossaryPopover.offsetHeight;
+
+  const left = Math.min(
+    Math.max(margin, wordBox.left),
+    document.documentElement.clientWidth - width - margin
+  );
+
+  const below = wordBox.bottom + 8;
+  const top =
+    below + height > window.innerHeight - margin && wordBox.top - height - 8 > margin
+      ? wordBox.top - height - 8
+      : below;
+
+  glossaryPopover.style.left = `${left + window.scrollX}px`;
+  glossaryPopover.style.top = `${top + window.scrollY}px`;
+}
+
+guideContent.addEventListener("click", (event) => {
+  const button = event.target.closest(".glossary-term");
+
+  if (!button) {
+    return;
+  }
+
+  // Tapping the same word again closes the box
+  if (glossaryOpenButton === button) {
+    closeGlossaryPopover();
+  } else {
+    closeGlossaryPopover();
+    openGlossaryPopover(button);
+  }
+});
+
+// Close on a tap anywhere else, on Esc (back to the word) and on resize
+document.addEventListener("click", (event) => {
+  if (
+    glossaryOpenButton &&
+    !event.target.closest(".glossary-term, .glossary-popover")
+  ) {
+    closeGlossaryPopover();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && glossaryOpenButton) {
+    const button = glossaryOpenButton;
+    closeGlossaryPopover();
+    button.focus();
+  }
+});
+
+window.addEventListener("resize", closeGlossaryPopover);
+window.addEventListener("hashchange", closeGlossaryPopover);
 
 // FULL-SCREEN IMAGE VIEWER
 // Shows a guide image at full size; on phones it can be dragged around
